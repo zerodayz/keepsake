@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{.Title}}</title>
+    <link type="text/css" rel="stylesheet" href="/lib/styles.css">
+    <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+</head>
+
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="brand" href="/">Keepsake</a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li>
+                            <a href="/">Home</a>
+                        </li>
+                        <li>
+                            <a href="/edit/{{.Title}}">Edit</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div class="container">
+        <div class="header-text">
+            <h1>{{.Title}}</h1>
+        </div>
+        <div>{{.DisplayBody}}</div>
+    </div>
+    <hr>
+
+    <div class="container">
+        &nbsp;2020 © <a href="http://www.github.com/zerodayz" target="_blank">Robin Černín</a>. Brisbane, Australia.
+    </div>
+</body>
+
+</html>
