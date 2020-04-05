@@ -1,4 +1,4 @@
 data/*
-!data/WishList
-!data/FrontPage
+!data/WishList.md
+!data/FrontPage.md
 wiki
