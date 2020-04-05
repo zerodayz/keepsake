@@ -1006,7 +1006,11 @@ address {
 	line-height: 20px
 }
 
-.collapsible {
+input[type='checkbox'] {
+	display: none;
+  }
+  
+.lbl-toggle {
 	color: #0070c9;
 	cursor: pointer;
 	padding: 18px;
@@ -1017,31 +1021,66 @@ address {
 	line-height: 1.20849;
 	font-weight: 500;
 	letter-spacing: .015em;
-}
-  
-.toc {
-	padding: 0 18px;
-	display: none;
-	overflow: hidden;
-	font-size: 1em;
+	transition: all 0.25s ease-out;
 }
 
-.toc>.h1 {
+.lbl-toggle::before {
+	content: ' ';
+	display: inline-block;
+  
+	border-top: 5px solid transparent;
+	border-bottom: 5px solid transparent;
+	border-left: 5px solid currentColor;
+	vertical-align: middle;
+	margin-right: .7rem;
+	transform: translateY(-2px);
+  
+	transition: transform .2s ease-out;
+}
+  
+.toggle:checked + .lbl-toggle::before {
+	transform: rotate(90deg) translateX(-3px);
+}
+  
+.collapsible-content {
+	max-height: 0px;
+	overflow: hidden;
+	transition: max-height .25s ease-in-out;
+}
+  
+.toggle:checked + .lbl-toggle + .collapsible-content {
+	max-height: 100vh;
+}
+  
+.toggle:checked + .lbl-toggle {
+	border-bottom-right-radius: 0;
+	border-bottom-left-radius: 0;
+}
+  
+.collapsible-content .content-inner {
+	background: rgba(250, 224, 66, .2);
+	border-bottom: 1px solid rgba(250, 224, 66, .45);
+	border-bottom-left-radius: 7px;
+	border-bottom-right-radius: 7px;
+	padding: .5rem 1rem;
+}
+
+.collapsible-content>.h1 {
 	margin-left: 2em;
 }
-.toc>.h2 {
+.collapsible-content>.h2 {
 	margin-left: 4em;
 }
-.toc>.h3 {
+.collapsible-content>.h3 {
 	margin-left: 6em;
 } 
-.toc>.h4 {
+.collapsible-content>.h4 {
 	margin-left: 8em;
 }
-.toc>.h5 {
+.collapsible-content>.h5 {
 	margin-left: 10em;
 }
-.toc>.h6 {
+.collapsible-content>.h6 {
 	margin-left: 12em;
 } 
   

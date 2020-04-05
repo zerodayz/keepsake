@@ -82,8 +82,10 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		if len(line) != 0 {
 			if line[0] == '#' {
 				if startToc == true {
-					buf.Write([]byte(`<span class="collapsible" onclick="toggle('toc')">Table of Content</span>
-					<div class="toc" id="toc">`))
+					buf.Write([]byte(`
+					<input id="collapsible" class="toggle" type="checkbox">
+					<label for="collapsible" class="lbl-toggle">Table of Content</label>
+					<div class="collapsible-content">`))
 					startToc = false
 				}
 				count := bytes.Count(line, []byte(`#`))
