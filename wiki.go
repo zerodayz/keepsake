@@ -112,7 +112,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	}
 	if startToc == false {
 		buf.Write([]byte(`</div>`))
-		buf.Write([]byte(`<br><br>`))
+		buf.Write([]byte(`<br>`))
 		buf.WriteByte('\n')
 	}
 
