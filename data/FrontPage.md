@@ -2,8 +2,6 @@ Welcome to the Keepsake v2.0
 
 This version of keepsake is powered by Go. If you want to have something implemented please see [WishList] and put your requested feature and your name.
 
-All markdown files created are saved every minute in the [Gitlab](https://gitlab.cee.redhat.com/sbr-stack/keepsake/)
-
 ## Filename requirements
 To keep consistency across the Wiki, please use naming of your Wiki pages: `PRODUCT_MAJOR_MIN_TITLE`. For example `red_hat_openstack_platform_13_deployment`
 Filename can only contain **a-zA-Z0-9_** characters.
