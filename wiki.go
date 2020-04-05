@@ -112,17 +112,17 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
             count := bytes.Count(line, []byte(`#`))
             switch count {
             case 1:
-                line = h1Reg.ReplaceAll(line, []byte(`<h1>$2</h1>`))
+                line = h1Reg.ReplaceAll(line, []byte(`<h1 id="$2">$2</h1>`))
             case 2:
-                line = h2Reg.ReplaceAll(line, []byte(`<h2>$2</h2>`))
+                line = h2Reg.ReplaceAll(line, []byte(`<h2 id="$2">$2</h2>`))
             case 3:
-                line = h3Reg.ReplaceAll(line, []byte(`<h3>$2</h3>`))
+                line = h3Reg.ReplaceAll(line, []byte(`<h3 id="$2">$2</h3>`))
             case 4:
-                line = h4Reg.ReplaceAll(line, []byte(`<h4>$2</h4>`))
+                line = h4Reg.ReplaceAll(line, []byte(`<h4 id="$2">$2</h4>`))
             case 5:
-                line = h5Reg.ReplaceAll(line, []byte(`<h5>$2</h5>`))
+                line = h5Reg.ReplaceAll(line, []byte(`<h5 id="$2">$2</h5>`))
             case 6:
-                line = h6Reg.ReplaceAll(line, []byte(`<h6>$2</h6>`))
+                line = h6Reg.ReplaceAll(line, []byte(`<h6 id="$2">$2</h6>`))
             }
 		}
 		buf.Write(line)
