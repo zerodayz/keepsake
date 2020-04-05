@@ -113,15 +113,6 @@ img {
 }
 
 button,
-input,
-select,
-textarea {
-	margin: 0;
-	font-size: 100%;
-	vertical-align: middle
-}
-
-button,
 input {
 	*overflow: visible;
 	line-height: normal
@@ -765,7 +756,12 @@ h6 {
 	font-weight: inherit;
 	line-height: 20px;
 	color: #333333;
-	text-rendering: optimizelegibility
+	text-rendering: optimizelegibility;
+}
+
+:target {
+	padding-top: 79px;
+	margin-top: -79px;
 }
 
 h1 small,
@@ -1180,6 +1176,21 @@ label {
 	margin-bottom: 5px
 }
 
+textarea,
+input[type="search"] {
+	color: #333333;
+	border: 1px solid #e6e6e6;
+	border-radius: 6px;
+	padding: 0.35294rem 0.94118rem;
+	background-color: #f9fafa;
+	display: inline-block;
+	height: 20px;
+	margin: 10px 5px;
+	font-size: 18px;
+	line-height: 20px;
+	vertical-align: middle;
+}
+
 select,
 textarea,
 input[type="text"],
@@ -1193,16 +1204,15 @@ input[type="week"],
 input[type="number"],
 input[type="email"],
 input[type="url"],
-input[type="search"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input {
-  padding: 0;
-  color: #333333;
-  border: 1px solid #e6e6e6;
-  border-radius: 6px;
-  padding: 0.35294rem 0.94118rem;
-  background-color: #f9fafa;
+	padding: 0;
+	color: #333333;
+	border: 1px solid #e6e6e6;
+	border-radius: 6px;
+	padding: 0.35294rem 0.94118rem;
+	background-color: #f9fafa;
 	display: inline-block;
 	height: 20px;
 	padding: 0 0;
