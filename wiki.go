@@ -69,10 +69,48 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		h5Reg = regexp.MustCompile(`^#####(\s|)(.*?)$`)
 		h6Reg = regexp.MustCompile(`^######(\s|)(.*?)$`)
 		startBlock      bool = true
+		startToc        bool = true
 	)
 
 	escapedBody := template.HTMLEscapeString(string(p.Body))
 	buf := bytes.NewBuffer(nil)
+
+	tocscanner := bufio.NewScanner(strings.NewReader(escapedBody))
+	for tocscanner.Scan() {
+
+		line := tocscanner.Bytes()
+		if len(line) != 0 {
+			if line[0] == '#' {
+				if startToc == true {
+					buf.Write([]byte(`<span class="collapsible" onclick="toggle('toc')">Table of Content</span>
+					<div class="toc" id="toc">`))
+					startToc = false
+				}
+				count := bytes.Count(line, []byte(`#`))
+				switch count {
+				case 1:
+					line = h1Reg.ReplaceAll(line, []byte(`<a href="#$2" class="h1">$2</a>`))
+				case 2:
+					line = h2Reg.ReplaceAll(line, []byte(`<a href="#$2" class="h2">$2</a>`))
+				case 3:
+					line = h3Reg.ReplaceAll(line, []byte(`<a href="#$2" class="h3">$2</a>`))
+				case 4:
+					line = h4Reg.ReplaceAll(line, []byte(`<a href="#$2" class="h4">$2</a>`))
+				case 5:
+					line = h5Reg.ReplaceAll(line, []byte(`<a href="#$2" class="h5">$2</a>`))
+				case 6:
+					line = h6Reg.ReplaceAll(line, []byte(`<a href="#$2" class="h6">$2</a>`))
+				}
+				startToc = false
+				buf.Write(line)
+				buf.Write([]byte(`<br>`))
+				buf.WriteByte('\n')
+			}
+		}
+	}
+	buf.Write([]byte(`</div>`))
+	buf.Write([]byte(`<br><br>`))
+	buf.WriteByte('\n')
 
     scanner := bufio.NewScanner(strings.NewReader(escapedBody))
     for scanner.Scan() {
@@ -112,24 +150,24 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
             count := bytes.Count(line, []byte(`#`))
             switch count {
             case 1:
-                line = h1Reg.ReplaceAll(line, []byte(`<h1 id="$2">$2</h1>`))
+				line = h1Reg.ReplaceAll(line, []byte(`<h1 id="$2">$2</h1>`))
             case 2:
-                line = h2Reg.ReplaceAll(line, []byte(`<h2 id="$2">$2</h2>`))
+				line = h2Reg.ReplaceAll(line, []byte(`<h2 id="$2">$2</h2>`))
             case 3:
-                line = h3Reg.ReplaceAll(line, []byte(`<h3 id="$2">$2</h3>`))
+				line = h3Reg.ReplaceAll(line, []byte(`<h3 id="$2">$2</h3>`))
             case 4:
-                line = h4Reg.ReplaceAll(line, []byte(`<h4 id="$2">$2</h4>`))
+				line = h4Reg.ReplaceAll(line, []byte(`<h4 id="$2">$2</h4>`))
             case 5:
-                line = h5Reg.ReplaceAll(line, []byte(`<h5 id="$2">$2</h5>`))
+				line = h5Reg.ReplaceAll(line, []byte(`<h5 id="$2">$2</h5>`))
             case 6:
-                line = h6Reg.ReplaceAll(line, []byte(`<h6 id="$2">$2</h6>`))
+				line = h6Reg.ReplaceAll(line, []byte(`<h6 id="$2">$2</h6>`))
             }
 		}
 		buf.Write(line)
 		buf.Write([]byte(`<br>`))
 		buf.WriteByte('\n')
 	}
-
+    
 	p.DisplayBody = template.HTML(buf.String())
 	renderTemplate(w, "view", p)
 }
