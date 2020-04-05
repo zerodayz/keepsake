@@ -1,4 +1,4 @@
 - ~~Jump to header using # - Robin~~
-- Add auto-generated Table of Content - Robin
+- ~~Add auto-generated Table of Content - Robin~~
 - Add search feature - Robin
 - Fix display of italic font - Robin

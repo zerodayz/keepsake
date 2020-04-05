@@ -108,9 +108,12 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 			}
 		}
 	}
-	buf.Write([]byte(`</div>`))
-	buf.Write([]byte(`<br><br>`))
-	buf.WriteByte('\n')
+	if startToc == false {
+		buf.Write([]byte(`</div>`))
+		buf.Write([]byte(`<br><br>`))
+		buf.WriteByte('\n')
+	}
+
 
     scanner := bufio.NewScanner(strings.NewReader(escapedBody))
     for scanner.Scan() {
