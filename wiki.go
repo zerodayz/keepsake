@@ -43,20 +43,26 @@ func Exists(name string) bool {
     return true
 }
 
-func (p *Page) validate() bool {
+func (p *Page) validate(w http.ResponseWriter, r *http.Request) bool {
 	p.Errors = make(map[string]string)
-	match := validFilename.Match([]byte(p.EditTitle))
+	if len(p.EditTitle) != 0 {
+		match := validFilename.Match([]byte(p.EditTitle))
+		if match == false {
+			p.Errors["Title"] = "Please enter a valid title. Allowed charset: [a-zA-Z0-9_]"
+		}
+	}
 	if p.EditTitle != p.Title {
 		exists := Exists(datapath + p.EditTitle + ".md")
 		if exists == true {
 			p.Errors["Title"] = "Unable to save. Another Wiki page already exists with the requested name."
 		}
 	}
-
-	if match == false {
-		p.Errors["Title"] = "Please enter a valid title. Allowed charset: [a-zA-Z0-9_]"
+	if len(p.Body) == 0 {
+		p.Errors["Content"] = "Unable to save with empty body."
 	}
-	
+	if len(p.EditTitle) == 0 && len(p.Body) == 0 {
+		http.Redirect(w, r, "/view/"+p.Title, http.StatusFound)
+	}
 	return len(p.Errors) == 0
 }
 
@@ -246,7 +252,7 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	editTitle := r.FormValue("title")
 	p := &Page{Title: title, Body: []byte(body), EditTitle: editTitle}
 
-	if p.validate() == false {
+	if p.validate(w, r) == false {
 		renderTemplate(w, "edit", p)
 		return
 	}

@@ -44,6 +44,9 @@
                     Title: <textarea name="title" cols="1">{{printf "%s" .Title}}</textarea>
                 </div>
                 <div class="controls">
+                    {{ with .Errors.Content }}
+                    <p>{{ . }}</p>
+                    {{ end }}
                     Body: <textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea>
                 </div>
                 <div class="control-group">
