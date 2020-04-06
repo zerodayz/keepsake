@@ -12,4 +12,4 @@ go build wiki.go
 ./wiki
 ~~~
 
-Navigate to `http://localhost:8080` and enoy.
+Navigate to `http://localhost:8080` and enjoy.
