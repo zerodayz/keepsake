@@ -7,25 +7,25 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"html/template"
 	"io/ioutil"
 	"log"
-	"os"
-	"bufio"
-	"bytes"
-	"strings"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
+	"strings"
 	"unicode/utf8"
 )
 
 type Page struct {
-	Title string
-	EditTitle string
-	Body  []byte
+	Title       string
+	EditTitle   string
+	Body        []byte
 	DisplayBody template.HTML
-	Errors  map[string]string
+	Errors      map[string]string
 }
 
 func (p *Page) save(datapath string) error {
@@ -35,12 +35,12 @@ func (p *Page) save(datapath string) error {
 }
 
 func Exists(name string) bool {
-    if _, err := os.Stat(name); err != nil {
-        if os.IsNotExist(err) {
-            return false
-        }
-    }
-    return true
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
 }
 
 func (p *Page) validate(w http.ResponseWriter, r *http.Request) bool {
@@ -101,26 +101,26 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/edit/"+title, http.StatusFound)
 		return
 	}
-	
+
 	var (
-		boldItalicReg = regexp.MustCompile(`\*\*\*(.*?)\*\*\*`)
-		boldReg       = regexp.MustCompile(`\*\*(.*?)\*\*`)
-		italicReg     = regexp.MustCompile(`\*(.*?)\*`)
-		strikeReg     = regexp.MustCompile(`\~\~(.*?)\~\~`)
-		underscoreReg = regexp.MustCompile(`__(.*?)__`)
-		anchorReg     = regexp.MustCompile(`\[(.*?)\]`)
-		anchorExtReg  = regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
-		escapeReg     = regexp.MustCompile(`^\>(\s|)`)
-		blockquoteReg = regexp.MustCompile(`\&gt\;(.*?)$`)
-		backtipReg    = regexp.MustCompile("`(.*?)`")
-		h1Reg = regexp.MustCompile(`^#(\s|)(.*?)$`)
-		h2Reg = regexp.MustCompile(`^##(\s|)(.*?)$`)
-		h3Reg = regexp.MustCompile(`^###(\s|)(.*?)$`)
-		h4Reg = regexp.MustCompile(`^####(\s|)(.*?)$`)
-		h5Reg = regexp.MustCompile(`^#####(\s|)(.*?)$`)
-		h6Reg = regexp.MustCompile(`^######(\s|)(.*?)$`)
-		startBlock      bool = true
-		startToc        bool = true
+		boldItalicReg      = regexp.MustCompile(`\*\*\*(.*?)\*\*\*`)
+		boldReg            = regexp.MustCompile(`\*\*(.*?)\*\*`)
+		italicReg          = regexp.MustCompile(`\*(.*?)\*`)
+		strikeReg          = regexp.MustCompile(`\~\~(.*?)\~\~`)
+		underscoreReg      = regexp.MustCompile(`__(.*?)__`)
+		anchorReg          = regexp.MustCompile(`\[(.*?)\]`)
+		anchorExtReg       = regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
+		escapeReg          = regexp.MustCompile(`^\>(\s|)`)
+		blockquoteReg      = regexp.MustCompile(`\&gt\;(.*?)$`)
+		backtipReg         = regexp.MustCompile("`(.*?)`")
+		h1Reg              = regexp.MustCompile(`^#(\s|)(.*?)$`)
+		h2Reg              = regexp.MustCompile(`^##(\s|)(.*?)$`)
+		h3Reg              = regexp.MustCompile(`^###(\s|)(.*?)$`)
+		h4Reg              = regexp.MustCompile(`^####(\s|)(.*?)$`)
+		h5Reg              = regexp.MustCompile(`^#####(\s|)(.*?)$`)
+		h6Reg              = regexp.MustCompile(`^######(\s|)(.*?)$`)
+		startBlock    bool = true
+		startToc      bool = true
 	)
 
 	escapedBody := template.HTMLEscapeString(string(p.Body))
@@ -178,15 +178,14 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		buf.WriteByte('\n')
 	}
 
+	scanner := bufio.NewScanner(strings.NewReader(escapedBody))
+	for scanner.Scan() {
 
-    scanner := bufio.NewScanner(strings.NewReader(escapedBody))
-    for scanner.Scan() {
-
-        line := scanner.Bytes()
-        if len(line) == 0 {
+		line := scanner.Bytes()
+		if len(line) == 0 {
 			buf.Write([]byte(`<br>`))
 			buf.WriteByte('\n')
-            continue
+			continue
 		}
 		if string(line) == "----" {
 			if startBlock == true {
@@ -203,30 +202,30 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 			buf.WriteByte('\n')
 			continue
 		}
-        line = boldItalicReg.ReplaceAll(line, []byte(`<b><i>$1</i></b>`))
-        line = boldReg.ReplaceAll(line, []byte(`<b>$1</b>`))
-        line = italicReg.ReplaceAll(line, []byte(`<i>$1</i>`))
-        line = strikeReg.ReplaceAll(line, []byte(`<s>$1</s>`))
+		line = boldItalicReg.ReplaceAll(line, []byte(`<b><i>$1</i></b>`))
+		line = boldReg.ReplaceAll(line, []byte(`<b>$1</b>`))
+		line = italicReg.ReplaceAll(line, []byte(`<i>$1</i>`))
+		line = strikeReg.ReplaceAll(line, []byte(`<s>$1</s>`))
 		line = underscoreReg.ReplaceAll(line, []byte(`<u>$1</u>`))
 		line = anchorExtReg.ReplaceAll(line, []byte(`<a href="$2">$1</a>`))
 		line = anchorReg.ReplaceAll(line, []byte(`<a href="/view/$1">$1</a>`))
-        line = escapeReg.ReplaceAll(line, []byte(`&gt;`))
-        line = blockquoteReg.ReplaceAll(line, []byte(`<blockquote>$1</blockquote>`))
+		line = escapeReg.ReplaceAll(line, []byte(`&gt;`))
+		line = blockquoteReg.ReplaceAll(line, []byte(`<blockquote>$1</blockquote>`))
 		line = backtipReg.ReplaceAll(line, []byte(`<code>$1</code>`))
-        if line[0] == '#' {
-            count := bytes.Count(line, []byte(`#`))
-            switch count {
-            case 1:
+		if line[0] == '#' {
+			count := bytes.Count(line, []byte(`#`))
+			switch count {
+			case 1:
 				line = h1Reg.ReplaceAll(line, []byte(`<h1 id="$2">$2</h1>`))
-            case 2:
+			case 2:
 				line = h2Reg.ReplaceAll(line, []byte(`<h2 id="$2">$2</h2>`))
-            case 3:
+			case 3:
 				line = h3Reg.ReplaceAll(line, []byte(`<h3 id="$2">$2</h3>`))
-            case 4:
+			case 4:
 				line = h4Reg.ReplaceAll(line, []byte(`<h4 id="$2">$2</h4>`))
-            case 5:
+			case 5:
 				line = h5Reg.ReplaceAll(line, []byte(`<h5 id="$2">$2</h5>`))
-            case 6:
+			case 6:
 				line = h6Reg.ReplaceAll(line, []byte(`<h6 id="$2">$2</h6>`))
 			}
 		}
@@ -234,7 +233,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		buf.Write([]byte(`<br>`))
 		buf.WriteByte('\n')
 	}
-    
+
 	p.DisplayBody = template.HTML(buf.String())
 	renderTemplate(w, "view", p)
 }
@@ -289,15 +288,15 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	buf := bytes.NewBuffer(nil)
 
 	files, err := ioutil.ReadDir(datapath)
-    if err != nil {
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	if len(searchKey) == 0 {
 		return
 	}
-	
+
 	for _, f := range files {
 		if fileReg.MatchString(f.Name()) {
 			content, err := ioutil.ReadFile(datapath + f.Name())
@@ -311,15 +310,15 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 			if len(indexes) != 0 {
 				fileName := strings.Split(f.Name(), ".")
 				buf.Write([]byte(`<h2><a href="/view/` +
-				fileName[0] + `">` +
-				fileName[0] + `</a></h2>`))
+					fileName[0] + `">` +
+					fileName[0] + `</a></h2>`))
 				for _, k := range indexes {
 					var start = k[0]
 					var end = k[1]
 
 					var showStart = max(start-100, 0)
 					var showEnd = min(end+100, contentLenght-1)
-					
+
 					for !utf8.RuneStart(content[showStart]) {
 						showStart = max(showStart-1, 0)
 					}
@@ -339,7 +338,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-			
+
 	p := &Page{Title: searchKey, Body: []byte(buf.String())}
 	p.DisplayBody = template.HTML(buf.String())
 	p.Title = searchKey
@@ -347,8 +346,8 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 var (
-	tmplpath = "tmpl/"
-	datapath = "data/"
+	tmplpath  = "tmpl/"
+	datapath  = "data/"
 	templates = template.Must(template.ParseFiles(
 		tmplpath+"edit.html", tmplpath+"view.html", tmplpath+"search.html"))
 	validFilename = regexp.MustCompile("^([a-zA-Z0-9_]+)$")
@@ -381,6 +380,6 @@ func main() {
 	http.HandleFunc("/save/", makeHandler(saveHandler))
 	http.HandleFunc("/search/", searchHandler)
 	http.HandleFunc("/", rootHandler)
-	
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
