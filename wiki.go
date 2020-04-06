@@ -253,9 +253,10 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 			var indexes = searchQuery.FindAllIndex(content, -1)
 			if len(indexes) != 0 {
+				fileName := strings.Split(f.Name(), ".")
 				buf.Write([]byte(`<h2><a href="/view/` +
-				strings.Trim(f.Name(), ".md") + `">` +
-				strings.Trim(f.Name(), ".md") + `</a></h2>`))
+				fileName[0] + `">` +
+				fileName[0] + `</a></h2>`))
 				for _, k := range indexes {
 					var start = k[0]
 					var end = k[1]
