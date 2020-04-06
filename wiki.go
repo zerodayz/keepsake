@@ -15,7 +15,9 @@ import (
 	"bytes"
 	"strings"
 	"net/http"
+	"net/url"
 	"regexp"
+	"unicode/utf8"
 )
 
 type Page struct {
@@ -28,6 +30,21 @@ func (p *Page) save(datapath string) error {
 	os.Mkdir("data", 0777)
 	filename := datapath + p.Title + ".md"
 	return ioutil.WriteFile(filename, p.Body, 0600)
+}
+
+func max(x int, y int) int {
+	if x > y {
+		return x
+	} else {
+		return y
+	}
+}
+func min(x int, y int) int {
+	if x > y {
+		return y
+	} else {
+		return x
+	}
 }
 
 func loadPage(datapath, title string) (*Page, error) {
@@ -202,10 +219,81 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
+func searchHandler(w http.ResponseWriter, r *http.Request) {
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	params := u.Query()
+	searchKey := params.Get("q")
+	var fileReg = regexp.MustCompile(`^[a-zA-Z0-9_]+\.md$`)
+	var searchQuery = regexp.MustCompile(searchKey)
+
+	buf := bytes.NewBuffer(nil)
+
+	files, err := ioutil.ReadDir(datapath)
+    if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	if len(searchKey) == 0 {
+		return
+	}
+	
+	for _, f := range files {
+		if fileReg.MatchString(f.Name()) {
+			content, err := ioutil.ReadFile(datapath + f.Name())
+			var contentLenght = len(content)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			var indexes = searchQuery.FindAllIndex(content, -1)
+			if len(indexes) != 0 {
+				buf.Write([]byte(`<h2><a href="/view/` +
+				strings.Trim(f.Name(), ".md") + `">` +
+				strings.Trim(f.Name(), ".md") + `</a></h2>`))
+				for _, k := range indexes {
+					var start = k[0]
+					var end = k[1]
+
+					var showStart = max(start-100, 0)
+					var showEnd = min(end+100, contentLenght-1)
+					
+					for !utf8.RuneStart(content[showStart]) {
+						showStart = max(showStart-1, 0)
+					}
+					for !utf8.RuneStart(content[showEnd]) {
+						showEnd = min(showEnd-1, contentLenght)
+					}
+					buf.Write([]byte(`<pre><code>`))
+					buf.Write([]byte(content[showStart:start]))
+					buf.Write([]byte(`<b>`))
+					buf.Write([]byte(content[start:end]))
+					buf.Write([]byte(`</b>`))
+					buf.Write([]byte(content[end:showEnd]))
+					buf.Write([]byte(`</pre></code>`))
+				}
+				buf.Write([]byte(`<br>`))
+				buf.WriteByte('\n')
+			}
+		}
+	}
+			
+	p := &Page{Title: searchKey, Body: []byte(buf.String())}
+	p.DisplayBody = template.HTML(buf.String())
+	p.Title = searchKey
+	renderTemplate(w, "search", p)
+}
+
 var (
 	tmplpath = "tmpl/"
 	datapath = "data/"
-	templates = template.Must(template.ParseFiles(tmplpath+"edit.html", tmplpath+"view.html"))
+	templates = template.Must(template.ParseFiles(
+		tmplpath+"edit.html", tmplpath+"view.html", tmplpath+"search.html"))
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
@@ -233,6 +321,7 @@ func main() {
 	http.HandleFunc("/view/", makeHandler(viewHandler))
 	http.HandleFunc("/edit/", makeHandler(editHandler))
 	http.HandleFunc("/save/", makeHandler(saveHandler))
+	http.HandleFunc("/search/", searchHandler)
 	http.HandleFunc("/", rootHandler)
 	
 	log.Fatal(http.ListenAndServe(":8080", nil))
