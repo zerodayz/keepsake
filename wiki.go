@@ -32,6 +32,11 @@ func (p *Page) save(datapath string) error {
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
+func (p *Page) remove(datapath string) error {
+	filename := datapath + p.Title + ".md"
+	return os.Remove(filename)
+}
+
 func max(x int, y int) int {
 	if x > y {
 		return x
@@ -215,19 +220,36 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
+	updatedTitle := r.FormValue("title")
 
 	nlcr := regexp.MustCompile("\r\n")
 	body = string(nlcr.ReplaceAllFunc([]byte(body), func(s []byte) []byte {
 		return []byte("\n")
 	}))
+	if updatedTitle == title {
+		p := &Page{Title: title, Body: []byte(body)}
+		err := p.save(datapath)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/view/"+title, http.StatusFound)
+	} else {
+		p := &Page{Title: updatedTitle, Body: []byte(body)}
+		err := p.save(datapath)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 
-	p := &Page{Title: title, Body: []byte(body)}
-	err := p.save(datapath)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		p = &Page{Title: title, Body: []byte(body)}
+		err = p.remove(datapath)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		http.Redirect(w, r, "/view/"+updatedTitle, http.StatusFound)
 	}
-	http.Redirect(w, r, "/view/"+title, http.StatusFound)
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
