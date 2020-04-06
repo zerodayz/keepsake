@@ -1,6 +1,6 @@
 - ~~Jump to header using # - Robin~~
 - ~~Add auto-generated Table of Content - Robin~~
-- Add search feature - Robin
+- ~~Add search feature - Robin~~
 - Fix display of italic font - Robin
 - Add dark theme - Robin
 - Add thumbs up/down - Robin

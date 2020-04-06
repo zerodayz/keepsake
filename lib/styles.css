@@ -216,9 +216,9 @@ body {
 	margin: 0;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
 	font-size: 17px;
-  line-height: 1.52947;
-  letter-spacing: -0.021em;
-  font-weight: 400;
+	line-height: 1.52947;
+	letter-spacing: -0.021em;
+	font-weight: 400;
 	color: #333333;
 	background-color: white;
 }
