@@ -22,8 +22,10 @@ import (
 
 type Page struct {
 	Title string
+	EditTitle string
 	Body  []byte
 	DisplayBody template.HTML
+	Errors  map[string]string
 }
 
 func (p *Page) save(datapath string) error {
@@ -32,9 +34,14 @@ func (p *Page) save(datapath string) error {
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
-func (p *Page) remove(datapath string) error {
-	filename := datapath + p.Title + ".md"
-	return os.Remove(filename)
+func (p *Page) validate() bool {
+	p.Errors = make(map[string]string)
+	match := validFilename.Match([]byte(p.EditTitle))
+	if match == false {
+	  p.Errors["Title"] = "Please enter a valid title. Allowed charset: [a-zA-Z0-9_]"
+	}
+	
+	return len(p.Errors) == 0
 }
 
 func max(x int, y int) int {
@@ -199,7 +206,7 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 				line = h5Reg.ReplaceAll(line, []byte(`<h5 id="$2">$2</h5>`))
             case 6:
 				line = h6Reg.ReplaceAll(line, []byte(`<h6 id="$2">$2</h6>`))
-            }
+			}
 		}
 		buf.Write(line)
 		buf.Write([]byte(`<br>`))
@@ -220,36 +227,29 @@ func editHandler(w http.ResponseWriter, r *http.Request, title string) {
 
 func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
-	updatedTitle := r.FormValue("title")
+	editTitle := r.FormValue("title")
+	p := &Page{Title: title, Body: []byte(body), EditTitle: editTitle}
+
+	if p.validate() == false {
+		renderTemplate(w, "edit", p)
+		return
+	}
 
 	nlcr := regexp.MustCompile("\r\n")
 	body = string(nlcr.ReplaceAllFunc([]byte(body), func(s []byte) []byte {
 		return []byte("\n")
 	}))
-	if updatedTitle == title {
-		p := &Page{Title: title, Body: []byte(body)}
-		err := p.save(datapath)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		http.Redirect(w, r, "/view/"+title, http.StatusFound)
-	} else {
-		p := &Page{Title: updatedTitle, Body: []byte(body)}
-		err := p.save(datapath)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 
-		p = &Page{Title: title, Body: []byte(body)}
-		err = p.remove(datapath)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		http.Redirect(w, r, "/view/"+updatedTitle, http.StatusFound)
+	p = &Page{Title: editTitle, Body: []byte(body)}
+	err := p.save(datapath)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	if editTitle != title {
+		os.Remove(datapath + title + ".md")
+	}
+	http.Redirect(w, r, "/view/"+editTitle, http.StatusFound)
 }
 
 func searchHandler(w http.ResponseWriter, r *http.Request) {
@@ -328,6 +328,7 @@ var (
 	datapath = "data/"
 	templates = template.Must(template.ParseFiles(
 		tmplpath+"edit.html", tmplpath+"view.html", tmplpath+"search.html"))
+	validFilename = regexp.MustCompile("^([a-zA-Z0-9_]+)$")
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {

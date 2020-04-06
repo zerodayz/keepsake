@@ -38,6 +38,9 @@
         <form action="/save/{{.Title}}" method="POST">
             <div class="control-group">
                 <div class="controls">
+                    {{ with .Errors.Title }}
+                    <p>{{ . }}</p>
+                    {{ end }}
                     Title: <textarea name="title" cols="1">{{printf "%s" .Title}}</textarea>
                 </div>
                 <div class="controls">
