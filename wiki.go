@@ -97,6 +97,17 @@ func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
 
 		line := tocscanner.Bytes()
 		if len(line) != 0 {
+			if string(line) == "----" {
+				if startBlock == true {
+					startBlock = false
+				} else {
+					startBlock = true
+				}
+				continue
+			}
+			if startBlock == false {
+				continue
+			}
 			if line[0] == '#' {
 				if startToc == true {
 					buf.Write([]byte(`
