@@ -261,15 +261,12 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 		return []byte("\n")
 	}))
 
-	p = &Page{Title: editTitle, Body: []byte(body)}
-	err := p.save(datapath)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	if editTitle != title {
-		os.Remove(datapath + title + ".md")
+		err := os.Rename(datapath + title + ".md", datapath + editTitle + ".md")
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 	http.Redirect(w, r, "/view/"+editTitle, http.StatusFound)
 }
