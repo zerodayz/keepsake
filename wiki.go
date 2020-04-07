@@ -91,7 +91,7 @@ func loadPage(datapath, title string) (*Page, error) {
 }
 
 func rootHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/view/FrontPage", http.StatusFound)
+	http.Redirect(w, r, "/view/home", http.StatusFound)
 }
 
 func viewHandler(w http.ResponseWriter, r *http.Request, title string) {
