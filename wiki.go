@@ -267,6 +267,12 @@ func saveHandler(w http.ResponseWriter, r *http.Request, title string) {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
+	} else {
+		err := p.save(datapath)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 	http.Redirect(w, r, "/view/"+editTitle, http.StatusFound)
 }
