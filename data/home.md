@@ -33,7 +33,7 @@ type Page struct {
 ***Bold Italic Text*** is defined by three.
 ~~Strikethrough Text~~ is defined by tilda.
 __Underscored Text__ using two underscores.
-[FrontPage] is a local wiki pages link using square brackets.
+[home] is a local wiki pages link using square brackets.
 [Google](https://www.google.com) is an external link.
 
 ### Header examples
