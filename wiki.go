@@ -48,7 +48,7 @@ func (p *Page) validate(w http.ResponseWriter, r *http.Request) bool {
 	if len(p.EditTitle) != 0 {
 		match := validFilename.Match([]byte(p.EditTitle))
 		if match == false {
-			p.Errors["Title"] = "Please enter a valid title. Allowed charset: [a-zA-Z0-9_]"
+			p.Errors["Title"] = "Please enter a valid title. Allowed charset: [a-z0-9_]"
 		}
 	}
 	if p.EditTitle != p.Title {
@@ -282,7 +282,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	params := u.Query()
 	searchKey := params.Get("q")
-	var fileReg = regexp.MustCompile(`^[a-zA-Z0-9_]+\.md$`)
+	var fileReg = regexp.MustCompile(`^[a-z0-9_]+\.md$`)
 	var searchQuery = regexp.MustCompile(searchKey)
 
 	buf := bytes.NewBuffer(nil)
@@ -350,7 +350,7 @@ var (
 	datapath  = "data/"
 	templates = template.Must(template.ParseFiles(
 		tmplpath+"edit.html", tmplpath+"view.html", tmplpath+"search.html"))
-	validFilename = regexp.MustCompile("^([a-zA-Z0-9_]+)$")
+	validFilename = regexp.MustCompile("^([a-z0-9_]+)$")
 )
 
 func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
@@ -360,7 +360,7 @@ func renderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(edit|save|view)/([a-zA-Z0-9_]+)$")
+var validPath = regexp.MustCompile("^/(edit|save|view)/([a-z0-9_]+)$")
 
 func makeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
