@@ -330,7 +330,9 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`<b>`))
 					buf.Write([]byte(content[start:end]))
 					buf.Write([]byte(`</b>`))
-					buf.Write([]byte(content[end:showEnd]))
+					if (end-1) != showEnd {
+						buf.Write([]byte(content[end:showEnd]))
+					}
 					buf.Write([]byte(`</pre></code>`))
 				}
 				buf.Write([]byte(`<br>`))
