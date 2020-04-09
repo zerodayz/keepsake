@@ -312,9 +312,13 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			var indexes = searchQuery.FindAllIndex(content, -1)
 			if len(indexes) != 0 {
 				fileName := strings.Split(f.Name(), ".")
-				buf.Write([]byte(`<h2><a href="/pages/view/` +
-					fileName[0] + `">` +
-					fileName[0] + `</a></h2>`))
+				buf.Write([]byte(`<label for="search-content" class="search-collapsible">` + fileName[0] + `</label>
+				<div id="search-content" class="search-content">`))
+				// <input id="search-collapsible" class="toggle" type="checkbox">
+				// <label for="search-collapsible"><a href="/pages/view/` +
+				// 	fileName[0] + `">` +
+				// 	fileName[0] + `</a></label>
+				// buf.Write([]byte(`<h2></h2>`))
 				for _, k := range indexes {
 					var start = k[0]
 					var end = k[1]
@@ -338,7 +342,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					buf.Write([]byte(`</pre></code>`))
 				}
-				buf.Write([]byte(`<br>`))
+				buf.Write([]byte(`</div>`))
 				buf.WriteByte('\n')
 			}
 		}
