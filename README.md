@@ -5,9 +5,8 @@ Wiki written in Go
 # How to use
 
 ~~~
-git clone https://gitlab.com/zerodayz/gowiki.git
-cd gowiki
-bash install_go.sh
+git clone https://gitlab.com/zerodayz/gowiki.git $GOPATH/src/gowiki
+cd $GOPATH/src/gowiki
 go build wiki.go
 ./wiki
 ~~~

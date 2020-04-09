@@ -16,15 +16,12 @@
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <li>
-                            <a href="/">Home</a>
-                        </li>
-                        <li>
-                            <a href="/edit/{{.Title}}">Edit</a>
+                            <a href="/pages/edit/{{.Title}}">Edit Page</a>
                         </li>
                     </ul>
                     <ul class="nav pull-right">
                         <li>
-                            <form action="/search" method="GET">
+                            <form action="/pages/search" method="GET">
                                 <input class="navbar-search" value="" placeholder="Search" type="search" name="q">
                             </form>
                         </li>

@@ -1,4 +1,4 @@
 data/*
-!data/wishlist.md
-!data/home.md
+!data/pages/wishlist.md
+!data/page/home.md
 wiki
