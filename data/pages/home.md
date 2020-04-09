@@ -14,7 +14,7 @@ Navigate to Syntax Help directly using #. For example [home#Syntax Help]
 
 ## How to create new Wiki page
 Simply visit the page you want to see and it will redirect you to the Edit page if it doesn't exist.
-For example creating Example page would be going to [example] `http://127.0.0.1:8080/view/Example` 
+For example creating Example page would be going to [example] `http://keepsake.usersys.redhat.com/view/Example` 
 
 ## Syntax Help
 ### Code blocks
