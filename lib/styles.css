@@ -745,6 +745,7 @@ a.text-success:focus {
 	text-align: center
 }
 
+
 h1,
 h2,
 h3,
@@ -3307,14 +3308,27 @@ table th[class*="span"],
 
 .nav {
 	margin-bottom: 20px;
-  margin-left: 0;
+    margin-left: 0;
 	list-style: none;
-	background: rgba(240,240,240,0.8)
+	/* background: rgba(240,240,240,0.8) */
+	background-image: linear-gradient(#E5E5E5, white);
 }
 
 .nav>li>a {
   display: block;
   padding: 5px;
+}
+
+.nav li.menu-create>a::before {
+	content: url(/lib/icons/create-outline-24px.svg);
+}
+
+.nav li.menu-edit>a::before {
+	content: url(/lib/icons/edit-outline-24px.svg);
+}
+
+.nav li.menu-delete>a::before {
+	content: url(/lib/icons/delete-outline-24px.svg);
 }
 
 .nav>li>a:hover,
@@ -3723,7 +3737,8 @@ table th[class*="span"],
 	*z-index: 2;
 	margin-bottom: 20px;
   overflow: visible;
-  background-color: rgba(240,240,240,0.8);
+  /* background-color: rgba(240,240,240,0.8); */
+  background-image: linear-gradient(black, white);
 }
 
 .navbar-inner {
@@ -3760,10 +3775,10 @@ table th[class*="span"],
 }
 
 .navbar .brand {
-  font-size: 24px;
-  line-height: 2.125;
-  font-weight: 500;
-  letter-spacing: 0.015em;
+	font-size: 24px;
+	line-height: 2.125;
+	font-weight: 500;
+	letter-spacing: 0.015em;
 	float: left;
 	padding: 0 10px;
 	margin-left: -10px;
@@ -4124,22 +4139,21 @@ table th[class*="span"],
 }
 
 .navbar-inverse .navbar-inner {
-	background: rgba(240,240,240,0.8)
+	background-image: linear-gradient(#E5E5E5, white);
 }
 
 .navbar-inverse .brand,
 .navbar-inverse .nav>li>a {
 	color: #000;
 	text-shadow: 0;
-	background: rgba(240,240,240,0.8)
+	background-image: linear-gradient(#E5E5E5, white);
 }
 
 .navbar-inverse .brand:hover,
 .navbar-inverse .nav>li>a:hover,
 .navbar-inverse .brand:focus,
 .navbar-inverse .nav>li>a:focus {
-	color: #bbb;
-	background: rgba(240,240,240,0.8)
+	background-image: linear-gradient(#DFDFDF, white);
 }
 
 .navbar-inverse .brand {
@@ -4152,8 +4166,7 @@ table th[class*="span"],
 
 .navbar-inverse .nav>li>a:focus,
 .navbar-inverse .nav>li>a:hover {
-	color: #bbb;
-	background: rgba(240,240,240,0.8)
+	background-image: linear-gradient(#DFDFDF, white);
 }
 
 .navbar-inverse .nav .active>a,

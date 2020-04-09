@@ -15,16 +15,24 @@
                 <a class="brand" href="/">Keepsake</a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li>
-                            <a href="/pages/edit/{{.Title}}">Edit Page</a>
+                        <li class="menu-create">
+                            <a href="/pages/create/"></a>
+                        </li>
+                        <li class="menu-edit">
+                            <a href="/pages/edit/{{.Title}}"></a>
+                        </li>
+                        <li class="menu-delete">
+                            <a href="/pages/delete/{{.Title}}"></a>
                         </li>
                     </ul>
                     <ul class="nav pull-right">
+
                         <li>
                             <form action="/pages/search" method="GET">
                                 <input class="navbar-search" value="" placeholder="Search" type="search" name="q">
                             </form>
                         </li>
+
                     </ul>
                 </div>
             </div>

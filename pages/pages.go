@@ -299,7 +299,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	if len(searchKey) == 0 {
 		return
 	}
-
+	buf.Write([]byte(`<div id="items"></div>`))
 	for _, f := range files {
 		if fileReg.MatchString(f.Name()) {
 			content, err := ioutil.ReadFile(datapath + f.Name())
@@ -312,10 +312,11 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			var indexes = searchQuery.FindAllIndex(content, -1)
 			if len(indexes) != 0 {
 				fileName := strings.Split(f.Name(), ".")
-				buf.Write([]byte(`<label for="search-content" class="search-collapsible">` + fileName[0] + `</label>
-				<div id="search-content" class="search-content">
-				<a href="/pages/view/` + fileName[0] + `">Visit Page</a> | 
-				<a href="/pages/edit/` + fileName[0] + `">Edit Page</a>`))
+				buf.Write([]byte(`<label for="search-content" class="search-collapsible">
+				` + fileName[0] + `
+				<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/visit-24px.svg"></a>
+				<a href="/pages/edit/` + fileName[0] + `"><img src="/lib/icons/edit-outline-24px.svg"></a></label>
+				<div id="search-content" class="search-content">`))
 				// <input id="search-collapsible" class="toggle" type="checkbox">
 				// <label for="search-collapsible"></label>
 				// buf.Write([]byte(`<h2></h2>`))
@@ -340,7 +341,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					if (end - 1) != showEnd {
 						buf.Write([]byte(content[end:showEnd]))
 					}
-					buf.Write([]byte(`</pre></code>`))
+					buf.Write([]byte(`</code></pre>`))
 				}
 				buf.Write([]byte(`</div>`))
 				buf.WriteByte('\n')
