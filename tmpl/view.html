@@ -9,31 +9,23 @@
 </head>
 
 <body>
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="brand" href="/">Keepsake</a>
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li class="menu-create">
-                            <a href="/pages/create/"></a>
-                        </li>
-                        <li class="menu-edit">
-                            <a href="/pages/edit/{{.Title}}"></a>
-                        </li>
-                        <li class="menu-delete">
-                            <a href="/pages/delete/{{.Title}}"></a>
-                        </li>
-                        <li>
-                            <form action="/pages/search" method="GET">
-                                <input class="navbar-search" id="input-query" value="" placeholder="Search"
-                                    type="search" name="q">
-                            </form>
-                        </li>
-                    </ul>
+    <div class="navvy">
+        <ul>
+            <li class="menu-home"><a href="/"></a></li>
+            <li class="menu-create"><a href="/pages/create/"></a></li>
+            <li class="menu-edit"><a href="/pages/edit/{{.Title}}"></a></li>
+            <li class="menu-delete"><a href="/pages/delete/{{.Title}}"></a></li>
+            <li>
+                <div class="search-container">
+                    <form action="/pages/search" method="GET">
+                        <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
+                            value="">
+                        <button class="navbar-search-button" type="submit">Search</button>
+                    </form>
                 </div>
-            </div>
-        </div>
+            </li>
+            <li class="menu-user" style="float:right"><a href="#user">Hello, there!</a></li>
+        </ul>
     </div>
     <div class="clearfix"></div>
     <div class="container">

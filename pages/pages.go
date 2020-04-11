@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"regexp"
 	"strings"
 	"unicode/utf8"
@@ -311,12 +312,15 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 			var indexes = searchQuery.FindAllIndex(content, -1)
 			if len(indexes) != 0 {
+				var occurences = strconv.Itoa(len(indexes))
 				fileName := strings.Split(f.Name(), ".")
-				buf.Write([]byte(`<label for="search-content" class="search-collapsible">
+				buf.Write([]byte(`
+				<div class="found">Found ` + occurences + ` occurrences.
+				<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
+				<a href="/pages/edit/` + fileName[0] + `"><img src="/lib/icons/edit-black-24px.svg"></a>
+				<label for="search-content" class="search-collapsible">
 				` + fileName[0] + `</label>
-				<div id="search-content" class="search-content">
-				<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/visit-24px.svg"></a>
-				<a href="/pages/edit/` + fileName[0] + `"><img src="/lib/icons/edit-outline-24px.svg"></a>`))
+				<div id="search-content" class="search-content">`))
 				for _, k := range indexes {
 					var start = k[0]
 					var end = k[1]
@@ -340,7 +344,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					buf.Write([]byte(`</code></pre>`))
 				}
-				buf.Write([]byte(`</div>`))
+				buf.Write([]byte(`</div></div>`))
 				buf.WriteByte('\n')
 			}
 		}
