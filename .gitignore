@@ -3,4 +3,6 @@ data/*
 data/pages/*
 !data/pages/wishlist.md
 !data/pages/home.md
+!data/mysql
+data/mysql/*
 wiki
