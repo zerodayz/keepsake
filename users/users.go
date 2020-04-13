@@ -3,6 +3,7 @@ package users
 import (
 	"html/template"
 	"gowiki/database"
+	"gowiki/pages"
 	"net/http"
 	"time"
 	"log"
@@ -43,7 +44,15 @@ func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
 // handlers
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
+	p := pages.Page{}
 	u := database.User{}
+
+	username := pages.ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+	}
+
+	p.User_LoggedIn = username
 
 	if r.Method == "POST" {
 		r.ParseForm()
@@ -55,7 +64,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t := template.Must(template.ParseFiles(tmplpath+"create.html"))
-	err := t.Execute(w, "create")
+	err := t.ExecuteTemplate(w, "create.html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -90,7 +99,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	t := template.Must(template.ParseFiles(tmplpath+"login.html"))
-	err := t.Execute(w, "create")
+	err := t.Execute(w, "login.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
