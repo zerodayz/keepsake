@@ -668,13 +668,29 @@ label {
 
 div.login {
 	width: 300px;
-    height: 300px;
+    height: 220px;
     position: fixed;
     margin-left: -150px;
     margin-top: -150px;
-    top: 50%;
-	left: 50%;
+    top: 77%;
+	left: 20%;
 	color: #d9d9d9;
+	background-color: #353535;
+	padding: 0.35294rem 0.94118rem;
+	font-family:  -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
+}
+
+
+div.create-user {
+	width: 350px;
+    height: 350px;
+    position: fixed;
+    margin-left: -150px;
+    margin-top: -150px;
+    top: 66%;
+	left: 20%;
+	color: #d9d9d9;
+	background-color: #353535;
 	padding: 0.35294rem 0.94118rem;
 	font-family:  -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
 }
@@ -715,7 +731,7 @@ input[type="color"],
 .uneditable-input {
 	color: #333333;
 	border: 1px solid #e6e6e6;
-	padding: 0.35294rem 0.94118rem;
+	padding: 0.94118rem 0.94118rem;
 	border-radius: 6px;
 	background-color: #f9fafa;
 	display: inline-block;
@@ -724,6 +740,7 @@ input[type="color"],
 	line-height: 20px;
 	margin: 3px;   
 	vertical-align: middle;
+	box-sizing: border-box;
 }
 
 input,
@@ -860,12 +877,23 @@ legend+.control-group {
 	content: url(/lib/icons/delete-24px.svg);
 }
 
+.navvy>ul>li .menu-user-add>a::before {
+	content: url(/lib/icons/person_add-24px.svg);
+}
+
+.navvy>ul>li .menu-login>a::before {
+	content: url(/lib/icons/meeting_room-24px.svg);
+}
+
 .navvy>ul>li.menu-user>a::before {
 	content: url(/lib/icons/person-24px.svg);
 }
 
-  
 .navvy>ul>li .active {
+	background-color: #575757;
+}
+
+.navvy>ul>li:hover:not(#search) {
 	background-color: #575757;
 }
 
@@ -873,6 +901,61 @@ legend+.control-group {
 	vertical-align: middle;
 	height: 48px;
 	display: table-cell;
+}
+
+
+.dropdown {
+	float: left;
+	overflow: hidden;
+}
+
+.dropdown .dropbtn {
+	font-size: 16px;
+	border: none;
+	outline: none;
+	color: white;
+	padding: 10px 10px;
+	background-color: inherit;
+	font-family: inherit;
+	margin: 0;
+}
+
+.dropdown .dropbtn:hover {
+	background-color: #575757;
+}
+
+.dropdown .dropbtn.setting::before {
+	content: url(/lib/icons/settings-24px.svg);
+}
+
+.dropdown .dropbtn.user::before {
+	content: url(/lib/icons/person-24px.svg);
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: #353535;
+	min-width: 160px;
+	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+}
+  
+.dropdown-content a {
+	float: none;
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+	text-align: left;
+}
+  
+.dropdown-content a:hover {
+	background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+	display: block;
 }
 
 .navvy

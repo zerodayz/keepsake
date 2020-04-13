@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Keepsake - Login</title>
+    <link type="text/css" rel="stylesheet" href="/lib/styles.css">
+    <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <meta charset='utf-8'>
+</head>
+
+<body class="loginbdy">
+    <div class="navvy">
+        <ul>
+            <li style="float:right">
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, there!
+                    </button>
+                    <div class="dropdown-content menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="clearfix"></div>
+    <div class=" container">
+        <div class="login">
+            <table>
+                <form action="/users/login/" method="POST">
+                    <tr>
+                        <td class="login-header" colspan="2">Login</td>
+                    </tr>
+                    <tr>
+                        <td><label for="username"><img src="/lib/icons/person-24px.svg"></label></td>
+                        <td><input type="text" placeholder="Enter Username" name="username" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="password"><img src="/lib/icons/lock-24px.svg"></label>
+                        </td>
+                        <td><input type="password" placeholder="Enter Password" name="password" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><button type="submit">Login</button></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span style="color: #d9d9d9">Forgot <a href="#">password?</a> Don't have an
+                                account
+                                yet? <a href="/users/create">Create
+                                    one</a> or
+                                continue
+                                as <a href="#">Guest.</a></span></td>
+                    </tr>
+                </form>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

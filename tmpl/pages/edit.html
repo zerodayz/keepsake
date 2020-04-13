@@ -15,7 +15,7 @@
             <li class="menu-create"><a href="/pages/create/"></a></li>
             <li class="menu-edit"><a class="active" href="/pages/edit/{{.Title}}"></a></li>
             <li class="menu-delete"><a href="/pages/delete/{{.Title}}"></a></li>
-            <li>
+            <li id="search">
                 <div class="search-container">
                     <form action="/pages/search" method="GET">
                         <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
@@ -24,7 +24,25 @@
                     </form>
                 </div>
             </li>
-            <li class="menu-user" style="float:right"><a href="#user">Hello, there!</a></li>
+            <li style="float:right">
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, {{.User_LoggedIn}}!
+                    </button>
+                    <div class="dropdown-content menu-login">
+                        <a href="/users/logout">Logout</a>
+                    </div>
+                </div>
+            </li>
+            <li style="float:right">
+                <div class="dropdown">
+                    <button class="dropbtn setting">
+                    </button>
+                    <div class="dropdown-content menu-user-add">
+                        <a href="/users/create">Create user</a>
+                    </div>
+                </div>
+            </li>
+
         </ul>
     </div>
     <div class="clearfix"></div>

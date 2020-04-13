@@ -1,5 +1,6 @@
 #!/bin/bash
 # go get -u github.com/go-sql-driver/mysql
+# go get -u golang.org/x/crypto/bcrypt
 
 mkdir $PWD/data/mysql
 podman run --name gowiki-mysql \

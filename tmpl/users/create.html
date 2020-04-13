@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Keepsake - Create user</title>
+    <link type="text/css" rel="stylesheet" href="/lib/styles.css">
+    <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <meta charset='utf-8'>
+</head>
+
+<body class="loginbdy">
+    <div class="navvy">
+        <ul>
+            <li style="float:right">
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, there!
+                    </button>
+                    <div class="dropdown-content menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+    <div class="container">
+        <div class="create-user">
+            <table>
+                <form action="/users/create/" method="POST">
+
+                    <tr>
+                        <td class="login-header" colspan="2">Create user
+                            <p>Please fill in this form to create an account.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="name"><b>Name</b></label></td>
+                        <td><input type="text" placeholder="Enter Name" name="name" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="username"><b>Username</b></label></td>
+                        <td><input type="text" placeholder="Enter Username" name="username" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="email"><b>Email</b></label></td>
+                        <td><input type="text" placeholder="Enter Email" name="email" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password"><b>Password</b></label></td>
+                        <td><input type="password" placeholder="Enter Password" name="password" required></td>
+                    </tr>
+                    <tr>
+                        <td><label for="password-repeat"><b>Repeat Password</b></label></td>
+                        <td><input type="password" placeholder="Repeat Password" name="password-repeat" required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><button type="submit">Sign in</button></td>
+                    </tr>
+                </form>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

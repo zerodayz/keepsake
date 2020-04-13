@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"gowiki/database"
 	"bufio"
 	"bytes"
 	"html/template"
@@ -16,6 +17,7 @@ import (
 
 type Page struct {
 	Title       string
+	User_LoggedIn    string
 	EditTitle   string
 	Body        []byte
 	DisplayBody template.HTML
@@ -23,7 +25,7 @@ type Page struct {
 }
 
 var (
-	tmplpath  = "tmpl/"
+	tmplpath  = "tmpl/pages/"
 	datapath  = "data/pages/"
 	templates = template.Must(template.ParseFiles(
 		tmplpath+"edit.html", tmplpath+"view.html", tmplpath+"search.html"))
@@ -57,6 +59,17 @@ func (p *Page) Save(datapath string) error {
 	os.MkdirAll(datapath, 0777)
 	filename := datapath + p.Title + ".md"
 	return ioutil.WriteFile(filename, p.Body, 0600)
+}
+
+func ReadCookie(w http.ResponseWriter, r *http.Request) string {
+	c, err := r.Cookie("gowiki_session")
+	if err != nil {
+		return "Unauthorized"
+	} else {
+		value := c.Value
+		username := database.GetSessionKey(w, r, value)
+		return username
+	}
 }
 
 func (p *Page) Validate(w http.ResponseWriter, r *http.Request) bool {
@@ -96,7 +109,13 @@ func LoadPage(datapath, title string) (*Page, error) {
 // Handlers
 
 func ViewHandler(w http.ResponseWriter, r *http.Request, title string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+	}
+
 	p, err := LoadPage(datapath, title)
+	p.User_LoggedIn = username
 
 	if err != nil {
 		http.Redirect(w, r, "/pages/edit/"+title, http.StatusFound)
@@ -240,10 +259,17 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func EditHandler(w http.ResponseWriter, r *http.Request, title string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+	}
+
 	p, err := LoadPage(datapath, title)
 	if err != nil {
 		p = &Page{Title: title}
 	}
+	p.User_LoggedIn = username
+
 	RenderTemplate(w, "edit", p)
 }
 
@@ -251,6 +277,12 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
 	editTitle := r.FormValue("title")
 	p := &Page{Title: title, Body: []byte(body), EditTitle: editTitle}
+	
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+	}
+	p.User_LoggedIn = username
 
 	if p.Validate(w, r) == false {
 		RenderTemplate(w, "edit", p)
@@ -279,6 +311,10 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 }
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+	}
 	u, err := url.Parse(r.URL.String())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -350,9 +386,10 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	p := &Page{Title: searchKey, Body: []byte(buf.String())}
+	p := &Page{Title: searchKey, Body: []byte(buf.String()), User_LoggedIn: username}
 	p.DisplayBody = template.HTML(buf.String())
 	p.Title = searchKey
+	p.User_LoggedIn = username
 	RenderTemplate(w, "search", p)
 }
 

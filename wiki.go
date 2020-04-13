@@ -9,6 +9,7 @@ package main
 import (
 	"gowiki/pages"
 	"gowiki/users"
+	"gowiki/database"
 	"log"
 	"net/http"
 )
@@ -18,12 +19,16 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	database.InitializeDatabase()
+
 	http.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("lib"))))
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
 	http.HandleFunc("/pages/save/", pages.MakeHandler(pages.SaveHandler))
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
 	http.HandleFunc("/users/login/", users.LoginHandler)
+	http.HandleFunc("/users/logout/", users.LogoutHandler)
+	http.HandleFunc("/users/create/", users.CreateUserHandler)
 	http.HandleFunc("/", RootHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
