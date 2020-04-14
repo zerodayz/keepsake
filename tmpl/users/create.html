@@ -5,12 +5,24 @@
     <title>Keepsake - Create user</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <script type="text/javascript" src="/lib/create.js"></script>
     <meta charset='utf-8'>
 </head>
 
-<body class="loginbdy">
+<body>
     <div class="navvy">
         <ul>
+            <li class="menu-home"><a href="/"></a></li>
+            <li class="menu-create"><a href="/pages/create/"></a></li>
+            <li id="search">
+                <div class="search-container">
+                    <form action="/pages/search" method="GET">
+                        <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
+                            value="">
+                        <button class="navbar-search-button" type="submit">Search</button>
+                    </form>
+                </div>
+            </li>
             <li style="float:right">
                 {{if .User_LoggedIn}}
                 <div class="dropdown">
@@ -30,41 +42,90 @@
                 </div>
                 {{end}}
             </li>
+            <li style="float:right">
+                <div class="dropdown">
+                    <button class="dropbtn setting">
+                    </button>
+                    <div class="dropdown-content menu-user-add">
+                        <a href="/users/create">Create user</a>
+                    </div>
+                </div>
+            </li>
         </ul>
     </div>
     <div class="clearfix"></div>
     <div class="container">
-        <div class="create-user">
+        <div class="header-text">
+            <h1>Create user</h1>
+        </div>
+        <div>
             <table>
                 <form action="/users/create/" method="POST">
-
                     <tr>
-                        <td class="login-header" colspan="2">Create user
+                        <td colspan="2">
                             <p>Please fill in this form to create an account.</p>
                         </td>
                     </tr>
                     <tr>
                         <td><label for="name"><b>Name</b></label></td>
-                        <td><input type="text" placeholder="Enter Name" name="name" required></td>
+                        <td><input type="text" placeholder="Enter Name" name="name" id="name" onkeyup='validate_form();'
+                                required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Please enter your First name, middle name and last name</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span id='message_name'></span></td>
                     </tr>
                     <tr>
                         <td><label for="username"><b>Username</b></label></td>
-                        <td><input type="text" placeholder="Enter Username" name="username" required></td>
+                        <td><input type="text" placeholder="Enter Username" name="username" id="username"
+                                onkeyup='validate_form();' required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">1-15 characters, allowed characters:
+                            [a-Z0-9_]</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span id='message_username'></span></td>
                     </tr>
                     <tr>
                         <td><label for="email"><b>Email</b></label></td>
-                        <td><input type="text" placeholder="Enter Email" name="email" required></td>
+                        <td><input type="text" placeholder="Enter Email" name="email" id="email"
+                                onkeyup='validate_form();' required></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Please enter your E-Mail</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span id='message_email'></span></td>
                     </tr>
                     <tr>
                         <td><label for="password"><b>Password</b></label></td>
-                        <td><input type="password" placeholder="Enter Password" name="password" required></td>
+                        <td><input type="password" placeholder="Enter Password" name="password" id="password"
+                                onkeyup='validate_form();' required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">8-60 characters. Combination of uppercase, lowercase, special character and
+                            number.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span id='message_pw_complex'></span></td>
                     </tr>
                     <tr>
                         <td><label for="password-repeat"><b>Repeat Password</b></label></td>
-                        <td><input type="password" placeholder="Repeat Password" name="password-repeat" required></td>
+                        <td><input type="password" placeholder="Repeat Password" name="password-repeat"
+                                id="password-repeat" onkeyup='validate_form();' required></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><button type="submit">Sign in</button></td>
+                        <td colspan="2"><span id='message_pw_repeat'></span></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><button type="submit" id="submit-button" disabled>{{if .User_LoggedIn}}Create
+                                user{{else}}Sign
+                                in{{end}}</button></td>
                     </tr>
                 </form>
             </table>

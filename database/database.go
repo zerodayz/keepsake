@@ -12,6 +12,7 @@ type User struct {
 	Username   string
 	Email      string
 	Password   string
+	User_LoggedIn    string
 	Errors     map[string]string
 }
 

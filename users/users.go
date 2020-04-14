@@ -46,13 +46,12 @@ func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	p := pages.Page{}
 	u := database.User{}
+	t := template.Must(template.ParseFiles(tmplpath+"create.html"))
 
 	username := pages.ReadCookie(w, r)
-	if username == "Unauthorized" {
-		http.Redirect(w, r, "/users/login/", http.StatusFound)
+	if username != "Unauthorized" {
+		p.User_LoggedIn, u.User_LoggedIn = username, username
 	}
-
-	p.User_LoggedIn = username
 
 	if r.Method == "POST" {
 		r.ParseForm()
@@ -63,7 +62,6 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		database.CreateUser(w, r, u)
 	}
 
-	t := template.Must(template.ParseFiles(tmplpath+"create.html"))
 	err := t.ExecuteTemplate(w, "create.html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
