@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 	"os"
 	"regexp"
 	"strconv"
@@ -61,6 +62,15 @@ func (p *Page) Save(datapath string) error {
 	return ioutil.WriteFile(filename, p.Body, 0600)
 }
 
+func DeletePage(w http.ResponseWriter, r *http.Request, datapath, title string) error {
+	os.MkdirAll(datapath + "deleted", 0777)
+
+	deleted_at := time.Now().AddDate(0, 0, 1).UTC().Format("20060102150405")
+	filename := datapath  + "deleted/" + title + "-" + deleted_at  + ".md"
+
+	return os.Rename(datapath+title+".md", filename)
+}
+
 func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 	c, err := r.Cookie("gowiki_session")
 	if err != nil {
@@ -112,12 +122,11 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	username := ReadCookie(w, r)
 
 	p, err := LoadPage(datapath, title)
-	p.User_LoggedIn = username
-
 	if err != nil {
 		http.Redirect(w, r, "/pages/edit/"+title, http.StatusFound)
 		return
 	}
+	p.User_LoggedIn = username
 
 	var (
 		boldItalicReg      = regexp.MustCompile(`\*\*\*(.*?)\*\*\*`)
@@ -259,6 +268,7 @@ func EditHandler(w http.ResponseWriter, r *http.Request, title string) {
 	username := ReadCookie(w, r)
 	if username == "Unauthorized" {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
 	}
 
 	p, err := LoadPage(datapath, title)
@@ -270,6 +280,21 @@ func EditHandler(w http.ResponseWriter, r *http.Request, title string) {
 	RenderTemplate(w, "edit", p)
 }
 
+func DeleteHandler(w http.ResponseWriter, r *http.Request, title string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	
+	err := DeletePage(w, r, datapath, title)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	http.Redirect(w, r, "/pages/view/home", http.StatusFound)
+}
+
 func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
 	editTitle := r.FormValue("title")
@@ -278,6 +303,7 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	username := ReadCookie(w, r)
 	if username == "Unauthorized" {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
 	}
 	p.User_LoggedIn = username
 
@@ -404,7 +430,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages)/(edit|save|view)/([a-z0-9_]+)$")
+var validPath = regexp.MustCompile("^/(pages)/(edit|save|view|delete)/([a-z0-9_]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

@@ -9,12 +9,22 @@
 </head>
 
 <body>
+    <div id="Modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Are you sure ?</h1>
+            <br>
+            <p>Do you really want to delete the page {{.Title}}</p>
+            <a href="/pages/delete/{{.Title}}">Yes!</a> Please delete the page.<br>
+        </div>
+    </div>
+
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             <li class="menu-create"><a href="/pages/create/"></a></li>
             <li class="menu-edit"><a class="active" href="/pages/edit/{{.Title}}"></a></li>
-            <li class="menu-delete"><a href="/pages/delete/{{.Title}}"></a></li>
+            <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
             <li id="search">
                 <div class="search-container">
                     <form action="/pages/search" method="GET">
@@ -56,6 +66,7 @@
     </div>
     <div class="clearfix"></div>
     <div class="container">
+        <script type="text/javascript" src="/lib/edit.js"></script>
         <div class="header-text">
             <h1>Editing {{.Title}}</h1>
         </div>

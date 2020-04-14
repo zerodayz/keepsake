@@ -24,6 +24,7 @@ func main() {
 	http.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("lib"))))
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
+	http.HandleFunc("/pages/delete/", pages.MakeHandler(pages.DeleteHandler))
 	http.HandleFunc("/pages/save/", pages.MakeHandler(pages.SaveHandler))
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
 	http.HandleFunc("/users/login/", users.LoginHandler)
