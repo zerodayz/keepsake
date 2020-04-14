@@ -1,43 +1,43 @@
 package users
 
 import (
-	"html/template"
+	"encoding/base64"
+	"golang.org/x/crypto/bcrypt"
 	"gowiki/database"
 	"gowiki/pages"
+	"html/template"
+	"log"
 	"net/http"
 	"time"
-	"log"
-	"golang.org/x/crypto/bcrypt"
-	"encoding/base64"
 )
 
 var (
-	tmplpath  = "tmpl/users/"
+	tmplpath = "tmpl/users/"
 )
 
 func GenerateToken(email string) string {
-    hash, err := bcrypt.GenerateFromPassword([]byte(email), bcrypt.DefaultCost)
-    if err != nil {
-        log.Fatal(err)
-    }
-    return base64.StdEncoding.EncodeToString(hash)
+	hash, err := bcrypt.GenerateFromPassword([]byte(email), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return base64.StdEncoding.EncodeToString(hash)
 }
 
 func HashAndSalt(pwd []byte) string {
-    hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
-    if err != nil {
-        log.Println(err)
-    }
-    return string(hash)
+	hash, err := bcrypt.GenerateFromPassword(pwd, bcrypt.MinCost)
+	if err != nil {
+		log.Println(err)
+	}
+	return string(hash)
 }
 
 func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
 	byteHash := []byte(hashedPwd)
 	err := bcrypt.CompareHashAndPassword(byteHash, plainPwd)
-    if err != nil {
-        log.Println(err)
-        return false
-    }
+	if err != nil {
+		log.Println(err)
+		return false
+	}
 	return true
 }
 
@@ -46,7 +46,7 @@ func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	p := pages.Page{}
 	u := database.User{}
-	t := template.Must(template.ParseFiles(tmplpath+"create.html"))
+	t := template.Must(template.ParseFiles(tmplpath + "create.html"))
 
 	username := pages.ReadCookie(w, r)
 	if username != "Unauthorized" {
@@ -80,7 +80,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 		hashedPwd := database.GetHashedPwdForUser(w, r, u)
 		if ComparePasswords(hashedPwd, []byte(u.Password)) {
 
-			uuid   := GenerateToken(u.Email)
+			uuid := GenerateToken(u.Email)
 			expire := time.Now().AddDate(0, 0, 1).UTC()
 
 			tk.Expires = expire.Format("20060102150405")
@@ -90,13 +90,13 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 			cookie := http.Cookie{Name: "gowiki_session", Value: uuid, Path: "/", Expires: expire, MaxAge: 86400}
 			http.SetCookie(w, &cookie)
-			
+
 			http.Redirect(w, r, "/pages/view/home", http.StatusFound)
 			return
 		}
 	}
 
-	t := template.Must(template.ParseFiles(tmplpath+"login.html"))
+	t := template.Must(template.ParseFiles(tmplpath + "login.html"))
 	err := t.Execute(w, "login.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -7,9 +7,9 @@
 package main
 
 import (
+	"gowiki/database"
 	"gowiki/pages"
 	"gowiki/users"
-	"gowiki/database"
 	"log"
 	"net/http"
 )

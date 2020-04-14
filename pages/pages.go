@@ -1,27 +1,27 @@
 package pages
 
 import (
-	"gowiki/database"
 	"bufio"
 	"bytes"
+	"gowiki/database"
 	"html/template"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 	"regexp"
+	"strconv"
 	"strings"
 	"unicode/utf8"
 )
 
 type Page struct {
-	Title       string
-	User_LoggedIn    string
-	EditTitle   string
-	Body        []byte
-	DisplayBody template.HTML
-	Errors      map[string]string
+	Title         string
+	User_LoggedIn string
+	EditTitle     string
+	Body          []byte
+	DisplayBody   template.HTML
+	Errors        map[string]string
 }
 
 var (
@@ -274,7 +274,7 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	body := r.FormValue("body")
 	editTitle := r.FormValue("title")
 	p := &Page{Title: title, Body: []byte(body), EditTitle: editTitle}
-	
+
 	username := ReadCookie(w, r)
 	if username == "Unauthorized" {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
@@ -403,7 +403,6 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
 
 var validPath = regexp.MustCompile("^/(pages)/(edit|save|view)/([a-z0-9_]+)$")
 

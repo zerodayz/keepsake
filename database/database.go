@@ -3,21 +3,21 @@ package database
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
-	"net/http"
 	"log"
+	"net/http"
 )
 
 type User struct {
-	Name       string
-	Username   string
-	Email      string
-	Password   string
-	User_LoggedIn    string
-	Errors     map[string]string
+	Name          string
+	Username      string
+	Email         string
+	Password      string
+	User_LoggedIn string
+	Errors        map[string]string
 }
 
 type Token struct {
-	Token	string
+	Token   string
 	Expires string
 }
 
