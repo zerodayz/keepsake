@@ -26,6 +26,7 @@ func main() {
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
 	http.HandleFunc("/pages/delete/", pages.MakeHandler(pages.DeleteHandler))
 	http.HandleFunc("/pages/save/", pages.MakeHandler(pages.SaveHandler))
+	http.HandleFunc("/pages/trash/", pages.RecycleBinHandler)
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
 	http.HandleFunc("/users/login/", users.LoginHandler)
 	http.HandleFunc("/users/logout/", users.LogoutHandler)

@@ -65,7 +65,7 @@ func (p *Page) Save(datapath string) error {
 func DeletePage(w http.ResponseWriter, r *http.Request, datapath, title string) error {
 	os.MkdirAll(datapath + "deleted", 0777)
 
-	deleted_at := time.Now().AddDate(0, 0, 1).UTC().Format("20060102150405")
+	deleted_at := time.Now().UTC().Format("20060102150405")
 	filename := datapath  + "deleted/" + title + "-" + deleted_at  + ".md"
 
 	return os.Rename(datapath+title+".md", filename)
@@ -421,6 +421,50 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	p.Title = searchKey
 	p.User_LoggedIn = username
 	RenderTemplate(w, "search", p)
+}
+
+func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
+	p := Page{}
+	t := template.Must(template.ParseFiles(tmplpath + "trash.html"))
+
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	
+	var fileReg = regexp.MustCompile(`^[a-z0-9_]+-[0-9]+\.md$`)
+
+	buf := bytes.NewBuffer(nil)
+
+	files, err := ioutil.ReadDir(datapath+"deleted/")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(files)) + ` files in Recycle Bin.</div>`))
+	for _, f := range files {
+		fileName := strings.Split(f.Name(), ".")
+		fileName = strings.Split(fileName[0], "-")
+		deleted_at, _ := time.Parse("20060102150405" ,fileName[1])
+
+		if fileReg.MatchString(f.Name()) {
+			buf.Write([]byte(`
+			<div class="found">Deleted at ` + deleted_at.String() + `.
+			<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
+			<a href="/pages/restore/` + fileName[0] + `"><img src="/lib/icons/restore_from_trash-dark-24px.svg"></a>
+			<label for="search-content" class="recycle-bin">
+			` + fileName[0] + `</label>`))
+			buf.Write([]byte(`</div>`))
+		}
+	}
+
+	p.DisplayBody = template.HTML(buf.String())
+	p.User_LoggedIn = username
+	err = t.ExecuteTemplate(w, "trash.html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {

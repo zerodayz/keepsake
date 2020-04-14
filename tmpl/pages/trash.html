@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{.Title}}</title>
+    <title>Keepsake - Recycle Bin</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
     <meta charset='utf-8'>
@@ -12,9 +12,9 @@
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
-            {{if eq .User_LoggedIn "Unauthorized"}}
-            {{else}}
+            {{if .User_LoggedIn}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
+            {{else}}
             {{end}}
             <li id="search">
                 <div class="search-container">
@@ -26,20 +26,20 @@
                 </div>
             </li>
             <li style="float:right">
-                {{if eq .User_LoggedIn "Unauthorized"}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, Guest!
-                    </button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/login">Login</a>
-                    </div>
-                </div>
-                {{else}}
+                {{if .User_LoggedIn}}
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, {{.User_LoggedIn}}!
                     </button>
                     <div class="dropdown-content-right menu-login">
                         <a href="/users/logout">Logout</a>
+                    </div>
+                </div>
+                {{else}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, Guest!
+                    </button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/login">Login</a>
                     </div>
                 </div>
                 {{end}}
@@ -62,12 +62,10 @@
     <div class="clearfix"></div>
     <div class="container">
         <div class="header-text">
-            <h1>Search Query is {{.Title}}</h1>
+            <h1>Recycle Bin</h1>
         </div>
         <div>{{.DisplayBody}}</div>
-        <script type="text/javascript" src="/lib/search.js"></script>
     </div>
-    <hr>
 </body>
 
 </html>

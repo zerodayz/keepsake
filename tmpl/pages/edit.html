@@ -39,7 +39,7 @@
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, Guest!
                     </button>
-                    <div class="dropdown-content menu-login">
+                    <div class="dropdown-content-right menu-login">
                         <a href="/users/login">Login</a>
                     </div>
                 </div>
@@ -47,7 +47,7 @@
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, {{.User_LoggedIn}}!
                     </button>
-                    <div class="dropdown-content menu-login">
+                    <div class="dropdown-content-right menu-login">
                         <a href="/users/logout">Logout</a>
                     </div>
                 </div>
@@ -57,8 +57,12 @@
                 <div class="dropdown">
                     <button class="dropbtn setting">
                     </button>
-                    <div class="dropdown-content menu-user-add">
-                        <a href="/users/create">Create user</a>
+                    <div class="dropdown-content">
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                        {{if eq .User_LoggedIn "Unauthorized"}}
+                        {{else}}
+                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                        {{end}}
                     </div>
                 </div>
             </li>
