@@ -452,7 +452,7 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 			buf.Write([]byte(`
 			<div class="found">Deleted at ` + deleted_at.String() + `.
 			<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
-			<a href="/pages/restore/` + fileName[0] + `"><img src="/lib/icons/restore_from_trash-dark-24px.svg"></a>
+			<a href="/pages/restore/` + fileName[0] + `-` + fileName[1] + `"><img src="/lib/icons/restore_from_trash-dark-24px.svg"></a>
 			<label for="search-content" class="recycle-bin">
 			` + fileName[0] + `</label>`))
 			buf.Write([]byte(`</div>`))
@@ -465,6 +465,26 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func RestoreHandler(w http.ResponseWriter, r *http.Request) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	var restorePath = regexp.MustCompile("^/pages/restore/([a-z0-9_-]+)$")
+	m := restorePath.FindStringSubmatch(r.URL.Path)
+	fileName := m[1]
+	newFileName := strings.Split(fileName, "-")
+
+	err := os.Rename(datapath+"deleted/"+fileName+".md", datapath+newFileName[0]+".md")
+	if err != nil {
+		http.Redirect(w, r, "/pages/trash", http.StatusFound)
+		return
+	}
+	http.Redirect(w, r, "/pages/view/"+newFileName[0], http.StatusFound)
+	return
 }
 
 func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
