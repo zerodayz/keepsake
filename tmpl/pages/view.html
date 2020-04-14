@@ -12,9 +12,12 @@
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
+            {{if eq .User_LoggedIn "Unauthorized"}}
+            {{else}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
             <li class="menu-edit"><a href="/pages/edit/{{.Title}}"></a></li>
             <li class="menu-delete"><a href="/pages/delete/{{.Title}}"></a></li>
+            {{end}}
             <li id="search">
                 <div class="search-container">
                     <form action="/pages/search" method="GET">
@@ -25,20 +28,20 @@
                 </div>
             </li>
             <li style="float:right">
-                {{if .User_LoggedIn}}
+                {{if eq .User_LoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, Guest!
+                    </button>
+                    <div class="dropdown-content menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+                {{else}}
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, {{.User_LoggedIn}}!
                     </button>
                     <div class="dropdown-content menu-login">
                         <a href="/users/logout">Logout</a>
-                    </div>
-                </div>
-                {{else}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, there!
-                    </button>
-                    <div class="dropdown-content menu-login">
-                        <a href="/users/login">Login</a>
                     </div>
                 </div>
                 {{end}}
@@ -52,7 +55,6 @@
                     </div>
                 </div>
             </li>
-
         </ul>
     </div>
     <div class="clearfix"></div>

@@ -13,7 +13,10 @@
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
+            {{if .User_LoggedIn}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
+            {{else}}
+            {{end}}
             <li id="search">
                 <div class="search-container">
                     <form action="/pages/search" method="GET">
@@ -34,7 +37,7 @@
                 </div>
                 {{else}}
                 <div class="dropdown">
-                    <button class="dropbtn user">Hello, there!
+                    <button class="dropbtn user">Hello, Guest!
                     </button>
                     <div class="dropdown-content menu-login">
                         <a href="/users/login">Login</a>

@@ -25,20 +25,20 @@
                 </div>
             </li>
             <li style="float:right">
-                {{if .User_LoggedIn}}
+                {{if eq .User_LoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, Guest!
+                    </button>
+                    <div class="dropdown-content menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+                {{else}}
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, {{.User_LoggedIn}}!
                     </button>
                     <div class="dropdown-content menu-login">
                         <a href="/users/logout">Logout</a>
-                    </div>
-                </div>
-                {{else}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, there!
-                    </button>
-                    <div class="dropdown-content menu-login">
-                        <a href="/users/login">Login</a>
                     </div>
                 </div>
                 {{end}}
@@ -52,7 +52,6 @@
                     </div>
                 </div>
             </li>
-
         </ul>
     </div>
     <div class="clearfix"></div>

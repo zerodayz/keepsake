@@ -110,9 +110,6 @@ func LoadPage(datapath, title string) (*Page, error) {
 
 func ViewHandler(w http.ResponseWriter, r *http.Request, title string) {
 	username := ReadCookie(w, r)
-	if username == "Unauthorized" {
-		http.Redirect(w, r, "/users/login/", http.StatusFound)
-	}
 
 	p, err := LoadPage(datapath, title)
 	p.User_LoggedIn = username
@@ -312,9 +309,7 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	username := ReadCookie(w, r)
-	if username == "Unauthorized" {
-		http.Redirect(w, r, "/users/login/", http.StatusFound)
-	}
+
 	u, err := url.Parse(r.URL.String())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -350,13 +345,22 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			if len(indexes) != 0 {
 				var occurences = strconv.Itoa(len(indexes))
 				fileName := strings.Split(f.Name(), ".")
-				buf.Write([]byte(`
-				<div class="found">Found ` + occurences + ` occurrences.
-				<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
-				<a href="/pages/edit/` + fileName[0] + `"><img src="/lib/icons/edit-black-24px.svg"></a>
-				<label for="search-content" class="search-collapsible">
-				` + fileName[0] + `</label>
-				<div id="search-content" class="search-content">`))
+				if username == "Unauthorized" {
+					buf.Write([]byte(`
+					<div class="found">Found ` + occurences + ` occurrences.
+					<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
+					<label for="search-content" class="search-collapsible">
+					` + fileName[0] + `</label>
+					<div id="search-content" class="search-content">`))
+				} else {
+					buf.Write([]byte(`
+					<div class="found">Found ` + occurences + ` occurrences.
+					<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
+					<a href="/pages/edit/` + fileName[0] + `"><img src="/lib/icons/edit-black-24px.svg"></a>
+					<label for="search-content" class="search-collapsible">
+					` + fileName[0] + `</label>
+					<div id="search-content" class="search-content">`))
+				}
 				for _, k := range indexes {
 					var start = k[0]
 					var end = k[1]
