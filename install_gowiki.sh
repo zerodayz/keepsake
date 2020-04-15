@@ -12,6 +12,7 @@ cd $GOPATH
 go get -u github.com/go-sql-driver/mysql
 go get -u golang.org/x/crypto/bcrypt
 git clone https://github.com/zerodayz/gowiki.git $GOPATH/src/gowiki/
+git clone https://github.com/zerodayz/gowiki.git $GOPATH/src/gowiki-upstream/
 cd $GOPATH/src/gowiki/
 /root/.local/go/bin/go build wiki.go
 
@@ -28,4 +29,5 @@ docker run --name gowiki-mysql \
 mariadb:latest
 
 cd $GOPATH/src/gowiki/
+rm -Rf $GOPATH/src/gowiki/.git
 nohup ./wiki &
