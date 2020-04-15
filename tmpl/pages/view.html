@@ -61,9 +61,10 @@
                     <button class="dropbtn setting">
                     </button>
                     <div class="dropdown-content">
-                        <a class="menu-user-add" href="/users/create">Create user</a>
                         {{if eq .User_LoggedIn "Unauthorized"}}
+                        <a class="menu-user-add" href="/users/create">Sign in</a>
                         {{else}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
                         <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
                         {{end}}
                     </div>
