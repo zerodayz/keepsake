@@ -8,11 +8,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"time"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 	"unicode/utf8"
 )
 
@@ -63,10 +63,10 @@ func (p *Page) Save(datapath string) error {
 }
 
 func DeletePage(w http.ResponseWriter, r *http.Request, datapath, title string) error {
-	os.MkdirAll(datapath + "deleted", 0777)
+	os.MkdirAll(datapath+"deleted", 0777)
 
 	deleted_at := time.Now().UTC().Format("20060102150405")
-	filename := datapath  + "deleted/" + title + "-" + deleted_at  + ".md"
+	filename := datapath + "deleted/" + title + "-" + deleted_at + ".md"
 
 	return os.Rename(datapath+title+".md", filename)
 }
@@ -134,7 +134,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, title string) {
 		italicReg          = regexp.MustCompile(`\*(.*?)\*`)
 		strikeReg          = regexp.MustCompile(`\~\~(.*?)\~\~`)
 		underscoreReg      = regexp.MustCompile(`__(.*?)__`)
-		imgReg			   = regexp.MustCompile(`!\[(.*?)\]\((.*?)\)`)
+		imgReg             = regexp.MustCompile(`!\[(.*?)\]\((.*?)\)`)
 		anchorReg          = regexp.MustCompile(`\[(.*?)\]`)
 		anchorExtReg       = regexp.MustCompile(`\[(.*?)\]\((.*?)\)`)
 		escapeReg          = regexp.MustCompile(`^\>(\s|)`)
@@ -288,7 +288,7 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, title string) {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
 		return
 	}
-	
+
 	err := DeletePage(w, r, datapath, title)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -439,12 +439,12 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
 		return
 	}
-	
+
 	var fileReg = regexp.MustCompile(`^[a-z0-9_]+-[0-9]+\.md$`)
 
 	buf := bytes.NewBuffer(nil)
 
-	files, err := ioutil.ReadDir(datapath+"deleted/")
+	files, err := ioutil.ReadDir(datapath + "deleted/")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -453,7 +453,7 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 	for _, f := range files {
 		fileName := strings.Split(f.Name(), ".")
 		fileName = strings.Split(fileName[0], "-")
-		deleted_at, _ := time.Parse("20060102150405" ,fileName[1])
+		deleted_at, _ := time.Parse("20060102150405", fileName[1])
 
 		if fileReg.MatchString(f.Name()) {
 			buf.Write([]byte(`
