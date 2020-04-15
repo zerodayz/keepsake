@@ -318,7 +318,12 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, title string) {
 	}))
 
 	if editTitle != title {
-		err := os.Rename(datapath+title+".md", datapath+editTitle+".md")
+		err := p.Save(datapath)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		err = os.Rename(datapath+title+".md", datapath+editTitle+".md")
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
