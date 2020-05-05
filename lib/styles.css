@@ -586,6 +586,7 @@ input[type='checkbox'] {
   
 code {
 	padding: 0;
+	word-wrap: break-word;
   color: #333333;
   border: 1px solid #e6e6e6;
   border-radius: 6px;
