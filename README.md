@@ -33,9 +33,7 @@ Go
 
 ## Installation
 ~~~
-git clone https://github.com/zerodayz/gowiki.git
-cd gowiki
-bash install_gowiki.sh
+go get https://github.com/zerodayz/gowiki/
 ~~~
 
 Navigate to `http://localhost:8080` and enjoy.
