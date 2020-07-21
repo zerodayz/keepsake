@@ -11,10 +11,6 @@ Insipiration of some features from (jmoiron's gowiki)[https://github.com/jmoiron
 
 The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
 
-![Wiki Homepage](https://github.com/zerodayz/gowiki/blob/master/screenshots/WikiHome.png?raw=true)
-
-See (screenshots)[https://github.com/zerodayz/gowiki/tree/master/screenshots] folder for more.
-
 # How to use
 
 Currently you will need mysql, that is dependency and used for Pages, History and User management.
