@@ -15,7 +15,7 @@ docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/
 The default port the wiki is listening on is `8080`.
 
 ## Pre-requirements
-Some basics are already provided in the `install_gowiki.sh` script.
+Some basics are already provided in the `install_go.sh` script.
 ~~~
 Go
 ~~~
