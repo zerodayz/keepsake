@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{.Title}}</title>
+    <link type="text/css" rel="stylesheet" href="/lib/styles.css">
+    <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <meta charset='utf-8'>
+</head>
+
+<body>
+    <div id="Modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h1>Are you sure ?</h1>
+            <br>
+            <p>Do you really want to delete the page {{.Title}}</p>
+            <a href="/pages/delete/{{.InternalId}}">Yes!</a> Please delete the page.<br>
+        </div>
+    </div>
+
+    <div class="navvy">
+        <ul>
+            <li class="menu-home"><a href="/"></a></li>
+            {{if eq .UserLoggedIn "Unauthorized"}}
+            {{else}}
+            <li class="menu-create"><a href="/pages/create/"></a></li>
+            {{end}}
+            <li id="search">
+                <div class="search-container">
+                    <form action="/pages/search" method="GET">
+                        <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
+                            value="">
+                        <button class="navbar-search-button" type="submit">Search</button>
+                    </form>
+                </div>
+            </li>
+            <li style="float:right">
+                {{if eq .UserLoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, Guest!
+                    </button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+                {{else}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, {{.UserLoggedIn}}!
+                    </button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/logout">Logout</a>
+                    </div>
+                </div>
+                {{end}}
+            </li>
+            <li style="float:right">
+                <div class="dropdown">
+                    <button class="dropbtn setting">
+                    </button>
+                    <div class="dropdown-content">
+                        {{if eq .UserLoggedIn "Unauthorized"}}
+                        <a class="menu-user-add" href="/users/create">Sign in</a>
+                        {{else}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                        {{end}}
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="clearfix"></div>
+    <div class="container">
+        <script type="text/javascript" src="/lib/view.js"></script>
+        <div class="header-text">
+            <h1>{{.Title}}</h1>
+        </div>
+        <div>
+            Created by {{.CreatedBy}} on {{.DateCreated}} UTC
+            {{ if .LastModifiedBy }}
+            <br>
+            Last Modified by {{.LastModifiedBy}} on {{.LastModified}} UTC
+            {{ end }}
+        </div>
+        <br>
+        <div>{{.DisplayBody}}</div>
+    </div>
+    <hr>
+    <div class="container">
+        &nbsp;2020 © <a href="http://www.github.com/zerodayz" target="_blank">Robin Černín</a>. Brisbane, Australia.
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,20 @@
+# github.com/go-sql-driver/mysql v1.5.0
+## explicit
+github.com/go-sql-driver/mysql
+# gitlab.com/golang-commonmark/html v0.0.0-20191124015941-a22733972181
+gitlab.com/golang-commonmark/html
+# gitlab.com/golang-commonmark/linkify v0.0.0-20191026162114-a0c2df6c8f82
+gitlab.com/golang-commonmark/linkify
+# gitlab.com/golang-commonmark/markdown v0.0.0-20191127184510-91b5b3c99c19
+## explicit
+gitlab.com/golang-commonmark/markdown
+# gitlab.com/golang-commonmark/mdurl v0.0.0-20191124015652-932350d1cb84
+gitlab.com/golang-commonmark/mdurl
+# gitlab.com/golang-commonmark/puny v0.0.0-20191124015043-9f83538fa04f
+gitlab.com/golang-commonmark/puny
+# golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
+## explicit
+golang.org/x/crypto/bcrypt
+golang.org/x/crypto/blowfish
+# golang.org/x/text v0.3.2
+golang.org/x/text/unicode/rangetable

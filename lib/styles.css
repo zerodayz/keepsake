@@ -160,23 +160,12 @@ small {
 	font-size: 100%
 }
 
-strong {
-	font-weight: normal;
-	color: #fff
-}
-
-em {
-	font-weight: normal;
-	color: #fff
-}
-
 cite {
 	font-style: normal
 }
 
 i,
 cite,
-em,
 var,
 address,
 dfn {
@@ -185,13 +174,11 @@ dfn {
 
 i:before,
 cite:before,
-em:before,
 var:before,
 address:before,
 dfn:before,
 i:after,
 cite:after,
-em:after,
 var:after,
 address:after,
 dfn:after {
@@ -873,6 +860,10 @@ legend+.control-group {
 
 .navvy>ul>li.menu-edit>a::before {
 	content: url(/lib/icons/edit-24px.svg);
+}
+
+.navvy>ul>li.menu-revisions>a::before {
+	content: url(/lib/icons/history-24px.svg);
 }
 
 .navvy>ul>li.menu-delete>a::before {

@@ -2,9 +2,9 @@ package users
 
 import (
 	"encoding/base64"
+	"github.com/zerodayz/gowiki/database"
+	"github.com/zerodayz/gowiki/pages"
 	"golang.org/x/crypto/bcrypt"
-	"gowiki/database"
-	"gowiki/pages"
 	"html/template"
 	"log"
 	"net/http"
@@ -50,7 +50,7 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	username := pages.ReadCookie(w, r)
 	if username != "Unauthorized" {
-		p.User_LoggedIn, u.User_LoggedIn = username, username
+		p.UserLoggedIn, u.UserLoggedIn = username, username
 	}
 
 	if r.Method == "POST" {
@@ -91,7 +91,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{Name: "gowiki_session", Value: uuid, Path: "/", Expires: expire, MaxAge: 86400}
 			http.SetCookie(w, &cookie)
 
-			http.Redirect(w, r, "/pages/view/home", http.StatusFound)
+			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
 	}

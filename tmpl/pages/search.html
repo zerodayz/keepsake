@@ -12,7 +12,7 @@
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
-            {{if eq .User_LoggedIn "Unauthorized"}}
+            {{if eq .UserLoggedIn "Unauthorized"}}
             {{else}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
             {{end}}
@@ -26,7 +26,7 @@
                 </div>
             </li>
             <li style="float:right">
-                {{if eq .User_LoggedIn "Unauthorized"}}
+                {{if eq .UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, Guest!
                     </button>
@@ -36,7 +36,7 @@
                 </div>
                 {{else}}
                 <div class="dropdown">
-                    <button class="dropbtn user">Hello, {{.User_LoggedIn}}!
+                    <button class="dropbtn user">Hello, {{.UserLoggedIn}}!
                     </button>
                     <div class="dropdown-content-right menu-login">
                         <a href="/users/logout">Logout</a>
@@ -49,7 +49,7 @@
                     <button class="dropbtn setting">
                     </button>
                     <div class="dropdown-content">
-                        {{if eq .User_LoggedIn "Unauthorized"}}
+                        {{if eq .UserLoggedIn "Unauthorized"}}
                         <a class="menu-user-add" href="/users/create">Sign in</a>
                         {{else}}
                         <a class="menu-user-add" href="/users/create">Create user</a>
