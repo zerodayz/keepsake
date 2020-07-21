@@ -4,13 +4,6 @@
 
 Wiki written in Go
 
-This is free wiki written in Go, for personal development purposes. 
-
-Initial Wiki started off the Go Learning project (Web Go Application)[https://golang.org/doc/articles/wiki/]
-Insipiration of some features from (jmoiron's gowiki)[https://github.com/jmoiron/gowiki] project last updated 4 years ago and from (ieyasu's go-bwiki)[https://github.com/ieyasu/go-bwiki] which had updates couple of months back.
-
-The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
-
 # How to use
 
 Currently you will need mysql, that is dependency and used for Pages, History and User management.
@@ -33,3 +26,12 @@ go get https://github.com/zerodayz/gowiki/
 ~~~
 
 Navigate to `http://localhost:8080` and enjoy.
+
+---
+This is free wiki written in Go, for personal development purposes. 
+
+Initial Wiki started off the Go Learning project (Web Go Application)[https://golang.org/doc/articles/wiki/]
+Insipiration of some features from (jmoiron's gowiki)[https://github.com/jmoiron/gowiki] project last updated 4 years ago and from (ieyasu's go-bwiki)[https://github.com/ieyasu/go-bwiki] which had updates couple of months back.
+
+The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
+
