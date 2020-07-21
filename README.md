@@ -17,7 +17,11 @@ See (screenshots)[https://github.com/zerodayz/gowiki/tree/master/screenshots] fo
 
 # How to use
 
-Currently you will need mysql, that is dependency and used for User management. I am providing two scripts `install_gowiki.sh` and `update_gowiki.sh` which are meant for installation and updating wiki.
+Currently you will need mysql, that is dependency and used for Pages, History and User management.
+
+```
+docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/tcp -e MYSQL_ROOT_PASSWORD=roottoor -e MYSQL_DATABASE=gowiki -e MYSQL_USER=gowiki -e MYSQL_PASSWORD=gowiki55 -d mariadb:latest
+```
 
 The default port the wiki is listening on is `8080`.
 
