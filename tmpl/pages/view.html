@@ -23,6 +23,7 @@
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .UserLoggedIn "Unauthorized"}}
+                <li class="menu-revisions"><a href="/pages/revisions/{{.InternalId}}"></a></li>
             {{else}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
             <li class="menu-edit"><a href="/pages/edit/{{.InternalId}}"></a></li>

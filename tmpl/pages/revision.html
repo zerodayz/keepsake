@@ -75,7 +75,10 @@
         <script type="text/javascript" src="/lib/view.js"></script>
         <div class="header-text">
             <h1>Revision {{.RevisionId}} of {{.Title}}</h1>
+            {{if eq .UserLoggedIn "Unauthorized"}}
+            {{else}}
             <br><a href="/revisions/rollback/{{.InternalId}}">Rollback to this version</a>
+            {{end}}
         </div>
         <div>
             Created by {{.CreatedBy}} on {{.DateCreated}} UTC

@@ -310,10 +310,6 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 	t := template.Must(template.ParseFiles(templatePath + "revisions.html"))
 
 	username := ReadCookie(w, r)
-	if username == "Unauthorized" {
-		http.Redirect(w, r, "/users/login/", http.StatusFound)
-		return
-	}
 	id, _ := strconv.Atoi(InternalId)
 
 	buf := bytes.NewBuffer(nil)
