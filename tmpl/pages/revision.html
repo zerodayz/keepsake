@@ -74,7 +74,8 @@
     <div class="container">
         <script type="text/javascript" src="/lib/view.js"></script>
         <div class="header-text">
-            <h1>{{.Title}}</h1>
+            <h1>Revision {{.RevisionId}} of {{.Title}}</h1>
+            <br><a href="/revisions/rollback/{{.InternalId}}">Rollback to this version</a>
         </div>
         <div>
             Created by {{.CreatedBy}} on {{.DateCreated}} UTC

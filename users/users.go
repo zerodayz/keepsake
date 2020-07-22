@@ -44,7 +44,7 @@ func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
 // handlers
 
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
-	p := pages.Page{}
+	p := database.WikiPage{}
 	u := database.User{}
 	t := template.Must(template.ParseFiles(tmplpath + "create.html"))
 

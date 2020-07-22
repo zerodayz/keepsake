@@ -651,7 +651,7 @@ label {
 	  padding: 0.35294rem 0.94118rem;
 	margin-top: 20px;
 	margin-bottom: 20px;
-	  font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
+	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
 		background-color: #fff;
 }
 

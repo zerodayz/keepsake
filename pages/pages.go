@@ -6,26 +6,12 @@ import (
 	"gitlab.com/golang-commonmark/markdown"
 	"html/template"
 	"net/http"
-	"os"
+	"net/url"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
+	"unicode/utf8"
 )
-
-type Page struct {
-	Title          string
-	InternalId     string
-	UserLoggedIn   string
-	CreatedBy      string
-	DateCreated    string
-	LastModified   string
-	LastModifiedBy string
-	EditTitle      string
-	Body           string
-	DisplayBody    template.HTML
-	Errors         map[string]string
-}
 
 var (
 	templatePath = "tmpl/pages/"
@@ -49,15 +35,6 @@ func min(x int, y int) int {
 	}
 }
 
-func Exists(name string) bool {
-	if _, err := os.Stat(name); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
-}
-
 func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 	c, err := r.Cookie("gowiki_session")
 	if err != nil {
@@ -69,44 +46,21 @@ func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 	}
 }
 
-func (p *Page) Validate(w http.ResponseWriter, r *http.Request) bool {
-	p.Errors = make(map[string]string)
-	if len(p.EditTitle) != 0 {
-		var validFilename = regexp.MustCompile("^([a-z0-9_]+)$")
-
-		match := validFilename.Match([]byte(p.EditTitle))
-		if match == false {
-			p.Errors["Title"] = "Please enter a valid title. Allowed charset: [a-z0-9_]"
-		}
-	}
-	if p.EditTitle != p.Title {
-		exists := Exists(datapath + p.EditTitle + ".md")
-		if exists == true {
-			p.Errors["Title"] = "Unable to save. Another Wiki page already exists with the requested name."
-		}
-	}
-	if len(p.Body) == 0 {
-		p.Errors["Content"] = "Unable to save with empty body."
-	}
-	if len(p.EditTitle) == 0 && len(p.Body) == 0 {
-		http.Redirect(w, r, "/pages/view/"+p.Title, http.StatusFound)
-	}
-	return len(p.Errors) == 0
-}
-
-func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*Page, error) {
+func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
 	s := database.ShowPage(w, r, InternalId)
-	return &Page{Title: s.Title, Body: s.Content, InternalId: strconv.Itoa(InternalId), CreatedBy: s.Username, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPage{Title: s.Title, Body: s.Content, InternalId: InternalId, CreatedBy: s.Username, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
-func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*Page, error) {
+func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPageRevision, error) {
 	s := database.ShowRevisionPage(w, r, InternalId)
-	return &Page{Title: s.Title, Body: s.Content, InternalId: strconv.Itoa(InternalId), CreatedBy: s.Username, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPageRevision{Title: s.Title, RevisionId: s.RevisionId, Body: s.Content, InternalId: InternalId, CreatedBy: s.Username, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
 // Handlers
 
 func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	t := template.Must(template.ParseFiles(templatePath + "view.html"))
+
 	username := ReadCookie(w, r)
 	id, err := strconv.Atoi(InternalId)
 	if err != nil {
@@ -114,20 +68,23 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		return
 	}
 
-	p, err := LoadPage(w, r, id)
+	s, err := LoadPage(w, r, id)
 	if err != nil {
 		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
 		return
 	}
 	md := markdown.New()
-	p.DisplayBody = template.HTML(md.RenderToString([]byte(p.Body)))
-
-	p.UserLoggedIn = username
-	RenderTemplate(w, "view", p)
+	s.DisplayBody = template.HTML(md.RenderToString([]byte(s.Body)))
+	s.UserLoggedIn = username
+	err = t.ExecuteTemplate(w, "view.html", s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	t := template.Must(template.ParseFiles(templatePath + "revision.html"))
+
 	username := ReadCookie(w, r)
 	id, err := strconv.Atoi(InternalId)
 	if err != nil {
@@ -135,16 +92,16 @@ func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId str
 		return
 	}
 
-	p, err := LoadRevisionPage(w, r, id)
+	s, err := LoadRevisionPage(w, r, id)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 		return
 	}
 	md := markdown.New()
-	p.DisplayBody = template.HTML(md.RenderToString([]byte(p.Body)))
+	s.DisplayBody = template.HTML(md.RenderToString([]byte(s.Body)))
 
-	p.UserLoggedIn = username
-	err = t.ExecuteTemplate(w, "revision.html", p)
+	s.UserLoggedIn = username
+	err = t.ExecuteTemplate(w, "revision.html", s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -161,22 +118,21 @@ func EditHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 		return
 	}
-	p, err := LoadPage(w, r, id)
+	s, err := LoadPage(w, r, id)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-	p.UserLoggedIn = username
+	s.UserLoggedIn = username
 
-	RenderTemplate(w, "edit", p)
+	RenderTemplate(w, "edit", s)
 }
 
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	s := database.WikiPage{}
-	p := &Page{}
 	t := template.Must(template.ParseFiles(templatePath + "create.html"))
 
 	username := ReadCookie(w, r)
-	p.UserLoggedIn = username
+	s.UserLoggedIn = username
 
 	if username == "Unauthorized" {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
@@ -194,7 +150,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		database.CreatePage(w, r, s)
 	}
 
-	err := t.ExecuteTemplate(w, "create.html", p)
+	err := t.ExecuteTemplate(w, "create.html", s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -217,7 +173,6 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 
 func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	s := database.WikiPage{}
-	p := &Page{}
 	username := ReadCookie(w, r)
 
 	if username == "Unauthorized" {
@@ -230,7 +185,7 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		return
 	}
 
-	p.UserLoggedIn = username
+	s.UserLoggedIn = username
 	// Set username to Logged in User.
 	s.Username = username
 	if r.Method == "POST" {
@@ -248,98 +203,110 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	http.Redirect(w, r, "/pages/view/"+InternalId, http.StatusFound)
 }
 
-//func SearchHandler(w http.ResponseWriter, r *http.Request) {
-//	username := ReadCookie(w, r)
-//
-//	u, err := url.Parse(r.URL.String())
-//	if err != nil {
-//		http.Error(w, err.Error(), http.StatusInternalServerError)
-//		return
-//	}
-//	params := u.Query()
-//	searchKey := params.Get("q")
-//	var fileReg = regexp.MustCompile(`^[a-z0-9_]+\.md$`)
-//	var searchQuery = regexp.MustCompile(searchKey)
-//
-//	buf := bytes.NewBuffer(nil)
-//
-//	files, err := ioutil.ReadDir(datapath)
-//	if err != nil {
-//		http.Error(w, err.Error(), http.StatusInternalServerError)
-//		return
-//	}
-//
-//	if len(searchKey) == 0 {
-//		return
-//	}
-//	buf.Write([]byte(`<div id="items"></div>`))
-//	for _, f := range files {
-//		if fileReg.MatchString(f.Name()) {
-//			content, err := ioutil.ReadFile(datapath + f.Name())
-//			var contentLenght = len(content)
-//			if err != nil {
-//				http.Error(w, err.Error(), http.StatusInternalServerError)
-//				return
-//			}
-//
-//			var indexes = searchQuery.FindAllIndex(content, -1)
-//			if len(indexes) != 0 {
-//				var occurences = strconv.Itoa(len(indexes))
-//				fileName := strings.Split(f.Name(), ".")
-//				if username == "Unauthorized" {
-//					buf.Write([]byte(`
-//					<div class="found">Found ` + occurences + ` occurrences.
-//					<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
-//					<label for="search-content" class="search-collapsible">
-//					` + fileName[0] + `</label>
-//					<div id="search-content" class="search-content">`))
-//				} else {
-//					buf.Write([]byte(`
-//					<div class="found">Found ` + occurences + ` occurrences.
-//					<a href="/pages/view/` + fileName[0] + `"><img src="/lib/icons/public-24px.svg"></a>
-//					<a href="/pages/edit/` + fileName[0] + `"><img src="/lib/icons/edit-black-24px.svg"></a>
-//					<label for="search-content" class="search-collapsible">
-//					` + fileName[0] + `</label>
-//					<div id="search-content" class="search-content">`))
-//				}
-//				for _, k := range indexes {
-//					var start = k[0]
-//					var end = k[1]
-//
-//					var showStart = max(start-100, 0)
-//					var showEnd = min(end+100, contentLenght-1)
-//
-//					for !utf8.RuneStart(content[showStart]) {
-//						showStart = max(showStart-1, 0)
-//					}
-//					for !utf8.RuneStart(content[showEnd]) {
-//						showEnd = min(showEnd-1, contentLenght)
-//					}
-//					buf.Write([]byte(`<pre><code>`))
-//					buf.WriteString(template.HTMLEscapeString(string(content[showStart:start])))
-//					buf.Write([]byte(`<b>`))
-//					buf.WriteString(template.HTMLEscapeString(string(content[start:end])))
-//					buf.Write([]byte(`</b>`))
-//					if (end - 1) != showEnd {
-//						buf.WriteString(template.HTMLEscapeString(string(content[end:showEnd])))
-//					}
-//					buf.Write([]byte(`</code></pre>`))
-//				}
-//				buf.Write([]byte(`</div></div>`))
-//				buf.WriteByte('\n')
-//			}
-//		}
-//	}
-//
-//	p := &Page{Title: searchKey, Body: []byte(buf.String()), UserLoggedIn: username}
-//	p.DisplayBody = template.HTML(buf.String())
-//	p.Title = searchKey
-//	p.UserLoggedIn = username
-//	RenderTemplate(w, "search", p)
-//}
+func RevisionRollbackHandler(w http.ResponseWriter, r *http.Request, RollbackId string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	id, err := strconv.Atoi(RollbackId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+
+	internalId := database.RollbackPage(w, r, id)
+	http.Redirect(w, r, "/pages/view/"+internalId, http.StatusFound)
+
+}
+
+func SearchHandler(w http.ResponseWriter, r *http.Request) {
+	username := ReadCookie(w, r)
+	t := template.Must(template.ParseFiles(templatePath + "search.html"))
+
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	params := u.Query()
+	searchKey := params.Get("q")
+	var searchQuery = regexp.MustCompile(searchKey)
+
+	buf := bytes.NewBuffer(nil)
+
+	if len(searchKey) == 0 {
+		return
+	}
+
+	buf.Write([]byte(`<div id="items"></div>`))
+	s := database.SearchWikiPages(w, r, searchKey)
+
+	for _, f := range s {
+		var contentLength = len(f.Content)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
+		if len(indexes) != 0 {
+			var occurrences = strconv.Itoa(len(indexes))
+			if username == "Unauthorized" {
+				buf.Write([]byte(`
+					<div class="found">Found ` + occurrences + ` occurrences.
+					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
+					`<label for="search-content" class="search-collapsible">
+					` + f.Title + `</label>
+					<div id="search-content" class="search-content">`))
+			} else {
+				buf.Write([]byte(`
+					<div class="found">Found ` + occurrences + ` occurrences.
+					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
+					`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a>
+					<label for="search-content" class="search-collapsible">
+					` + f.Title + `</label>
+					<div id="search-content" class="search-content">`))
+			}
+			for _, k := range indexes {
+				var start = k[0]
+				var end = k[1]
+
+				var showStart = max(start-100, 0)
+				var showEnd = min(end+100, contentLength-1)
+
+				for !utf8.RuneStart(f.Content[showStart]) {
+					showStart = max(showStart-1, 0)
+				}
+				for !utf8.RuneStart(f.Content[showEnd]) {
+					showEnd = min(showEnd-1, contentLength)
+				}
+				buf.Write([]byte(`<pre><code>`))
+				buf.WriteString(template.HTMLEscapeString(f.Content[showStart:start]))
+				buf.Write([]byte(`<b>`))
+				buf.WriteString(template.HTMLEscapeString(f.Content[start:end]))
+				buf.Write([]byte(`</b>`))
+				if (end - 1) != showEnd {
+					buf.WriteString(template.HTMLEscapeString(f.Content[end:showEnd]))
+				}
+				buf.Write([]byte(`</code></pre>`))
+			}
+			buf.Write([]byte(`</div></div>`))
+			buf.WriteByte('\n')
+		}
+	}
+	p := database.WikiPage{}
+	p.DisplayBody = template.HTML(buf.String())
+	p.Title = searchKey
+	p.UserLoggedIn = username
+
+	err = t.ExecuteTemplate(w, "search.html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
 
 func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
-	p := Page{}
+	p := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "revisions.html"))
 
 	username := ReadCookie(w, r)
@@ -355,8 +322,8 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 
 	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(wikiRevisionPages)) + ` revision(s) available.</div>`))
 	for _, f := range wikiRevisionPages {
-		buf.Write([]byte(`<b>` + f.Title  + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `">Revision ` + strconv.Itoa(f.RevisionId) + `</a> | ` + `Modified by ` +
-			f.LastModifiedBy + ` | ` + f.LastModified ))
+		buf.Write([]byte(`<b>` + f.Title  + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `">Revision ` + strconv.Itoa(f.RevisionId) + `</a> | ` + `Last Modified by ` +
+			f.LastModifiedBy + ` on ` + f.LastModified ))
 		buf.Write([]byte(`<br>`))
 	}
 
@@ -371,7 +338,7 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 
 
 func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
-	p := Page{}
+	p := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "trash.html"))
 
 	username := ReadCookie(w, r)
@@ -398,34 +365,30 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func RestoreHandler(w http.ResponseWriter, r *http.Request) {
+func RestoreHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	username := ReadCookie(w, r)
 	if username == "Unauthorized" {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
 		return
 	}
-	var restorePath = regexp.MustCompile("^/pages/restore/([a-z0-9_-]+)$")
-	m := restorePath.FindStringSubmatch(r.URL.Path)
-	fileName := m[1]
-	newFileName := strings.Split(fileName, "-")
-
-	err := os.Rename(datapath+"deleted/"+fileName+".md", datapath+newFileName[0]+".md")
+	id, err := strconv.Atoi(InternalId)
 	if err != nil {
-		http.Redirect(w, r, "/pages/trash", http.StatusFound)
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
 		return
 	}
-	http.Redirect(w, r, "/pages/view/"+newFileName[0], http.StatusFound)
-	return
+
+	database.RestorePage(w, r, id)
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string, p *Page) {
+
+func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages|revisions)/(edit|save|view|delete|revisions)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/(pages|revisions)/(edit|save|view|delete|restore|revisions|rollback)/([0-9]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
