@@ -17,7 +17,7 @@ var (
 	templatePath = "tmpl/pages/"
 	datapath     = "data/pages/"
 	templates    = template.Must(template.ParseFiles(
-		templatePath+"edit.html", templatePath+"view.html", templatePath+"search.html"))
+		templatePath+"edit.html", templatePath+"view.html", templatePath+"preview.html", templatePath+"search.html"))
 )
 
 func max(x int, y int) int {
@@ -48,12 +48,17 @@ func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 
 func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
 	s := database.ShowPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, InternalId: InternalId, CreatedBy: s.Username, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPage{Title: s.Title, Body: s.Content, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+}
+
+func LoadPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
+	s := database.ShowPreviewPage(w, r, InternalId)
+	return &database.WikiPage{Title: s.Title, Body: s.Content, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
 func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPageRevision, error) {
 	s := database.ShowRevisionPage(w, r, InternalId)
-	return &database.WikiPageRevision{Title: s.Title, RevisionId: s.RevisionId, Body: s.Content, InternalId: InternalId, CreatedBy: s.Username, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPageRevision{Title: s.Title, RevisionId: s.RevisionId, Body: s.Content, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
 // Handlers
@@ -130,7 +135,6 @@ func EditHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	s := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "create.html"))
-
 	username := ReadCookie(w, r)
 	s.UserLoggedIn = username
 
@@ -147,13 +151,30 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		date := time.Now().UTC()
 		s.DateCreated = date.Format("20060102150405")
 
-		database.CreatePage(w, r, s)
+		s.InternalId = database.CreatePreviewPage(w, r, s)
+		http.Redirect(w, r, "/preview/view/"+strconv.Itoa(s.InternalId), http.StatusFound)
+
 	}
 
 	err := t.ExecuteTemplate(w, "create.html", s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func PreviewCreateHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	id, err := strconv.Atoi(InternalId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+
+	database.CreatePage(w, r, id)
 }
 
 func DeleteHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
@@ -171,6 +192,29 @@ func DeleteHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	database.DeletePage(w, r, id)
 }
 
+func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	t := template.Must(template.ParseFiles(templatePath + "preview.html"))
+	username := ReadCookie(w, r)
+	id, err := strconv.Atoi(InternalId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+
+	s, err := LoadPreviewPage(w, r, id)
+	if err != nil {
+		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
+		return
+	}
+	md := markdown.New()
+	s.DisplayBody = template.HTML(md.RenderToString([]byte(s.Body)))
+	s.UserLoggedIn = username
+	err = t.ExecuteTemplate(w, "preview.html", s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	s := database.WikiPage{}
 	username := ReadCookie(w, r)
@@ -186,8 +230,6 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	}
 
 	s.UserLoggedIn = username
-	// Set username to Logged in User.
-	s.Username = username
 	if r.Method == "POST" {
 		r.ParseForm()
 		s.InternalId = id
@@ -197,10 +239,11 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		s.LastModified = date.Format("20060102150405")
 		s.LastModifiedBy = username
 
-		database.UpdatePage(w, r, s)
-	}
 
-	http.Redirect(w, r, "/pages/view/"+InternalId, http.StatusFound)
+		previewId := database.CreateEditPreviewPage(w, r, s)
+		http.Redirect(w, r, "/preview/view/"+strconv.Itoa(previewId), http.StatusFound)
+
+	}
 }
 
 func RevisionRollbackHandler(w http.ResponseWriter, r *http.Request, RollbackId string) {
@@ -384,7 +427,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages|revisions)/(edit|save|view|delete|restore|revisions|rollback)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

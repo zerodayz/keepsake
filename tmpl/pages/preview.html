@@ -15,16 +15,14 @@
             <h1>Are you sure ?</h1>
             <br>
             <p>Do you really want to delete the page {{.Title}}</p>
-            <a href="/pages/delete/{{.Title}}">Yes!</a> Please delete the page.<br>
+            <a href="/pages/delete/{{.InternalId}}">Yes!</a> Please delete the page.<br>
         </div>
     </div>
 
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
-            <li class="menu-create"><a href="/pages/create/"></a></li>
-            <li class="menu-edit"><a class="active" href="/pages/edit/{{.Title}}"></a></li>
-            <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
+            <li class="menu-create"><a class="active" href="/pages/create/"></a></li>
             <li id="search">
                 <div class="search-container">
                     <form action="/pages/search" method="GET">
@@ -71,31 +69,34 @@
     </div>
     <div class="clearfix"></div>
     <div class="container">
-        <script type="text/javascript" src="/lib/edit.js"></script>
+        <script type="text/javascript" src="/lib/view.js"></script>
         <div class="header-text">
-            <h1>Editing {{.Title}}</h1>
+            <h1>Preview of {{.Title}}</h1>
         </div>
-        <form action="/pages/save/{{.InternalId}}" method="POST">
-            <div class="control-group">
-                <div class="controls">
-                    {{ with .Errors.Title }}
-                    <p>{{ . }}</p>
-                    {{ end }}
-                    Title: <textarea name="title" cols="1">{{printf "%s" .Title}}</textarea>
-                </div>
-                <div class="controls">
-                    {{ with .Errors.Content }}
-                    <p>{{ . }}</p>
-                    {{ end }}
-                    Body: <textarea name="body" rows="20" cols="80">{{printf "%s" .Body}}</textarea>
-                </div>
-                <div class="control-group">
-                    <div class="controls">
-                        <input type="submit" value="Preview & Save">
-                    </div>
-                </div>
-            </div>
+        <div>
+            Created by {{.CreatedBy}} on {{.DateCreated}} UTC
+            {{ if .LastModifiedBy }}
+            <br>
+            Last Modified by {{.LastModifiedBy}} on {{.LastModified}} UTC
+            {{ end }}
+        </div>
+        <br>
+        <div>{{.DisplayBody}}</div>
+        <button onclick="goBack()">Go Back</button>
+
+        <script>
+            function goBack() {
+                window.history.back();
+            }
+        </script>
+        <form style="display: inline" action="/preview/create/{{.InternalId}}">
+            <input type="submit" value="Save" />
         </form>
+
+    </div>
+    <hr>
+    <div class="container">
+        &nbsp;2020 © <a href="http://www.github.com/zerodayz" target="_blank">Robin Černín</a>. Brisbane, Australia.
     </div>
 </body>
 
