@@ -206,7 +206,6 @@ func CreateEditPreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) i
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
-	log.Println(err)
 	wikiPageId, err := res.LastInsertId()
 	if err != nil {
 		log.Fatal(err)
@@ -295,6 +294,10 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 			&lastModified, &lastModifiedBy, &dateCreated)
 		if err != nil {
 			log.Fatal(err)
+		}
+		if title == s.Title && content == s.Content {
+			http.Redirect(w, r, "/pages/view/"+strconv.Itoa(ep), http.StatusFound)
+			return
 		}
 
 		// Get latest revision_number
@@ -456,25 +459,43 @@ func DeletePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPageRevision {
+func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*WikiPageRevision, *WikiPage) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
 	defer db.Close()
-	var title, content, dateCreated, lastModified, lastModifiedBy, username, revisionId string
+	var title, content, dateCreated, lastModified, lastModifiedBy, username, revisionId, wikiPageId string
 	err = db.QueryRow(`
-	SELECT title, content, revision_id, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_rev WHERE internal_id = ?
-	`, InternalId).Scan(&title, &content, &revisionId, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	SELECT title, content, wiki_page_id, revision_id, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_rev WHERE internal_id = ?
+	`, InternalId).Scan(&title, &content, &wikiPageId, &revisionId, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-
 	id, err := strconv.Atoi(revisionId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
-	return &WikiPageRevision{Title: title, Content: content, RevisionId: id, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	wid, err := strconv.Atoi(wikiPageId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	wpr := &WikiPageRevision{Title: title, WikiPageId: wid, Content: content, RevisionId: id, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+
+
+	id, err = strconv.Atoi(wikiPageId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	err = db.QueryRow(`
+	SELECT title, content, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
+	`, id).Scan(&title, &content, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusNotFound)
+	}
+	wp:= &WikiPage{Title: title, Content: content, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+
+	return wpr, wp
 }
 
 func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage {

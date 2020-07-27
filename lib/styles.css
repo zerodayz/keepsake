@@ -116,6 +116,24 @@ a:focus {
 	*zoom: 1
 }
 
+.left,
+.right {
+	float: left;
+	width: 50%;
+	box-sizing: border-box;
+}
+
+.left {
+	padding-right: 16px;
+	border-right: 4px solid #353535;
+}
+
+.right {
+	border-left: 4px solid #353535;
+	padding-left: 16px;
+	margin-left: -4px;
+}
+
 .container:before,
 .container:after {
 	display: table;

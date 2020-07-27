@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>{{.Title}}</title>
+    <title>{{.WikiPageRevision.Title}}</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
     <meta charset='utf-8'>
@@ -14,15 +14,15 @@
             <span class="close">&times;</span>
             <h1>Are you sure ?</h1>
             <br>
-            <p>Do you really want to delete the page {{.Title}}</p>
-            <a href="/pages/delete/{{.InternalId}}">Yes!</a> Please delete the page.<br>
+            <p>Do you really want to delete the page {{.WikiPageRevision.Title}}</p>
+            <a href="/pages/delete/{{.WikiPageRevision.InternalId}}">Yes!</a> Please delete the page.<br>
         </div>
     </div>
 
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
-            {{if eq .UserLoggedIn "Unauthorized"}}
+            {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
             {{else}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
             {{end}}
@@ -36,7 +36,7 @@
                 </div>
             </li>
             <li style="float:right">
-                {{if eq .UserLoggedIn "Unauthorized"}}
+                {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
                     <button class="dropbtn user">Hello, Guest!
                     </button>
@@ -46,7 +46,7 @@
                 </div>
                 {{else}}
                 <div class="dropdown">
-                    <button class="dropbtn user">Hello, {{.UserLoggedIn}}!
+                    <button class="dropbtn user">Hello, {{.WikiPageRevision.UserLoggedIn}}!
                     </button>
                     <div class="dropdown-content-right menu-login">
                         <a href="/users/logout">Logout</a>
@@ -59,7 +59,7 @@
                     <button class="dropbtn setting">
                     </button>
                     <div class="dropdown-content">
-                        {{if eq .UserLoggedIn "Unauthorized"}}
+                        {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
                         <a class="menu-user-add" href="/users/create">Sign in</a>
                         {{else}}
                         <a class="menu-user-add" href="/users/create">Create user</a>
@@ -72,23 +72,41 @@
     </div>
     <div class="clearfix"></div>
     <div class="container">
+    <div class="left">
         <script type="text/javascript" src="/lib/view.js"></script>
         <div class="header-text">
-            <h1>Revision {{.RevisionId}} of {{.Title}}</h1>
-            {{if eq .UserLoggedIn "Unauthorized"}}
+            <h1>Revision {{.WikiPageRevision.RevisionId}} of {{.WikiPageRevision.Title}}</h1>
+            {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
             {{else}}
-            <br><a href="/revisions/rollback/{{.InternalId}}">Rollback to this version</a>
+                <br><a href="/revisions/rollback/{{.WikiPageRevision.InternalId}}">Rollback to this version</a>
             {{end}}
         </div>
         <div>
-            Created by {{.CreatedBy}} on {{.DateCreated}} UTC
-            {{ if .LastModifiedBy }}
+            Created by {{.WikiPageRevision.CreatedBy}} on {{.WikiPageRevision.DateCreated}} UTC
+            {{ if .WikiPageRevision.LastModifiedBy }}
             <br>
-            Last Modified by {{.LastModifiedBy}} on {{.LastModified}} UTC
+            Last Modified by {{.WikiPageRevision.LastModifiedBy}} on {{.WikiPageRevision.LastModified}} UTC
             {{ end }}
         </div>
         <br>
-        <div>{{.DisplayBody}}</div>
+        <div>{{.WikiPageRevision.DisplayBody}}</div>
+    </div>
+    <div class="right">
+        <script type="text/javascript" src="/lib/view.js"></script>
+        <div class="header-text">
+            <h1>Current version of {{.WikiPage.Title}}</h1>
+            <br><a href="/pages/view/{{.WikiPageRevision.WikiPageId}}">Visit current version</a>
+        </div>
+        <div>
+            Created by {{.WikiPage.CreatedBy}} on {{.WikiPage.DateCreated}} UTC
+            {{ if .WikiPage.LastModifiedBy }}
+                <br>
+                Last Modified by {{.WikiPage.LastModifiedBy}} on {{.WikiPage.LastModified}} UTC
+            {{ end }}
+        </div>
+        <br>
+        <div>{{.WikiPage.DisplayBody}}</div>
+    </div>
     </div>
     <hr>
     <div class="container">
