@@ -536,7 +536,7 @@ func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
 	}
 		defer rows.Close()
 		for rows.Next() {
-		err := rows.Scan(&id, &title, &dateCreated, &createdBy, &lastModifiedBy, &lastModified)
+		err := rows.Scan(&id, &title, &createdBy, &dateCreated, &lastModifiedBy, &lastModified)
 		if err != nil {
 		log.Fatal(err)
 	}
