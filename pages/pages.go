@@ -88,6 +88,33 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	}
 }
 
+func DashboardHandler(w http.ResponseWriter, r *http.Request) {
+	p := database.WikiPage{}
+	t := template.Must(template.ParseFiles(templatePath + "dashboard.html"))
+
+	username := ReadCookie(w, r)
+
+	buf := bytes.NewBuffer(nil)
+	wikiPages := database.LoadPageLast25(w, r)
+
+	for _, f := range wikiPages {
+		if f.LastModifiedBy == "" {
+			buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+				` | Not yet modified.</div>`))
+		} else {
+			buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+			` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+		}
+	}
+
+	p.DisplayBody = template.HTML(buf.String())
+	p.UserLoggedIn = username
+	err := t.ExecuteTemplate(w, "dashboard.html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	t := template.Must(template.ParseFiles(templatePath + "revision.html"))
 

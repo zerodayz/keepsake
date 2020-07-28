@@ -509,6 +509,31 @@ input[type='checkbox'] {
 	transition: all 0.25s ease-out;
 }
 
+.dashboard {
+	color: #333333;
+	border: 1px solid #e6e6e6;
+	border-radius: 6px;
+	padding: 0.35294rem 0.94118rem;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
+	background-color: #fff;
+}
+
+.dashboard:hover {
+	background-color: rgb(248, 248, 248);
+}
+
+
+.dashboard-title {
+	text-align: left;
+	outline: none;
+	font-size: 24px;
+	line-height: 1.20849;
+	font-weight: 500;
+	letter-spacing: .015em;
+}
+
 
 .search-collapsible {
 	color: #007031;

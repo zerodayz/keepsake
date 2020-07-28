@@ -15,7 +15,7 @@ import (
 )
 
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/pages/view/1", http.StatusFound)
+	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
 func main() {
@@ -38,6 +38,7 @@ func main() {
 	http.HandleFunc("/users/login/", users.LoginHandler)
 	http.HandleFunc("/users/logout/", users.LogoutHandler)
 	http.HandleFunc("/users/create/", users.CreateUserHandler)
+	http.HandleFunc("/dashboard", pages.DashboardHandler)
 	http.HandleFunc("/", RootHandler)
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
