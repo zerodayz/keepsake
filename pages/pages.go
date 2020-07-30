@@ -305,63 +305,67 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	buf := bytes.NewBuffer(nil)
 
+
 	if len(searchKey) == 0 {
-		return
-	}
+		buf.Write([]byte(`
+					<div class="found">Please search for something else than empty.</div>`))
+	} else
+	{
+		buf.Write([]byte(`<div id="items"></div>`))
 
-	buf.Write([]byte(`<div id="items"></div>`))
-	s := database.SearchWikiPages(w, r, searchKey)
+		s := database.SearchWikiPages(w, r, searchKey)
 
-	for _, f := range s {
-		var contentLength = len(f.Content)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
-		if len(indexes) != 0 {
-			var occurrences = strconv.Itoa(len(indexes))
-			if username == "Unauthorized" {
-				buf.Write([]byte(`
+		for _, f := range s {
+			var contentLength = len(f.Content)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
+			if len(indexes) != 0 {
+				var occurrences = strconv.Itoa(len(indexes))
+				if username == "Unauthorized" {
+					buf.Write([]byte(`
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
-					`<label for="search-content" class="search-collapsible">
+						`<label for="search-content" class="search-collapsible">
 					` + f.Title + `</label>
 					<div id="search-content" class="search-content">`))
-			} else {
-				buf.Write([]byte(`
+				} else {
+					buf.Write([]byte(`
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
-					`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a>
+						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a>
 					<label for="search-content" class="search-collapsible">
 					` + f.Title + `</label>
 					<div id="search-content" class="search-content">`))
-			}
-			for _, k := range indexes {
-				var start = k[0]
-				var end = k[1]
+				}
+				for _, k := range indexes {
+					var start = k[0]
+					var end = k[1]
 
-				var showStart = max(start-100, 0)
-				var showEnd = min(end+100, contentLength-1)
+					var showStart = max(start-100, 0)
+					var showEnd = min(end+100, contentLength-1)
 
-				for !utf8.RuneStart(f.Content[showStart]) {
-					showStart = max(showStart-1, 0)
+					for !utf8.RuneStart(f.Content[showStart]) {
+						showStart = max(showStart-1, 0)
+					}
+					for !utf8.RuneStart(f.Content[showEnd]) {
+						showEnd = min(showEnd-1, contentLength)
+					}
+					buf.Write([]byte(`<pre><code>`))
+					buf.WriteString(template.HTMLEscapeString(f.Content[showStart:start]))
+					buf.Write([]byte(`<b>`))
+					buf.WriteString(template.HTMLEscapeString(f.Content[start:end]))
+					buf.Write([]byte(`</b>`))
+					if (end - 1) != showEnd {
+						buf.WriteString(template.HTMLEscapeString(f.Content[end:showEnd]))
+					}
+					buf.Write([]byte(`</code></pre>`))
 				}
-				for !utf8.RuneStart(f.Content[showEnd]) {
-					showEnd = min(showEnd-1, contentLength)
-				}
-				buf.Write([]byte(`<pre><code>`))
-				buf.WriteString(template.HTMLEscapeString(f.Content[showStart:start]))
-				buf.Write([]byte(`<b>`))
-				buf.WriteString(template.HTMLEscapeString(f.Content[start:end]))
-				buf.Write([]byte(`</b>`))
-				if (end - 1) != showEnd {
-					buf.WriteString(template.HTMLEscapeString(f.Content[end:showEnd]))
-				}
-				buf.Write([]byte(`</code></pre>`))
+				buf.Write([]byte(`</div></div>`))
+				buf.WriteByte('\n')
 			}
-			buf.Write([]byte(`</div></div>`))
-			buf.WriteByte('\n')
 		}
 	}
 	p := database.WikiPage{}

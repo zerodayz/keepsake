@@ -63,7 +63,7 @@
     <div class="clearfix"></div>
     <div class="container">
         <div class="header-text">
-            <h1>Search Query is {{.Title}}</h1>
+            <h1>Search Query is {{ if .Title }} {{.Title}} {{else}} empty. {{end}}</h1>
         </div>
         <div>{{.DisplayBody}}</div>
         <script type="text/javascript" src="/lib/search.js"></script>
