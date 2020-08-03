@@ -96,14 +96,38 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	buf := bytes.NewBuffer(nil)
 	wikiPages := database.LoadPageLast25(w, r)
+	dateYesterday := time.Now().AddDate(0, 0, -1).UTC()
 
 	for _, f := range wikiPages {
+		// 2020-08-02 23:44:28
+		dateCreated := time.Now()
+		dateCreated, err := time.Parse("2006-01-02 15:04:05", f.DateCreated)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 		if f.LastModifiedBy == "" {
-			buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-				` | Not yet modified.</div>`))
+			if dateCreated.After(dateYesterday) {
+				buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					` | Not yet modified.</div>`))
+			} else {
+				buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					` | Not yet modified.</div>`))
+			}
 		} else {
-			buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-			` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+			dateModified, err := time.Parse("2006-01-02 15:04:05", f.LastModified)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			if dateCreated.After(dateYesterday) && dateModified.After(dateYesterday) {
+				buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New!"/> <img src="/lib/icons/new_releases-24px.svg" alt="Updated!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+			} else if dateModified.After(dateYesterday) {
+				buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/new_releases-24px.svg" alt="Updated!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+			} else {
+				buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+			}
 		}
 	}
 

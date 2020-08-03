@@ -2,3 +2,4 @@ data/*
 data/pages/*
 data/mysql/*
 wiki
+.DS_Store
