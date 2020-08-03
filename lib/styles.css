@@ -644,6 +644,7 @@ pre {
   color: #333333;
   border: 1px solid #e6e6e6;
   border-radius: 6px;
+	white-space: pre-wrap;
   padding: 0.35294rem 0.94118rem;
   font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
 	background-color: #f4f4f4;
