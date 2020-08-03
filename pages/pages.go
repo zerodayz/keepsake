@@ -2,8 +2,11 @@ package pages
 
 import (
 	"bytes"
+	"github.com/yuin/goldmark"
+	highlighting "github.com/yuin/goldmark-highlighting"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 	"github.com/zerodayz/gowiki/database"
-	"gitlab.com/golang-commonmark/markdown"
 	"html/template"
 	"net/http"
 	"net/url"
@@ -79,8 +82,22 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
 		return
 	}
-	md := markdown.New()
-	s.DisplayBody = template.HTML(md.RenderToString([]byte(s.Body)))
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("github"),
+			),
+		),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+	)
+
+	var buf bytes.Buffer
+	md.Convert([]byte(s.Body), &buf)
+	s.DisplayBody = template.HTML(buf.String())
+
 	s.UserLoggedIn = username
 	err = t.ExecuteTemplate(w, "view.html", s)
 	if err != nil {
@@ -151,9 +168,24 @@ func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId str
 
 	wpr, wp := LoadRevisionPage(w, r, id)
 
-	md := markdown.New()
-	wpr.DisplayBody = template.HTML(md.RenderToString([]byte(wpr.Content)))
-	wp.DisplayBody = template.HTML(md.RenderToString([]byte(wp.Content)))
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("github"),
+			),
+		),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+	)
+	var bufferWikiPageRevision bytes.Buffer
+	md.Convert([]byte(wpr.Content), &bufferWikiPageRevision)
+	wpr.DisplayBody = template.HTML(bufferWikiPageRevision.String())
+
+	var bufferWikiPage bytes.Buffer
+	md.Convert([]byte(wp.Content), &bufferWikiPage)
+	wp.DisplayBody = template.HTML(bufferWikiPage.String())
 
 	wpr.UserLoggedIn = username
 	err = t.ExecuteTemplate(w, "revision.html",
@@ -257,8 +289,24 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
 		return
 	}
-	md := markdown.New()
-	s.DisplayBody = template.HTML(md.RenderToString([]byte(s.Body)))
+
+	md := goldmark.New(
+		goldmark.WithExtensions(
+			extension.GFM,
+			highlighting.NewHighlighting(
+				highlighting.WithStyle("github"),
+			),
+		),
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
+	)
+
+	var buf bytes.Buffer
+
+	md.Convert([]byte(s.Body), &buf)
+	s.DisplayBody = template.HTML(buf.String())
+
 	s.UserLoggedIn = username
 	err = t.ExecuteTemplate(w, "preview.html", s)
 	if err != nil {
@@ -282,10 +330,14 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 
 	s.UserLoggedIn = username
 	if r.Method == "POST" {
+		nlcr := regexp.MustCompile("\r\n")
 		r.ParseForm()
 		s.InternalId = id
 		s.Title = r.PostFormValue("title")
 		s.Content = r.PostFormValue("body")
+		s.Content = string(nlcr.ReplaceAllFunc([]byte(s.Content), func(s []byte) []byte {
+			return []byte("\n")
+		}))
 		date := time.Now().UTC()
 		s.LastModified = date.Format("20060102150405")
 		s.LastModifiedBy = username
