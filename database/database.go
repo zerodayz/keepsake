@@ -411,8 +411,8 @@ func SearchWikiPages(w http.ResponseWriter, r *http.Request, searchKey string) [
 
 	rows, err := db.Query(`
 	SELECT internal_id, title, content, created_by, COALESCE(last_modified_by, '') as last_modified_by, last_modified, date_created
-	FROM pages WHERE content REGEXP ?
-	`, searchKey)
+	FROM pages WHERE content REGEXP ? OR title REGEXP ?
+	`, searchKey, searchKey)
 
 	if err != nil {
 		log.Fatal(err)

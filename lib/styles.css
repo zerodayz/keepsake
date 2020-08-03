@@ -534,6 +534,19 @@ input[type='checkbox'] {
 	letter-spacing: .015em;
 }
 
+.search-no-collapsible {
+	color: #007031;
+	cursor: pointer;
+	padding: 18px;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 24px;
+	line-height: 1.20849;
+	font-weight: 500;
+	letter-spacing: .015em;
+	transition: all 0.25s ease-out;
+}
 
 .search-collapsible {
 	color: #007031;

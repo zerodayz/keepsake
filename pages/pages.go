@@ -325,7 +325,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	params := u.Query()
 	searchKey := params.Get("q")
-	var searchQuery = regexp.MustCompile(searchKey)
+	var searchQuery = regexp.MustCompile(`(?i)` + searchKey)
 
 	buf := bytes.NewBuffer(nil)
 
@@ -338,13 +338,13 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		buf.Write([]byte(`<div id="items"></div>`))
 
 		s := database.SearchWikiPages(w, r, searchKey)
-
 		for _, f := range s {
 			var contentLength = len(f.Content)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
+
 			var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
 			if len(indexes) != 0 {
 				var occurrences = strconv.Itoa(len(indexes))
@@ -388,6 +388,23 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`</code></pre>`))
 				}
 				buf.Write([]byte(`</div></div>`))
+				buf.WriteByte('\n')
+			} else {
+				if username == "Unauthorized" {
+					buf.Write([]byte(`
+					<div class="found">Matched title of the wiki page.
+					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
+						`<label for="search-content" class="search-no-collapsible">
+					` + f.Title + `</label>`))
+				} else {
+					buf.Write([]byte(`
+					<div class="found">Matched title of the wiki page.
+					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
+						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a>
+					<label for="search-content" class="search-no-collapsible">
+					` + f.Title + `</label>`))
+				}
+				buf.Write([]byte(`</div>`))
 				buf.WriteByte('\n')
 			}
 		}
