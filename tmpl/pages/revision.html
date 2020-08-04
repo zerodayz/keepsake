@@ -23,8 +23,10 @@
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
+                <li class="menu-help"><a href="/ticket/new"></a></li>
             {{else}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
+            <li class="menu-help"><a href="/ticket/new"></a></li>
             {{end}}
             <li id="search">
                 <div class="search-container">
@@ -63,6 +65,7 @@
                         <a class="menu-user-add" href="/users/create">Sign in</a>
                         {{else}}
                         <a class="menu-user-add" href="/users/create">Create user</a>
+                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
                         <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
                         {{end}}
                     </div>

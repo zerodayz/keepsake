@@ -10,6 +10,7 @@ import (
 	"github.com/zerodayz/gowiki/database"
 	"github.com/zerodayz/gowiki/pages"
 	"github.com/zerodayz/gowiki/users"
+	"github.com/zerodayz/gowiki/tickets"
 	"log"
 	"net/http"
 )
@@ -26,6 +27,7 @@ func main() {
 	http.HandleFunc("/revisions/rollback/", pages.MakeHandler(pages.RevisionRollbackHandler))
 	http.HandleFunc("/preview/view/", pages.MakeHandler(pages.PreviewHandler))
 	http.HandleFunc("/preview/create/", pages.MakeHandler(pages.PreviewCreateHandler))
+
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
 	http.HandleFunc("/pages/revisions/", pages.MakeHandler(pages.RevisionsHandler))
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
@@ -35,6 +37,13 @@ func main() {
 	http.HandleFunc("/pages/trash/", pages.RecycleBinHandler)
 	http.HandleFunc("/pages/restore/", pages.MakeHandler(pages.RestoreHandler))
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
+
+	http.HandleFunc("/ticket/new", tickets.TicketNewHandler)
+	http.HandleFunc("/ticket/view/", tickets.MakeHandler(tickets.TicketViewHandler))
+	http.HandleFunc("/ticket/assign/", tickets.MakeHandler(tickets.TicketAssignHandler))
+	http.HandleFunc("/ticket/complete/", tickets.MakeHandler(tickets.TicketCompleteHandler))
+	http.HandleFunc("/ticket/queue", tickets.TicketQueueHandler)
+
 	http.HandleFunc("/users/login/", users.LoginHandler)
 	http.HandleFunc("/users/logout/", users.LogoutHandler)
 	http.HandleFunc("/users/create/", users.CreateUserHandler)

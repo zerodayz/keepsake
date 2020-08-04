@@ -142,6 +142,20 @@ func InitializeDatabase() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	_, err = db.Exec(`
+	CREATE TABLE IF NOT EXISTS queue (
+		internal_id int NOT NULL AUTO_INCREMENT,
+		name varchar(50),
+		question TEXT,
+		date_completed timestamp,
+		date_created timestamp,
+		assigned varchar(255),
+		status varchar(60),
+		PRIMARY KEY (internal_id)
+		);`)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func InsertToken(w http.ResponseWriter, r *http.Request, u User, tk Token) {

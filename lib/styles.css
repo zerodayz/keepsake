@@ -910,6 +910,10 @@ legend+.control-group {
 	content: url(/lib/icons/home-24px.svg);
 }
 
+.navvy>ul>li.menu-help>a::before {
+	content: url(/lib/icons/help-24px.svg);
+}
+
 .navvy>ul>li.menu-create>a::before {
 	content: url(/lib/icons/note_add-24px.svg);
 }
@@ -932,6 +936,10 @@ legend+.control-group {
 
 .navvy>ul>li a.menu-user-add::before {
 	content: url(/lib/icons/person_add-24px.svg);
+}
+
+.navvy>ul>li a.menu-ticket-queue::before {
+	content: url(/lib/icons/help-24px.svg);
 }
 
 .navvy>ul>li .menu-login>a::before {
@@ -961,6 +969,14 @@ legend+.control-group {
 	float: left;
 	overflow: hidden;
 }
+
+.number {
+	margin: 0;
+	font-size: 52px;
+	color: #007031;
+	text-rendering: optimizelegibility;
+}
+
 
 .dropdown .dropbtn {
 	font-size: 16px;

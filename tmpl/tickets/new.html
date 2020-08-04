@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Keepsake - Tickets</title>
+    <link type="text/css" rel="stylesheet" href="/lib/styles.css">
+    <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <meta charset='utf-8'>
+</head>
+
+<body>
+<div class="navvy">
+    <ul>
+        <li class="menu-home"><a href="/"></a></li>
+        {{if .Page.UserLoggedIn}}
+            <li class="menu-create"><a href="/pages/create/"></a></li>
+            <li class="menu-help"><a href="/ticket/new"></a></li>
+        {{else}}
+            <li class="menu-help"><a href="/ticket/new"></a></li>
+        {{end}}
+        <li id="search">
+            <div class="search-container">
+                <form action="/pages/search" method="GET">
+                    <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
+                           value="">
+                    <button class="navbar-search-button" type="submit">Search</button>
+                </form>
+            </div>
+        </li>
+        <li style="float:right">
+            {{if eq .Page.UserLoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, Guest!
+                    </button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+            {{else}}
+                <div class="dropdown">
+                    <button class="dropbtn user">Hello, {{.Page.UserLoggedIn}}!
+                    </button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/logout">Logout</a>
+                    </div>
+                </div>
+            {{end}}
+        </li>
+        <li style="float:right">
+            <div class="dropdown">
+                <button class="dropbtn setting">
+                </button>
+                <div class="dropdown-content">
+                    {{if eq .Page.UserLoggedIn "Unauthorized"}}
+                        <a class="menu-user-add" href="/users/create">Sign in</a>
+                    {{else}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
+                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                    {{end}}
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="clearfix"></div>
+<div class="container">
+    <div class="header-text">
+        <h1>Keepsake Waiting Room</h1>
+    </div>
+    <div class="dashboard">
+        <table>
+            <tr>
+                <td style="padding: 10px" class="login-header">Now serving</td>
+                <td style="padding: 10px" class="login-header">In Queue</td>
+                <td style="padding: 10px" class="login-header">Estimated waiting time</td>
+            </tr>
+            <tr>
+                <td style="padding: 10px" class="number">{{.New.NowServing}}</td>
+                <td style="padding: 10px" class="number">{{.New.InQueue}}</td>
+                <td style="padding: 10px" class="number">{{.New.EstimatedTime}}</td>
+            </tr>
+        </table>
+
+        <table>
+            <form action="/ticket/new" method="POST">
+                <tr><td colspan="2">Got a question? Please fill in the form below and sit tight.</td></tr>
+                <tr>
+                    <td><label for="ircname">Name</label></td>
+                    <td><input type="text" placeholder="Enter your IRC handle" name="ircname" required></td>
+                </tr>
+                <tr>
+                    <td><label for="question">Question</label></td>
+                    <td colspan="2"><input type="text" placeholder="Enter your question" name="question" required></td>
+                </tr>
+                <tr>
+                    <td align="right" colspan="2"><button type="submit">Please submit ticket</button></td>
+                </tr>
+            </form>
+        </table>
+    </div>
+</div>
+<hr>
+<div class="container">
+    &nbsp;2020 © <a href="http://www.github.com/zerodayz" target="_blank">Robin Černín</a>. Brisbane, Australia.
+</div>
+</body>
+
+</html>
