@@ -96,7 +96,7 @@ func InitializeDatabase() {
 	_, err = db.Exec(`
 	CREATE TABLE IF NOT EXISTS pages (
 		internal_id int NOT NULL AUTO_INCREMENT,
-		title varchar(50) NOT NULL,
+		title varchar(255) NOT NULL,
 		content TEXT,
 		created_by varchar(15) NOT NULL,
 		deleted int,
@@ -112,7 +112,7 @@ func InitializeDatabase() {
 	CREATE TABLE IF NOT EXISTS pages_preview (
 		internal_id int NOT NULL AUTO_INCREMENT,
 		wiki_page_id int,
-		title varchar(50) NOT NULL,
+		title varchar(255) NOT NULL,
 		content TEXT,
 		created_by varchar(15) NOT NULL,
 		deleted int,
@@ -130,7 +130,7 @@ func InitializeDatabase() {
 		wiki_page_id int,
 		revision_id int,
 		date_modified timestamp,
-		title varchar(50) NOT NULL,
+		title varchar(255) NOT NULL,
 		content TEXT,
 		created_by varchar(15) NOT NULL,
 		deleted int,
@@ -242,7 +242,7 @@ func CreatePreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) int {
 	var res sql.Result
 	res, err = PageInsert.Exec(s.Title, s.Content, s.Username, s.Deleted, s.DateCreated)
 	if err != nil {
-		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		log.Fatal(err)
 	}
 
 	wikiPageId, err := res.LastInsertId()
