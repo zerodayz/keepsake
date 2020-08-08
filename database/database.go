@@ -23,6 +23,15 @@ type Token struct {
 	Expires string
 }
 
+type Comment struct {
+	InternalId     int
+	WikiPageId	   int
+	CreatedBy      string
+	DateCreated    string
+	Title          string
+	Body           string
+}
+
 type WikiPage struct {
 	InternalId     int
 	WikiPageId	   int
@@ -37,6 +46,7 @@ type WikiPage struct {
 	CreatedBy      string
 	Body           string
 	DisplayBody    template.HTML
+	DisplayComment template.HTML
 	Errors         map[string]string
 }
 
@@ -77,6 +87,19 @@ func InitializeDatabase() {
 		username varchar(15) NOT NULL UNIQUE,
 		email varchar(255),
 		password varchar(60),
+		PRIMARY KEY (internal_id)
+		);`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
+	CREATE TABLE IF NOT EXISTS comments (
+		internal_id int NOT NULL AUTO_INCREMENT,
+		wiki_page_id int,
+		created_by varchar(15) NOT NULL,
+		date_created timestamp,
+		title varchar(255) NOT NULL,
+		content TEXT,
 		PRIMARY KEY (internal_id)
 		);`)
 	if err != nil {
@@ -173,6 +196,24 @@ func InsertToken(w http.ResponseWriter, r *http.Request, u User, tk Token) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	CommentInsert, err := db.Prepare(`
+	INSERT INTO comments (title, content, wiki_page_id, created_by, date_created) VALUES ( ?, ?, ?, ?, ? )
+	`)
+
+	_, err = CommentInsert.Exec(c.Title, c.Body, c.WikiPageId, c.CreatedBy, c.DateCreated)
+	if err != nil {
+		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusInternalServerError)
+	}
+	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusFound)
 }
 
 func CreateUser(w http.ResponseWriter, r *http.Request, u User) {
@@ -650,6 +691,40 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 	return wikiPages, wikiPage
+}
+
+func FetchComments(w http.ResponseWriter, r *http.Request, internalId int) []Comment {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	var (
+		comment []Comment
+		createdBy string
+		dateCreated string
+		title string
+		content string
+	)
+
+	rows, err := db.Query(`SELECT title, content, created_by, date_created FROM comments where wiki_page_id = ? ORDER BY date_created DESC`, internalId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&title, &content, &createdBy, &dateCreated)
+		if err != nil {
+			log.Fatal(err)
+		}
+		comment = append(comment, Comment{Title: title, Body: content, CreatedBy: createdBy, DateCreated: dateCreated})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return comment
 }
 
 func GetSessionKey(w http.ResponseWriter, r *http.Request, token string) string {

@@ -99,6 +99,21 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	s.DisplayBody = template.HTML(buf.String())
 
 	s.UserLoggedIn = username
+
+	// Fetch comments
+	var bufComments bytes.Buffer
+
+	comments := database.FetchComments(w, r, id)
+	bufComments.Write([]byte(`<div>There are ` + strconv.Itoa(len(comments)) + ` comment(s).</div>`))
+	for _, f := range comments {
+		bufComments.Write([]byte(`
+				<div class="found">Comment by ` + f.CreatedBy + ` on ` + f.DateCreated + `
+				<label for="search-content" class="search-collapsible">`+ f.Title +`</label>
+				<div id="search-content" class="search-content">
+				<pre><code>` + f.Body + `</code></pre></div></div>`))
+	}
+	s.DisplayComment = template.HTML(bufComments.String())
+
 	err = t.ExecuteTemplate(w, "view.html", s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

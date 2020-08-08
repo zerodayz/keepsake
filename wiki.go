@@ -10,6 +10,7 @@ import (
 	"github.com/zerodayz/gowiki/database"
 	"github.com/zerodayz/gowiki/pages"
 	"github.com/zerodayz/gowiki/users"
+	"github.com/zerodayz/gowiki/comments"
 	"github.com/zerodayz/gowiki/tickets"
 	"log"
 	"net/http"
@@ -37,6 +38,8 @@ func main() {
 	http.HandleFunc("/pages/trash/", pages.RecycleBinHandler)
 	http.HandleFunc("/pages/restore/", pages.MakeHandler(pages.RestoreHandler))
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
+
+	http.HandleFunc("/comments/create/", comments.MakeHandler(comments.CreateHandler))
 
 	http.HandleFunc("/ticket/new", tickets.TicketNewHandler)
 	http.HandleFunc("/ticket/view/", tickets.MakeHandler(tickets.TicketViewHandler))
