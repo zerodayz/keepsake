@@ -99,6 +99,8 @@
             <h1>Comments</h1>
         </div>
         <div>
+            {{if eq .UserLoggedIn "Unauthorized"}}
+            {{else}}
             <div class="found">
                 <label for="search-content" class="search-collapsible">Add new</label>
                 <div id="search-content" class="search-content">
@@ -125,6 +127,7 @@
                     </form>
                 </div>
             </div>
+            {{end}}
             <div>{{.DisplayComment}}</div>
         </div>
         <script type="text/javascript" src="/lib/search.js"></script>
