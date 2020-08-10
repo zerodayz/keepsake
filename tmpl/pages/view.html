@@ -102,8 +102,8 @@
             {{if eq .UserLoggedIn "Unauthorized"}}
             {{else}}
             <div class="found">
-                <label for="search-content" class="search-collapsible">Add new</label>
-                <div id="search-content" class="search-content">
+                <h1 class="comment-collapsible">Add new</h1>
+                <div>
                     <form action="/comments/create/{{.InternalId}}" method="POST">
                         <div class="control-group">
                             <div class="controls">
