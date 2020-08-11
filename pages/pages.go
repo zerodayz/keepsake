@@ -130,6 +130,9 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	bufComment := bytes.NewBuffer(nil)
 	wikiPagesTop10Commented := database.Top10Commented(w, r)
 	bufComment.Write([]byte(`<div class="header-text"><h1>Keepsake Last 10 Discussed</h1></div>`))
+	if len(wikiPagesTop10Commented) == 0 {
+		bufComment.Write([]byte(`There are no discussions.`))
+	}
 	for _, f := range wikiPagesTop10Commented {
 		// 2020-08-02 23:44:28
 		dateCreated := time.Now()
