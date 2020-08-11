@@ -109,7 +109,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		bufComments.Write([]byte(`
 				<div class="found">Comment by ` + f.CreatedBy + ` on ` + f.DateCreated + `
 				<label for="search-content" class="search-collapsible">`+ f.Title +`</label>
-				<div id="search-content" class="search-content">
+				<div id="search-content" class="comment-content">
 				<pre><code>` + f.Body + `</code></pre></div></div>`))
 	}
 	s.DisplayComment = template.HTML(bufComments.String())

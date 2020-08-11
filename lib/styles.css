@@ -597,7 +597,13 @@ input[type='checkbox'] {
 	padding: 0 18px;
 	display: none;
 	overflow: hidden;
-} 
+}
+
+.comment-content {
+	padding: 0 0px;
+	display: none;
+	overflow: hidden;
+}
 
 .collapsible-content {
 	max-height: 0px;
