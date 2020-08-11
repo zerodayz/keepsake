@@ -1106,6 +1106,11 @@ div.header-text {
 	padding-bottom: 23px;
 }
 
+div.header-text-n {
+	padding-top: 23px;
+	padding-bottom: 23px;
+}
+
  /* The Modal (background) */
  .modal {
 	display: none; /* Hidden by default */

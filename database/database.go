@@ -35,6 +35,7 @@ type Comment struct {
 type WikiPage struct {
 	InternalId     int
 	WikiPageId	   int
+	CommentCount   int
 	Title          string
 	Content        string
 	Username       string
@@ -602,8 +603,40 @@ func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 		return wikiPages
-	}
+}
 
+func Top10Commented(w http.ResponseWriter, r *http.Request) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages []WikiPage
+		id int
+		commentCount int
+		title string
+		createdBy string
+		dateCreated string
+	)
+	rows, err := db.Query("SELECT comments.wiki_page_id, count(comments.wiki_page_id) as comment_count, pages.title, comments.created_by, max(comments.date_created) FROM comments, pages WHERE pages.internal_id = wiki_page_id AND deleted = ? GROUP BY comments.wiki_page_id ORDER BY max(comments.date_created) DESC limit 10", 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&id, &commentCount, &title, &createdBy, &dateCreated)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, CommentCount: commentCount, Title: title, DateCreated: dateCreated, CreatedBy: createdBy})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+}
 
 func ShowPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
