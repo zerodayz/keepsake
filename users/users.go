@@ -46,7 +46,6 @@ func ComparePasswords(hashedPwd string, plainPwd []byte) bool {
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	p := database.WikiPage{}
 	u := database.User{}
-	t := template.Must(template.ParseFiles(tmplpath + "create.html"))
 
 	username := pages.ReadCookie(w, r)
 	if username != "Unauthorized" {
@@ -62,7 +61,8 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		database.CreateUser(w, r, u)
 	}
 
-	err := t.ExecuteTemplate(w, "create.html", p)
+	t := template.Must(template.ParseFiles(tmplpath + "create.html"))
+	err := t.Execute(w, p)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

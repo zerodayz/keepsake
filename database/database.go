@@ -89,7 +89,7 @@ func InitializeDatabase() {
 		email varchar(255),
 		password varchar(60),
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -102,7 +102,7 @@ func InitializeDatabase() {
 		title varchar(255) NOT NULL,
 		content TEXT,
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -113,7 +113,7 @@ func InitializeDatabase() {
 		username varchar(15) NOT NULL UNIQUE,
 		expires timestamp,
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -128,7 +128,7 @@ func InitializeDatabase() {
 		last_modified timestamp,
 		date_created timestamp,
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -144,7 +144,7 @@ func InitializeDatabase() {
 		last_modified timestamp,
 		date_created timestamp,
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -162,7 +162,7 @@ func InitializeDatabase() {
 		last_modified timestamp,
 		date_created timestamp,
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -176,7 +176,7 @@ func InitializeDatabase() {
 		assigned varchar(255),
 		status varchar(60),
 		PRIMARY KEY (internal_id)
-		);`)
+		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
 	}

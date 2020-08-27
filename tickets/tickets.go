@@ -356,7 +356,6 @@ func TicketQueueHandler(w http.ResponseWriter, r *http.Request) {
 				` | Change status to <a href="/ticket/assign/` + strconv.Itoa(f.InternalId) + `">Assigned</a> or <a href="/ticket/complete/` + strconv.Itoa(f.InternalId) + `">Completed</a>
 				<label for="search-content" class="search-collapsible"> Ticket ` + strconv.Itoa(f.InternalId) + ` Status: ` + f.Status + `, Assigned: ` + f.Assigned + ` </label><div id="search-content" class="search-content">
 				<pre><code>` + f.Question + `</code></pre></div></div>`))
-			buf.Write([]byte(`<br>`))
 		}
 	}
 
