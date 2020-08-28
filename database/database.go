@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type User struct {
@@ -23,6 +24,12 @@ type Token struct {
 	Expires string
 }
 
+type Tag struct {
+	InternalId	int
+	Name		string
+	DateCreated	string
+	CreatedBy   string
+}
 type Comment struct {
 	InternalId     int
 	WikiPageId	   int
@@ -38,6 +45,7 @@ type WikiPage struct {
 	CommentCount   int
 	Title          string
 	Content        string
+	Tags		   []string
 	Username       string
 	DateCreated    string
 	LastModified   string
@@ -58,6 +66,7 @@ type WikiPageRevision struct {
 	DateModified   string
 	Title          string
 	Content        string
+	Tags		   []string
 	Username       string
 	DateCreated    string
 	LastModified   string
@@ -118,10 +127,22 @@ func InitializeDatabase() {
 		log.Fatal(err)
 	}
 	_, err = db.Exec(`
+	CREATE TABLE IF NOT EXISTS tags (
+		internal_id int NOT NULL AUTO_INCREMENT,
+		name varchar(60) NOT NULL UNIQUE,
+		date_created timestamp,
+		created_by varchar(15) NOT NULL,
+		PRIMARY KEY (internal_id)
+		) CHARACTER SET utf8;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = db.Exec(`
 	CREATE TABLE IF NOT EXISTS pages (
 		internal_id int NOT NULL AUTO_INCREMENT,
 		title varchar(255) NOT NULL,
 		content TEXT,
+		tags TEXT,
 		created_by varchar(15) NOT NULL,
 		deleted int,
 		last_modified_by varchar(15),
@@ -138,6 +159,7 @@ func InitializeDatabase() {
 		wiki_page_id int,
 		title varchar(255) NOT NULL,
 		content TEXT,
+		tags TEXT,
 		created_by varchar(15) NOT NULL,
 		deleted int,
 		last_modified_by varchar(15),
@@ -156,6 +178,7 @@ func InitializeDatabase() {
 		date_modified timestamp,
 		title varchar(255) NOT NULL,
 		content TEXT,
+		tags TEXT,
 		created_by varchar(15) NOT NULL,
 		deleted int,
 		last_modified_by varchar(15),
@@ -217,6 +240,53 @@ func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusFound)
 }
 
+func CreateCategory(w http.ResponseWriter, r *http.Request, c Tag) {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	UserInsert, err := db.Prepare(`
+	INSERT INTO tags (name, created_by, date_created) VALUES ( ?, ?, ? )
+	`)
+
+	_, err = UserInsert.Exec(c.Name, c.CreatedBy, c.DateCreated)
+	if err != nil {
+		http.Redirect(w, r, "/categories/create/", http.StatusFound)
+	}
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func FetchCategories(w http.ResponseWriter, r *http.Request) []Tag {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		tags []Tag
+		name string
+	)
+	rows, err := db.Query("SELECT name FROM tags")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&name)
+		if err != nil {
+			log.Fatal(err)
+		}
+		tags = append(tags, Tag{Name: name})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return tags
+}
+
 func CreateUser(w http.ResponseWriter, r *http.Request, u User) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
@@ -254,11 +324,11 @@ func CreateEditPreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) i
 	// Set deleted to 0 during creation.
 	s.Deleted = 0
 	PageInsert, err := db.Prepare(`
-	INSERT INTO pages_preview (title, wiki_page_id, content, created_by, deleted, last_modified, last_modified_by, date_created) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)
+	INSERT INTO pages_preview (title, wiki_page_id, content, tags, created_by, deleted, last_modified, last_modified_by, date_created) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`)
 
 	var res sql.Result
-	res, err = PageInsert.Exec(s.Title, s.InternalId, s.Content, username, s.Deleted, s.LastModified, s.LastModifiedBy, dateCreated)
+	res, err = PageInsert.Exec(s.Title, s.InternalId, s.Content,  strings.Join(s.Tags, ","), username, s.Deleted, s.LastModified, s.LastModifiedBy, dateCreated)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
@@ -278,11 +348,11 @@ func CreatePreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) int {
 	// Set deleted to 0 during creation.
 	s.Deleted = 0
 	PageInsert, err := db.Prepare(`
-	INSERT INTO pages_preview (title, content, created_by, deleted, date_created) VALUES ( ?, ?, ?, ?, ? )
+	INSERT INTO pages_preview (title, content, tags, created_by, deleted, date_created) VALUES ( ?, ?, ?, ?, ?, ? )
 	`)
 
 	var res sql.Result
-	res, err = PageInsert.Exec(s.Title, s.Content, s.Username, s.Deleted, s.DateCreated)
+	res, err = PageInsert.Exec(s.Title, s.Content, strings.Join(s.Tags, ","), s.Username, s.Deleted, s.DateCreated)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -301,11 +371,11 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	}
 	defer db.Close()
 
-	var title, content, createdBy, existingPage, deleted, dateCreated, lastModified, lastModifiedBy, revisionId string
+	var title, content, tags, createdBy, existingPage, deleted, dateCreated, lastModified, lastModifiedBy, revisionId string
 	// Get the original page
 	err = db.QueryRow(`
-	SELECT title, COALESCE(wiki_page_id, '') as wiki_page_id, content, created_by, last_modified, COALESCE(last_modified_by, '') as last_modified_by, deleted, date_created
-	FROM pages_preview WHERE internal_id = ?`, InternalId).Scan(&title, &existingPage, &content, &createdBy, &lastModified, &lastModifiedBy, &deleted, &dateCreated)
+	SELECT title, COALESCE(wiki_page_id, '') as wiki_page_id, content, COALESCE(tags, '') as tags, created_by, last_modified, COALESCE(last_modified_by, '') as last_modified_by, deleted, date_created
+	FROM pages_preview WHERE internal_id = ?`, InternalId).Scan(&title, &existingPage, &content, &tags, &createdBy, &lastModified, &lastModifiedBy, &deleted, &dateCreated)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -313,16 +383,16 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	ep, err := strconv.Atoi(existingPage)
 	d, err := strconv.Atoi(deleted)
 
-	s := &WikiPage{Title: title, InternalId: ep, Content: content, LastModified: lastModified, LastModifiedBy: lastModifiedBy, Deleted: d, DateCreated: dateCreated}
+	s := &WikiPage{Title: title, InternalId: ep, Content: content, Tags: strings.Split(tags, ","), LastModified: lastModified, LastModifiedBy: lastModifiedBy, Deleted: d, DateCreated: dateCreated}
 
 	if existingPage == "" {
 		PageInsert, err := db.Prepare(`
-		INSERT INTO pages (title, content, created_by, deleted, date_created) VALUES ( ?, ?, ?, ?, ? )
+		INSERT INTO pages (title, content, tags, created_by, deleted, date_created) VALUES ( ?, ?, ?, ?, ?, ? )
 		`)
 
 		var res sql.Result
 
-		res, err = PageInsert.Exec(title, content, createdBy, deleted, dateCreated)
+		res, err = PageInsert.Exec(title, content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
 		}
@@ -333,11 +403,11 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		}
 
 		PageRevisionInsert, err := db.Prepare(`
-		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, created_by, deleted, date_created)
-		VALUES ( ?, ?, ?, ?, ?, ?, ? )
+		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, tags, created_by, deleted, date_created)
+		VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )
 		`)
 
-		_, err = PageRevisionInsert.Exec(wikiPageId, 1, title, content, createdBy, deleted, dateCreated)
+		_, err = PageRevisionInsert.Exec(wikiPageId, 1, title, content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
 		}
@@ -345,13 +415,13 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	} else {
 		// Get the original page
 		err = db.QueryRow(`
-		SELECT title, content, created_by, deleted, last_modified, COALESCE(last_modified_by, '') as last_modified_by, date_created
-		FROM pages WHERE internal_id = ?`, existingPage).Scan(&title, &content, &createdBy, &deleted,
+		SELECT title, content, COALESCE(tags, '') as tags, created_by, deleted, last_modified, COALESCE(last_modified_by, '') as last_modified_by, date_created
+		FROM pages WHERE internal_id = ?`, existingPage).Scan(&title, &content, &tags, &createdBy, &deleted,
 			&lastModified, &lastModifiedBy, &dateCreated)
 		if err != nil {
 			log.Fatal(err)
 		}
-		if title == s.Title && content == s.Content {
+		if title == s.Title && content == s.Content && tags == strings.Join(s.Tags, ",") {
 			http.Redirect(w, r, "/pages/view/"+strconv.Itoa(ep), http.StatusFound)
 			return
 		}
@@ -378,11 +448,11 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		i++
 		// Insert into revisions
 		PageRevisionInsert, err := db.Prepare(`
-		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, created_by, deleted, date_created, last_modified_by, last_modified)
-		VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? )
+		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, tags, created_by, deleted, date_created, last_modified_by, last_modified)
+		VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
 		`)
 
-		_, err = PageRevisionInsert.Exec(existingPage, i, s.Title, s.Content, createdBy, deleted, dateCreated, s.LastModifiedBy, s.LastModified)
+		_, err = PageRevisionInsert.Exec(existingPage, i, s.Title, s.Content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated, s.LastModifiedBy, s.LastModified)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
 		}
@@ -391,11 +461,11 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		s.Deleted = 0
 
 		PageUpdate, err := db.Prepare(`
-		UPDATE pages SET title = ?, content = ?, deleted = ?, last_modified = ?, last_modified_by = ?
+		UPDATE pages SET title = ?, content = ?, tags = ?, deleted = ?, last_modified = ?, last_modified_by = ?
 		WHERE internal_id = ?
 		`)
 
-		_, err = PageUpdate.Exec(s.Title, s.Content, s.Deleted, s.LastModified, s.LastModifiedBy, s.InternalId)
+		_, err = PageUpdate.Exec(s.Title, s.Content, strings.Join(s.Tags, ","), s.Deleted, s.LastModified, s.LastModifiedBy, s.InternalId)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusFound)
 		}
@@ -521,10 +591,10 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
 	defer db.Close()
-	var title, content, dateCreated, lastModified, lastModifiedBy, username, revisionId, wikiPageId string
+	var title, content, tags, dateCreated, lastModified, lastModifiedBy, username, revisionId, wikiPageId string
 	err = db.QueryRow(`
-	SELECT title, content, wiki_page_id, revision_id, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_rev WHERE internal_id = ?
-	`, InternalId).Scan(&title, &content, &wikiPageId, &revisionId, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	SELECT title, content, tags, wiki_page_id, revision_id, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_rev WHERE internal_id = ?
+	`, InternalId).Scan(&title, &content, &tags, &wikiPageId, &revisionId, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
@@ -536,7 +606,7 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
-	wpr := &WikiPageRevision{Title: title, WikiPageId: wid, Content: content, RevisionId: id, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	wpr := &WikiPageRevision{Title: title, WikiPageId: wid, Content: content, Tags: strings.Split(tags, ","), RevisionId: id, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 
 
 	id, err = strconv.Atoi(wikiPageId)
@@ -544,12 +614,12 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 	err = db.QueryRow(`
-	SELECT title, content, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
-	`, id).Scan(&title, &content, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	SELECT title, content, tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
+	`, id).Scan(&title, &content, &tags, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-	wp:= &WikiPage{Title: title, Content: content, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	wp:= &WikiPage{Title: title, Content: content, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 
 	return wpr, wp
 }
@@ -560,15 +630,18 @@ func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage 
 		log.Fatal(err)
 	}
 	defer db.Close()
-	var title, content, dateCreated, lastModified, lastModifiedBy, username string
+	var title, content, tags, dateCreated, lastModified, lastModifiedBy, username string
 
 	err = db.QueryRow(`
-	SELECT title, content, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
-	`, InternalId).Scan(&title, &content, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	SELECT title, content, COALESCE(tags, '') as tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
+	`, InternalId).Scan(&title, &content, &tags, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	if len(tags) == 0 {
+		tags = "None"
+	}
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-	return &WikiPage{Title: title, Content: content, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	return &WikiPage{Title: title, Content: content, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 }
 
 func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
@@ -644,15 +717,16 @@ func ShowPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) *Wi
 		log.Fatal(err)
 	}
 	defer db.Close()
-	var title, content, dateCreated, lastModified, lastModifiedBy, username string
+	var title, content, tags, dateCreated, lastModified, lastModifiedBy, username string
 
 	err = db.QueryRow(`
-	SELECT title, content, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_preview WHERE internal_id = ?
-	`, InternalId).Scan(&title, &content, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	SELECT title, content, tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_preview WHERE internal_id = ?
+	`, InternalId).Scan(&title, &content, &tags, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-	return &WikiPage{Title: title, Content: content, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	tagsArray := strings.Split(tags, ",")
+	return &WikiPage{Title: title, Content: content, Tags: tagsArray, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 }
 
 

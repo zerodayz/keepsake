@@ -458,10 +458,6 @@ address {
 	font-style: normal;
 	line-height: 20px
 }
-
-input[type='checkbox'] {
-	display: none;
-  }
   
 .lbl-toggle {
 	color: #007031;
@@ -507,6 +503,27 @@ input[type='checkbox'] {
 	font-weight: 500;
 	letter-spacing: .015em;
 	transition: all 0.25s ease-out;
+}
+.checkboxes {
+	color: #333333;
+	border: 1px solid #e6e6e6;
+	border-radius: 6px;
+	padding: 0.35294rem 0.94118rem;
+	margin-top: 10px;
+	margin-bottom: 10px;
+	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
+	background-color: #f4f4f4;
+}
+
+.categories {
+	color: #333333;
+	border: 1px solid #e6e6e6;
+	display: inline-block;
+	border-radius: 6px;
+	padding: 3px 3px;
+	margin: 3px;
+	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
+	background-color: #f4f4f4;
 }
 
 .dashboard {
@@ -840,10 +857,12 @@ input[type="color"]:focus,
 
 input[type="radio"],
 input[type="checkbox"] {
-	margin: 4px 0 0;
-	margin-top: 1px \9;
-	*margin-top: 0;
 	line-height: normal
+}
+
+div.checkbox {
+	padding: 3px;
+	display: inline-block;
 }
 
 input[type="file"],
@@ -946,6 +965,7 @@ legend+.control-group {
 	content: url(/lib/icons/history-24px.svg);
 }
 
+
 .navvy>ul>li.menu-delete>a::before {
 	content: url(/lib/icons/delete-24px.svg);
 }
@@ -956,6 +976,10 @@ legend+.control-group {
 
 .navvy>ul>li a.menu-user-add::before {
 	content: url(/lib/icons/person_add-24px.svg);
+}
+
+.navvy>ul>li a.menu-category>a::before {
+	content: url(/lib/icons/category-24px.svg);
 }
 
 .navvy>ul>li a.menu-ticket-queue::before {

@@ -51,17 +51,17 @@ func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 
 func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
 	s := database.ShowPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
 func LoadPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
 	s := database.ShowPreviewPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
 func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPageRevision, *database.WikiPage) {
 	wpr, wp := database.ShowRevisionPage(w, r, InternalId)
-	return &database.WikiPageRevision{Title: wpr.Title, WikiPageId: wpr.WikiPageId, RevisionId: wpr.RevisionId, Content: wpr.Content, InternalId: InternalId, CreatedBy: wpr.CreatedBy, LastModified: wpr.LastModified, LastModifiedBy: wpr.LastModifiedBy, DateCreated: wpr.DateCreated},
+	return &database.WikiPageRevision{Title: wpr.Title, WikiPageId: wpr.WikiPageId, Tags: wpr.Tags, RevisionId: wpr.RevisionId, Content: wpr.Content, InternalId: InternalId, CreatedBy: wpr.CreatedBy, LastModified: wpr.LastModified, LastModifiedBy: wpr.LastModifiedBy, DateCreated: wpr.DateCreated},
 	wp
 }
 
@@ -258,6 +258,26 @@ func EditHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
 	s.UserLoggedIn = username
+	bufCategories := bytes.NewBuffer(nil)
+	existingCategories := database.FetchCategories(w, r)
+	if len(existingCategories) == 0 {
+		bufCategories.Write([]byte(`There are no categories yet.`))
+	} else {
+		var matched bool
+		for _, f := range existingCategories {
+			matched = false
+			for _, tag := range s.Tags {
+				if f.Name == tag {
+					bufCategories.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox" checked>` + f.Name + `</div></div>`))
+					matched = true
+				}
+			}
+			if matched != true {
+				bufCategories.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `</div></div>`))
+			}
+		}
+	}
+	s.DisplayComment = template.HTML(bufCategories.String())
 
 	RenderTemplate(w, "edit", s)
 }
@@ -278,13 +298,23 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		s.Title = r.PostFormValue("title")
 		s.Content = r.PostFormValue("body")
+		s.Tags = r.Form["tags"]
 		date := time.Now().UTC()
 		s.DateCreated = date.Format("20060102150405")
-
 		s.InternalId = database.CreatePreviewPage(w, r, s)
 		http.Redirect(w, r, "/preview/view/"+strconv.Itoa(s.InternalId), http.StatusFound)
 
 	}
+	bufCategories := bytes.NewBuffer(nil)
+	existingCategories := database.FetchCategories(w, r)
+	if len(existingCategories) == 0 {
+		bufCategories.Write([]byte(`There are no categories yet.`))
+	} else {
+		for _, f := range existingCategories {
+			bufCategories.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `</div></div>`))
+		}
+	}
+	s.DisplayComment = template.HTML(bufCategories.String())
 
 	err := t.ExecuteTemplate(w, "create.html", s)
 	if err != nil {
@@ -382,6 +412,7 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		s.InternalId = id
 		s.Title = r.PostFormValue("title")
 		s.Content = r.PostFormValue("body")
+		s.Tags = r.Form["tags"]
 		s.Content = string(nlcr.ReplaceAllFunc([]byte(s.Content), func(s []byte) []byte {
 			return []byte("\n")
 		}))

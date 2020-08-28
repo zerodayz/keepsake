@@ -88,6 +88,13 @@
             <br>
             Last Modified by {{.LastModifiedBy}} on {{.LastModified}} UTC
             {{ end }}
+            <br>
+            {{ if .Tags }}
+                Categories:
+                {{ range $i, $el := .Tags }}
+                    <div class="categories">{{ $el }}</div>
+                {{ end }}
+            {{ end }}
         </div>
         <br>
         <div>{{.DisplayBody}}</div>

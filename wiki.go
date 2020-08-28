@@ -9,6 +9,7 @@ package main
 import (
 	"github.com/zerodayz/gowiki/database"
 	"github.com/zerodayz/gowiki/pages"
+	"github.com/zerodayz/gowiki/categories"
 	"github.com/zerodayz/gowiki/users"
 	"github.com/zerodayz/gowiki/comments"
 	"github.com/zerodayz/gowiki/tickets"
@@ -40,6 +41,8 @@ func main() {
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
 
 	http.HandleFunc("/comments/create/", comments.MakeHandler(comments.CreateHandler))
+
+	http.HandleFunc("/categories/create/", categories.CreateHandler)
 
 	http.HandleFunc("/ticket/new", tickets.TicketNewHandler)
 	http.HandleFunc("/ticket/view/", tickets.MakeHandler(tickets.TicketViewHandler))

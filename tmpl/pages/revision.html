@@ -66,6 +66,7 @@
                         {{else}}
                         <a class="menu-user-add" href="/users/create">Create user</a>
                         <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
+                        <a class="menu-category" href="/categories/create">Add category</a>
                         <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
                         {{end}}
                     </div>
@@ -90,6 +91,13 @@
             <br>
             Last Modified by {{.WikiPageRevision.LastModifiedBy}} on {{.WikiPageRevision.LastModified}} UTC
             {{ end }}
+            <br>
+            {{ if .WikiPageRevision.Tags }}
+                Categories:
+                {{ range $i, $el := .WikiPageRevision.Tags }}
+                    <div class="categories">{{ $el }}</div>
+                {{ end }}
+            {{ end }}
         </div>
         <br>
         <div>{{.WikiPageRevision.DisplayBody}}</div>
@@ -105,6 +113,13 @@
             {{ if .WikiPage.LastModifiedBy }}
                 <br>
                 Last Modified by {{.WikiPage.LastModifiedBy}} on {{.WikiPage.LastModified}} UTC
+            {{ end }}
+            <br>
+            {{ if .WikiPage.Tags }}
+                Categories:
+                {{ range $i, $el := .WikiPage.Tags }}
+                    <div class="categories">{{ $el }}</div>
+                {{ end }}
             {{ end }}
         </div>
         <br>
