@@ -403,11 +403,11 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		}
 
 		PageRevisionInsert, err := db.Prepare(`
-		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, tags, created_by, deleted, date_created)
-		VALUES ( ?, ?, ?, ?, ?, ?, ?, ? )
+		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, tags, created_by, deleted, date_created, last_modified_by, last_modified)
+		VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
 		`)
 
-		_, err = PageRevisionInsert.Exec(wikiPageId, 1, title, content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated)
+		_, err = PageRevisionInsert.Exec(wikiPageId, 1, title, content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated, lastModifiedBy, lastModified)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
 		}
@@ -501,12 +501,12 @@ func RollbackPage(w http.ResponseWriter, r *http.Request, RollbackId int) string
 	}
 	defer db.Close()
 
-	var title, content, username, lastModifiedBy, deleted, lastModified, dateCreated, wikiPageId string
+	var title, content, tags, username, lastModifiedBy, deleted, lastModified, dateCreated, wikiPageId string
 
 	// Get the revision page
 	err = db.QueryRow(`
-	SELECT title, content, created_by, deleted, last_modified, COALESCE(last_modified_by, '') as last_modified_by, date_created, wiki_page_id
-	FROM pages_rev WHERE internal_id = ?`, RollbackId).Scan(&title, &content, &username, &deleted,
+	SELECT title, content, COALESCE(tags, '') as tags, created_by, deleted, last_modified, COALESCE(last_modified_by, '') as last_modified_by, date_created, wiki_page_id
+	FROM pages_rev WHERE internal_id = ?`, RollbackId).Scan(&title, &content, &tags, &username, &deleted,
 		&lastModified, &lastModifiedBy, &dateCreated, &wikiPageId)
 	if err != nil {
 		log.Fatal(err)
@@ -514,11 +514,11 @@ func RollbackPage(w http.ResponseWriter, r *http.Request, RollbackId int) string
 
 	// Update original
 	PageUpdate, err := db.Prepare(`
-	UPDATE pages SET title = ?, content = ?, created_by = ?, deleted = ?, last_modified = ?, last_modified_by = ?, date_created = ?
+	UPDATE pages SET title = ?, content = ?, tags = ?, created_by = ?, deleted = ?, last_modified = ?, last_modified_by = ?, date_created = ?
 	WHERE internal_id = ?
 	`)
 
-	_, err = PageUpdate.Exec(title, content, username, deleted, lastModified, lastModifiedBy, dateCreated, wikiPageId)
+	_, err = PageUpdate.Exec(title, content, tags, username, deleted, lastModified, lastModifiedBy, dateCreated, wikiPageId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
