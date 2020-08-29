@@ -593,7 +593,7 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 	defer db.Close()
 	var title, content, tags, dateCreated, lastModified, lastModifiedBy, username, revisionId, wikiPageId string
 	err = db.QueryRow(`
-	SELECT title, content, tags, wiki_page_id, revision_id, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_rev WHERE internal_id = ?
+	SELECT title, content, COALESCE(tags, '') as tags, wiki_page_id, revision_id, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_rev WHERE internal_id = ?
 	`, InternalId).Scan(&title, &content, &tags, &wikiPageId, &revisionId, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
@@ -614,7 +614,7 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 	err = db.QueryRow(`
-	SELECT title, content, tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
+	SELECT title, content, COALESCE(tags, '') as tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
 	`, id).Scan(&title, &content, &tags, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
