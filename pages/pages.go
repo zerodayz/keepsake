@@ -160,7 +160,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		for _, f := range wikiPages {
 			// 2020-08-02 23:44:28
 			dateCreated := time.Now()
-			comments := database.FetchComments(w, r, f.InternalId)
 
 			dateCreated, err := time.Parse("2006-01-02 15:04:05", f.DateCreated)
 			if err != nil {
@@ -168,10 +167,10 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if f.LastModifiedBy == "" {
 				if dateCreated.After(dateYesterday) {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New!"/> | Comments: ` + strconv.Itoa(len(comments)) + ` | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-						` | Not yet modified.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+						`</div>`))
 				} else {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Comments: ` + strconv.Itoa(len(comments)) + ` | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
 						` | Not yet modified.</div>`))
 				}
 			} else {
@@ -180,14 +179,11 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 				}
 				if dateCreated.After(dateYesterday) && dateModified.After(dateYesterday) {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New!"/> <img src="/lib/icons/new_releases-24px.svg" alt="Updated!"/> | Comments: ` + strconv.Itoa(len(comments)) + ` | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-						` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
 				} else if dateModified.After(dateYesterday) {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/new_releases-24px.svg" alt="Updated!"/> | Comments: ` + strconv.Itoa(len(comments)) + ` | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-						` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
 				} else {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Comments: ` + strconv.Itoa(len(comments)) + ` | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-						` | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
 				}
 			}
 		}
