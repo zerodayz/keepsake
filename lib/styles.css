@@ -978,7 +978,7 @@ legend+.control-group {
 	content: url(/lib/icons/person_add-24px.svg);
 }
 
-.navvy>ul>li a.menu-category>a::before {
+.navvy>ul>li a.menu-category::before {
 	content: url(/lib/icons/category-24px.svg);
 }
 
