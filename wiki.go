@@ -56,5 +56,5 @@ func main() {
 	http.HandleFunc("/dashboard", pages.DashboardHandler)
 	http.HandleFunc("/", RootHandler)
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServeTLS(":443", "server.crt", "server.key", nil))
 }

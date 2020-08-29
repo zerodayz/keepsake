@@ -1,31 +1,47 @@
 [![Go Report](https://goreportcard.com/badge/github.com/zerodayz/gowiki)](https://goreportcard.com/badge/github.com/zerodayz/gowiki)
 
 # GoWiki
-
 Wiki written in Go
 
 # How to use
-
-Currently you will need mysql, that is dependency and used for Pages, History and User management.
-
+## Run the DB container
 ```
 docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/tcp -e MYSQL_ROOT_PASSWORD=roottoor -e MYSQL_DATABASE=gowiki -e MYSQL_USER=gowiki -e MYSQL_PASSWORD=gowiki55 -d mariadb:latest
 ```
 
-The default port the wiki is listening on is `8080`.
-
-## Pre-requirements
-Some basics are already provided in the `install_go.sh` script.
+## Clone the gowiki into your own Filesystem
 ~~~
-Go
+git clone git@github.com:zerodayz/gowiki.git
 ~~~
-
-## Installation
+OR use HTTPS
 ~~~
-go get https://github.com/zerodayz/gowiki/
+https://github.com/zerodayz/gowiki.git
 ~~~
 
-Navigate to `http://localhost:8080` and enjoy.
+### Change directory to gowiki
+~~~
+cd gowiki
+~~~
+
+## Install TLS/SSL Cert
+~~~
+openssl ecparam -genkey -name secp384r1 -out server.key
+openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
+~~~
+This will generate server.key and server.crt for your Keepsake server.
+
+## Build Keepsake server
+~~~
+go build gowiki.go
+~~~
+
+## Run gowiki
+~~~
+./wiki
+~~~
+
+The default port the wiki is listening on is `443`.
+Navigate to `https://localhost` and enjoy.
 
 ---
 This is free wiki written in Go, for personal development purposes. 
