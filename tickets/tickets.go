@@ -348,7 +348,7 @@ func TicketQueueHandler(w http.ResponseWriter, r *http.Request) {
 	queue := FetchQueue(w, r)
 	newQueue := FetchNewQueue(w, r)
 
-	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(newQueue)) + ` people in the queue.</div>`))
+	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(newQueue)) + ` tickets in the queue.</div>`))
 	for _, f := range queue {
 		if f.Status == "New" || f.Status == "Assigned" {
 			buf.Write([]byte(`

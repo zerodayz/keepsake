@@ -13,10 +13,8 @@
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .UserLoggedIn "Unauthorized"}}
-            <li class="menu-help"><a href="/ticket/new"></a></li>
             {{else}}
             <li class="menu-create"><a href="/pages/create/"></a></li>
-            <li class="menu-help"><a href="/ticket/new"></a></li>
             {{end}}
             <li id="search">
                 <div class="search-container">
@@ -62,6 +60,7 @@
                     </div>
                 </div>
             </li>
+            <li style="float:right" class="menu-help"><a href="/ticket/new"></a></li>
         </ul>
     </div>
     <div class="clearfix"></div>
