@@ -9,11 +9,17 @@
 </head>
 
 <body>
-
+<div id="ModalCreate" class="modal">
+    <div class="modal-content-create-page">
+        <span class="close-create">&times;</span>
+        <iframe style="border: 0px; width: calc(100% - 18px);" height="627" src="/pages/create/"></iframe>
+    </div>
+</div>
 <div class="navvy">
     <ul>
         <li class="menu-home"><a href="/"></a></li>
-        <li class="menu-create"><a href="/pages/create/"></a></li>
+        <li class="menu-create"><a id="ModalButtonCreate" href="#"></a></li>
+
         <li id="search">
             <div class="search-container">
                 <form action="/pages/search" method="GET">

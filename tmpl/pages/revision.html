@@ -9,22 +9,18 @@
 </head>
 
 <body>
-    <div id="Modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h1>Are you sure ?</h1>
-            <br>
-            <p>Do you really want to delete the page {{.WikiPageRevision.Title}}</p>
-            <a href="/pages/delete/{{.WikiPageRevision.InternalId}}">Yes!</a> Please delete the page.<br>
-        </div>
+<div id="Modal" class="modal">
+    <div class="modal-content-create-page">
+        <span class="close">&times;</span>
+        <iframe style="border: 0px; width: calc(100% - 18px);" height="627" src="/pages/create/"></iframe>
     </div>
-
+</div>
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
             {{else}}
-            <li class="menu-create"><a href="/pages/create/"></a></li>
+                <li class="menu-create"><a id="ModalButton" href="#"></a></li>
             {{end}}
             <li id="search">
                 <div class="search-container">
@@ -102,7 +98,7 @@
         <div>{{.WikiPageRevision.DisplayBody}}</div>
     </div>
     <div class="right">
-        <script type="text/javascript" src="/lib/view.js"></script>
+        <script type="text/javascript" src="/lib/edit.js"></script>
         <div class="header-text">
             <h1>Current version of {{.WikiPage.Title}}</h1>
             <br><a href="/pages/view/{{.WikiPageRevision.WikiPageId}}">Visit current version</a>

@@ -560,11 +560,11 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(wikiRevisionPages)) + ` revision(s) available.</div>`))
 	for _, f := range wikiRevisionPages {
 		if len(wikiRevisionPages) == f.RevisionId {
-			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `">Latest version </a> | ` + `Last Modified by ` +
+			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `" target="_parent">Latest version </a> | ` + `Last Modified by ` +
 				f.LastModifiedBy + ` on ` + f.LastModified ))
 			buf.Write([]byte(`<br>`))
 		} else {
-			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `">Revision ` + strconv.Itoa(f.RevisionId) + `</a> | ` + `Last Modified by ` +
+			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `" target="_parent">Revision ` + strconv.Itoa(f.RevisionId) + `</a> | ` + `Last Modified by ` +
 				f.LastModifiedBy + ` on ` + f.LastModified ))
 			buf.Write([]byte(`<br>`))
 		}

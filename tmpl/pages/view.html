@@ -18,131 +18,149 @@
             <a href="/pages/delete/{{.InternalId}}">Yes!</a> Please delete the page.<br>
         </div>
     </div>
+    <div id="ModalCreate" class="modal">
+        <div class="modal-content-create-page">
+            <span class="close-create">&times;</span>
+            <iframe style="border: 0px; width: calc(100% - 18px);" height="627" src="/pages/create/"></iframe>
+        </div>
+    </div>
+    <div id="ModalEdit" class="modal">
+        <div class="modal-content-create-page">
+            <span class="close-edit">&times;</span>
+            <iframe style="border: 0px; width: calc(100% - 18px);" height="627" src="/pages/edit/{{.InternalId}}"></iframe>
+        </div>
+    </div>
+    <div id="ModalHistory" class="modal">
+        <div class="modal-content-history-page">
+            <span class="close-history">&times;</span>
+            <iframe style="border: 0px; width: calc(100% - 18px);" height="550" src="/pages/revisions/{{.InternalId}}"></iframe>
+        </div>
+    </div>
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .UserLoggedIn "Unauthorized"}}
-                <li class="menu-revisions"><a href="/pages/revisions/{{.InternalId}}"></a></li>
+                <li class="menu-revisions"><a id="ModalButtonRevisions" href="#"></a></li>
             {{else}}
-            <li class="menu-create"><a href="/pages/create/"></a></li>
-            <li class="menu-edit"><a href="/pages/edit/{{.InternalId}}"></a></li>
-            <li class="menu-revisions"><a href="/pages/revisions/{{.InternalId}}"></a></li>
-            <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
+                <li class="menu-create"><a id="ModalButtonCreate" href="#"></a></li>
+                <li class="menu-edit"><a id="ModalButtonEdit" href="#"></a></li>
+                <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
+                <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
             {{end}}
-            <li id="search">
-                <div class="search-container">
-                    <form action="/pages/search" method="GET">
-                        <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
-                            value="">
-                        <button class="navbar-search-button" type="submit">Search</button>
-                    </form>
-                </div>
-            </li>
-            <li style="float:right">
-                {{if eq .UserLoggedIn "Unauthorized"}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, Guest!
-                    </button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/login">Login</a>
+                <li id="search">
+                    <div class="search-container">
+                        <form action="/pages/search" method="GET">
+                            <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
+                                value="">
+                            <button class="navbar-search-button" type="submit">Search</button>
+                        </form>
                     </div>
-                </div>
+                </li>
+                <li style="float:right">
+                    {{if eq .UserLoggedIn "Unauthorized"}}
+                    <div class="dropdown">
+                        <button class="dropbtn user">Hello, Guest!
+                        </button>
+                        <div class="dropdown-content-right menu-login">
+                            <a href="/users/login">Login</a>
+                        </div>
+                    </div>
+                    {{else}}
+                    <div class="dropdown">
+                        <button class="dropbtn user">Hello, {{.UserLoggedIn}}!
+                        </button>
+                        <div class="dropdown-content-right menu-login">
+                            <a href="/users/logout">Logout</a>
+                        </div>
+                    </div>
+                    {{end}}
+                </li>
+                <li style="float:right">
+                    <div class="dropdown">
+                        <button class="dropbtn setting">
+                        </button>
+                        <div class="dropdown-content">
+                            {{if eq .UserLoggedIn "Unauthorized"}}
+                            <a class="menu-user-add" href="/users/create">Create user</a>
+                            {{else}}
+                            <a class="menu-user-add" href="/users/create">Create user</a>
+                            <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
+                            <a class="menu-category" href="/categories/create">Add category</a>
+                            <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                            {{end}}
+                        </div>
+                    </div>
+                </li>
+                <li style="float:right" class="menu-help"><a href="/ticket/new"></a></li>
+            </ul>
+        </div>
+        <div class="clearfix"></div>
+        <div class="container">
+            <div class="header-text">
+                <h1>{{.Title}}</h1>
+            </div>
+            <div>
+                Created by {{.CreatedBy}} on {{.DateCreated}} UTC
+                {{ if .LastModifiedBy }}
+                <br>
+                Last Modified by {{.LastModifiedBy}} on {{.LastModified}} UTC
+                {{ end }}
+                <br>
+                {{ if .Tags }}
+                    Categories:
+                    {{ range $i, $el := .Tags }}
+                        <div class="categories">{{ $el }}</div>
+                    {{ end }}
+                {{ end }}
+            </div>
+            <br>
+            <div>{{.DisplayBody}}</div>
+        </div>
+        <hr>
+        <div class="clearfix"></div>
+        <div class="container">
+            <div>
+                <h1>Comments</h1>
+            </div>
+            <div>
+                {{if eq .UserLoggedIn "Unauthorized"}}
                 {{else}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, {{.UserLoggedIn}}!
-                    </button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/logout">Logout</a>
+                <div class="found">
+                    <h1 class="comment-collapsible">Add new</h1>
+                    <div>
+                        <form action="/comments/create/{{.InternalId}}" method="POST">
+                            <div class="control-group">
+                                <div class="controls">
+                                    {{ with .Errors.Title }}
+                                        <p>{{ . }}</p>
+                                    {{ end }}
+                                    Short Description: <textarea name="comment_title" cols="1"></textarea>
+                                </div>
+                                <div class="controls">
+                                    {{ with .Errors.Content }}
+                                        <p>{{ . }}</p>
+                                    {{ end }}
+                                    Body: <textarea name="comment_message" rows="10" cols="80"></textarea>
+                                </div>
+                                <div class="control-group">
+                                    <div class="controls">
+                                        <input type="submit" value="Send">
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
                 {{end}}
-            </li>
-            <li style="float:right">
-                <div class="dropdown">
-                    <button class="dropbtn setting">
-                    </button>
-                    <div class="dropdown-content">
-                        {{if eq .UserLoggedIn "Unauthorized"}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
-                        {{else}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
-                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
-                        <a class="menu-category" href="/categories/create">Add category</a>
-                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
-                        {{end}}
-                    </div>
-                </div>
-            </li>
-            <li style="float:right" class="menu-help"><a href="/ticket/new"></a></li>
-        </ul>
-    </div>
-    <div class="clearfix"></div>
-    <div class="container">
-        <script type="text/javascript" src="/lib/view.js"></script>
-        <div class="header-text">
-            <h1>{{.Title}}</h1>
-        </div>
-        <div>
-            Created by {{.CreatedBy}} on {{.DateCreated}} UTC
-            {{ if .LastModifiedBy }}
-            <br>
-            Last Modified by {{.LastModifiedBy}} on {{.LastModified}} UTC
-            {{ end }}
-            <br>
-            {{ if .Tags }}
-                Categories:
-                {{ range $i, $el := .Tags }}
-                    <div class="categories">{{ $el }}</div>
-                {{ end }}
-            {{ end }}
-        </div>
-        <br>
-        <div>{{.DisplayBody}}</div>
-    </div>
-    <hr>
-    <div class="clearfix"></div>
-    <div class="container">
-        <div>
-            <h1>Comments</h1>
-        </div>
-        <div>
-            {{if eq .UserLoggedIn "Unauthorized"}}
-            {{else}}
-            <div class="found">
-                <h1 class="comment-collapsible">Add new</h1>
-                <div>
-                    <form action="/comments/create/{{.InternalId}}" method="POST">
-                        <div class="control-group">
-                            <div class="controls">
-                                {{ with .Errors.Title }}
-                                    <p>{{ . }}</p>
-                                {{ end }}
-                                Short Description: <textarea name="comment_title" cols="1"></textarea>
-                            </div>
-                            <div class="controls">
-                                {{ with .Errors.Content }}
-                                    <p>{{ . }}</p>
-                                {{ end }}
-                                Body: <textarea name="comment_message" rows="10" cols="80"></textarea>
-                            </div>
-                            <div class="control-group">
-                                <div class="controls">
-                                    <input type="submit" value="Send">
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                <div>{{.DisplayComment}}</div>
             </div>
-            {{end}}
-            <div>{{.DisplayComment}}</div>
+            <script type="text/javascript" src="/lib/view.js"></script>
+            <script type="text/javascript" src="/lib/edit.js"></script>
         </div>
-        <script type="text/javascript" src="/lib/search.js"></script>
-    </div>
-    <hr>
-    <div class="container">
-        &nbsp;2020 © <a href="http://www.github.com/zerodayz" target="_blank">Robin Černín</a>. Brisbane, Australia.
-    </div>
+        <hr>
+        <div class="container">
+            &nbsp;2020 © <a href="http://www.github.com/zerodayz" target="_blank">Robin Černín</a>. Brisbane, Australia.
+        </div>
 </body>
 
 </html>

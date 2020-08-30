@@ -891,7 +891,8 @@ select {
 input,
 textarea,
 .uneditable-input {
-	margin-left: 0
+	resize: none;
+	margin-left: 0;
 }
 
 input.search-query {
@@ -1159,6 +1160,24 @@ div.header-text-n {
 	box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
 	width: 400px; /* Could be more or less, depending on screen size */
   }
+
+  .modal-content-create-page {
+	  background-color: #fefefe;
+	  padding: 20px;
+	  margin: 5% auto; /* 15% from the top and centered */
+	  box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
+	  width: 80%; /* Could be more or less, depending on screen size */
+	  height: 620px;
+  }
+
+	.modal-content-history-page {
+		background-color: #fefefe;
+		padding: 20px;
+		margin: 5% auto; /* 15% from the top and centered */
+		box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
+		width: 600px; /* Could be more or less, depending on screen size */
+		height: 620px;
+	}
   
   /* The Close Button */
   .close {
@@ -1167,8 +1186,46 @@ div.header-text-n {
 	font-size: 28px;
 	font-weight: bold;
   }
-  
-  .close:hover,
+  .close-create {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+  }
+  .close-create:hover,
+  .close-create:focus {
+	  color: black;
+	  text-decoration: none;
+	  cursor: pointer;
+  }
+	.close-edit {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+	}
+	.close-edit:hover,
+	.close-edit:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+	.close-history {
+		color: #aaa;
+		float: right;
+		font-size: 28px;
+		font-weight: bold;
+	}
+	.close-history:hover,
+	.close-history:focus {
+		color: black;
+		text-decoration: none;
+		cursor: pointer;
+	}
+
+
+.close:hover,
   .close:focus {
 	color: black;
 	text-decoration: none;

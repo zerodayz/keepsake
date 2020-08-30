@@ -8,81 +8,17 @@
     <meta charset='utf-8'>
 </head>
 
-<body>
-<div id="Modal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h1>Are you sure ?</h1>
-        <br>
-        <p>Do you really want to delete the page {{.Title}}</p>
-        <a href="/pages/delete/{{.Title}}">Yes!</a> Please delete the page.<br>
-    </div>
-</div>
-
-<div class="navvy">
-    <ul>
-        <li class="menu-home"><a href="/"></a></li>
-        <li class="menu-create"><a href="/pages/create/"></a></li>
-        <li id="search">
-            <div class="search-container">
-                <form action="/pages/search" method="GET">
-                    <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
-                           value="">
-                    <button class="navbar-search-button" type="submit">Search</button>
-                </form>
-            </div>
-        </li>
-        <li style="float:right">
-            {{if eq .UserLoggedIn "Unauthorized"}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, Guest!
-                    </button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/login">Login</a>
-                    </div>
-                </div>
-            {{else}}
-                <div class="dropdown">
-                    <button class="dropbtn user">Hello, {{.UserLoggedIn}}!
-                    </button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/logout">Logout</a>
-                    </div>
-                </div>
-            {{end}}
-        </li>
-        <li style="float:right">
-            <div class="dropdown">
-                <button class="dropbtn setting">
-                </button>
-                <div class="dropdown-content">
-                    {{if eq .UserLoggedIn "Unauthorized"}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
-                    {{else}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
-                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
-                        <a class="menu-category" href="/categories/create">Add category</a>
-                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
-                    {{end}}
-                </div>
-            </div>
-        </li>
-        <li style="float:right" class="menu-help"><a href="/ticket/new"></a></li>
-    </ul>
-</div>
-<div class="clearfix"></div>
+<body style="background-color: #ffffff">
 <div class="container">
+    <h1>Create Wiki Page</h1>
     <script type="text/javascript" src="/lib/edit.js"></script>
-    <div class="header-text">
-        <h1>Create Wiki Page</h1>
-    </div>
     <form action="/pages/create/" method="POST">
         <div class="control-group">
             <div class="controls">
                 {{ with .Errors.Title }}
                     <p>{{ . }}</p>
                 {{ end }}
-                Title: <textarea name="title" cols="1"></textarea>
+                Title: <textarea name="title" cols="1" rows="1"></textarea>
             </div>
             Tags:
             </br>
@@ -91,11 +27,11 @@
                 {{ with .Errors.Content }}
                     <p>{{ . }}</p>
                 {{ end }}
-                Body: <textarea name="body" rows="20" cols="80"></textarea>
+                Body: <textarea name="body" rows="14" cols="80"></textarea>
             </div>
             <div class="control-group">
                 <div class="controls">
-                    <input type="submit" value="Preview & Save">
+                    <input id="submit" type="submit" value="Preview & Save">
                 </div>
             </div>
         </div>
