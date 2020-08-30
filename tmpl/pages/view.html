@@ -40,7 +40,7 @@
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .UserLoggedIn "Unauthorized"}}
-                <li class="menu-revisions"><a id="ModalButtonRevisions" href="#"></a></li>
+                <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
             {{else}}
                 <li class="menu-create"><a id="ModalButtonCreate" href="#"></a></li>
                 <li class="menu-edit"><a id="ModalButtonEdit" href="#"></a></li>
@@ -154,8 +154,11 @@
                 {{end}}
                 <div>{{.DisplayComment}}</div>
             </div>
-            <script type="text/javascript" src="/lib/view.js"></script>
+            {{if eq .UserLoggedIn "Unauthorized"}}
+            <script type="text/javascript" src="/lib/edit-noperms.js"></script>
+            {{else}}
             <script type="text/javascript" src="/lib/edit.js"></script>
+            {{end}}
         </div>
         <hr>
         <div class="container">

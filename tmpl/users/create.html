@@ -20,8 +20,8 @@
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if .UserLoggedIn}}
-            {{else}}
                 <li class="menu-create"><a id="ModalButtonCreate" href="#"></a></li>
+            {{else}}
             {{end}}
             <li id="search">
                 <div class="search-container">
@@ -56,13 +56,13 @@
                     <button class="dropbtn setting">
                     </button>
                     <div class="dropdown-content">
-                        {{if eq .UserLoggedIn "Unauthorized"}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
-                        {{else}}
+                        {{if .UserLoggedIn}}
                             <a class="menu-user-add" href="/users/create">Create user</a>
                             <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
                             <a class="menu-category" href="/categories/create">Add category</a>
                             <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                        {{else}}
+                            <a class="menu-user-add" href="/users/create">Create user</a>
                         {{end}}
                     </div>
                 </div>
