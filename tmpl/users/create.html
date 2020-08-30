@@ -19,7 +19,7 @@
     <div class="navvy">
         <ul>
             <li class="menu-home"><a href="/"></a></li>
-            {{if eq .UserLoggedIn "Unauthorized"}}
+            {{if .UserLoggedIn}}
             {{else}}
                 <li class="menu-create"><a id="ModalButtonCreate" href="#"></a></li>
             {{end}}
