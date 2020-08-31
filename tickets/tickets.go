@@ -221,7 +221,7 @@ func TicketNewHandler(w http.ResponseWriter, r *http.Request) {
 	q := Queue{}
 	p := &Page{}
 	newQ := New{}
-
+	
 	username := pages.ReadCookie(w, r)
 
 	if r.Method == "POST" {

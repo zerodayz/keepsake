@@ -24,10 +24,10 @@
             {{end}}
             <li id="search">
                 <div class="search-container">
-                    <form action="/pages/search" method="GET">
-                        <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
+                    <form id="searchForm" action="/pages/search" method="GET">
+                        <input type="search" class="search-input" onkeyup="postQuery()" id="inputQuery" name="q" placeholder="Search"
                             value="">
-                        <button class="navbar-search-button" type="submit">Search</button>
+                        <button class="navbar-search-button" id="submit" type="submit">Search</button>
                     </form>
                 </div>
             </li>

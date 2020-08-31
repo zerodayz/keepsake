@@ -533,10 +533,10 @@ func SearchWikiPages(w http.ResponseWriter, r *http.Request, searchKey string) [
 	}
 	defer db.Close()
 	var wikiPages []WikiPage
-	var title, content, username, lastModifiedBy, internalId, lastModified, dateCreated string
+	var title, content, username, lastModifiedBy, tags, internalId, lastModified, dateCreated string
 
 	rows, err := db.Query(`
-	SELECT internal_id, title, content, created_by, COALESCE(last_modified_by, '') as last_modified_by, last_modified, date_created
+	SELECT internal_id, title, content, COALESCE(tags, '') as tags, created_by, COALESCE(last_modified_by, '') as last_modified_by, last_modified, date_created
 	FROM pages WHERE content REGEXP ? OR title REGEXP ?
 	`, searchKey, searchKey)
 
@@ -546,7 +546,7 @@ func SearchWikiPages(w http.ResponseWriter, r *http.Request, searchKey string) [
 	defer rows.Close()
 
 	for rows.Next() {
-		err := rows.Scan(&internalId, &title, &content, &username, &lastModifiedBy,
+		err := rows.Scan(&internalId, &title, &content, &tags, &username, &lastModifiedBy,
 			&lastModified, &dateCreated)
 		if err != nil {
 			log.Fatal(err)
@@ -555,7 +555,7 @@ func SearchWikiPages(w http.ResponseWriter, r *http.Request, searchKey string) [
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
 		}
-		wikiPages = append(wikiPages, WikiPage{InternalId: id, Title: title, Content: content, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username})
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, Title: title, Content: content, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username})
 	}
 	err = rows.Err()
 	if err != nil {
