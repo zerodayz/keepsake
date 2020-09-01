@@ -1,6 +1,6 @@
 [![Go Report](https://goreportcard.com/badge/github.com/zerodayz/gowiki)](https://goreportcard.com/badge/github.com/zerodayz/gowiki)
 
-# GoWiki
+# Keepsake
 Wiki written in Go
 
 # How to use
