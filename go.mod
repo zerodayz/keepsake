@@ -1,4 +1,4 @@
-module github.com/zerodayz/gowiki
+module github.com/zerodayz/keepsake
 
 go 1.14
 

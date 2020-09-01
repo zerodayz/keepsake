@@ -2,8 +2,8 @@ package categories
 
 import (
 	"bytes"
-	"github.com/zerodayz/gowiki/database"
-	"github.com/zerodayz/gowiki/pages"
+	"github.com/zerodayz/keepsake/database"
+	"github.com/zerodayz/keepsake/pages"
 	"html/template"
 	"net/http"
 	"time"

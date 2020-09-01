@@ -11,16 +11,16 @@ docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/
 
 ## Clone the gowiki into your own Filesystem
 ~~~
-git clone git@github.com:zerodayz/gowiki.git
+git clone git@github.com:zerodayz/keepsake.git
 ~~~
 OR use HTTPS
 ~~~
-https://github.com/zerodayz/gowiki.git
+https://github.com/zerodayz/keepsake.git
 ~~~
 
-### Change directory to gowiki
+### Change directory to keepsake
 ~~~
-cd gowiki
+cd keepsake
 ~~~
 
 ## Install TLS/SSL Cert
@@ -35,7 +35,7 @@ This will generate server.key and server.crt for your Keepsake server.
 go build wiki.go
 ~~~
 
-## Run gowiki
+## Run keepsake
 ~~~
 ./wiki
 ~~~

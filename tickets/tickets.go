@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/zerodayz/gowiki/pages"
+	"github.com/zerodayz/keepsake/pages"
 	"html/template"
 	"log"
 	"net/http"

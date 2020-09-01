@@ -2,8 +2,8 @@ package users
 
 import (
 	"encoding/base64"
-	"github.com/zerodayz/gowiki/database"
-	"github.com/zerodayz/gowiki/pages"
+	"github.com/zerodayz/keepsake/database"
+	"github.com/zerodayz/keepsake/pages"
 	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"log"

@@ -6,7 +6,7 @@ import (
 	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
-	"github.com/zerodayz/gowiki/database"
+	"github.com/zerodayz/keepsake/database"
 	"html/template"
 	"net/http"
 	"net/url"
