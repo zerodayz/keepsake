@@ -43,6 +43,18 @@ go build gowiki.go
 The default port the wiki is listening on is `443`.
 Navigate to `https://localhost` and enjoy.
 
+## Dashboard
+![Dashboard](screenshots/Dashboard.jpg)
+
+## Create new user
+![Create_User](screenshots/Create_User.jpg)
+
+## Login to the Wiki
+![Login](screenshots/Login.jpg)
+
+## Create new page
+![Create_Page](screenshots/Create_Page.jpg)
+
 ---
 This is free wiki written in Go, for personal development purposes. 
 
