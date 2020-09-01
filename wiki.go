@@ -7,12 +7,12 @@
 package main
 
 import (
+	"github.com/zerodayz/gowiki/categories"
+	"github.com/zerodayz/gowiki/comments"
 	"github.com/zerodayz/gowiki/database"
 	"github.com/zerodayz/gowiki/pages"
-	"github.com/zerodayz/gowiki/categories"
-	"github.com/zerodayz/gowiki/users"
-	"github.com/zerodayz/gowiki/comments"
 	"github.com/zerodayz/gowiki/tickets"
+	"github.com/zerodayz/gowiki/users"
 	"log"
 	"net/http"
 )

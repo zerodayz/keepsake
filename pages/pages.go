@@ -63,7 +63,7 @@ func LoadPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*d
 func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPageRevision, *database.WikiPage) {
 	wpr, wp := database.ShowRevisionPage(w, r, InternalId)
 	return &database.WikiPageRevision{Title: wpr.Title, WikiPageId: wpr.WikiPageId, Tags: wpr.Tags, RevisionId: wpr.RevisionId, Content: wpr.Content, InternalId: InternalId, CreatedBy: wpr.CreatedBy, LastModified: wpr.LastModified, LastModifiedBy: wpr.LastModifiedBy, DateCreated: wpr.DateCreated},
-	wp
+		wp
 }
 
 // Handlers
@@ -109,7 +109,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	for _, f := range comments {
 		bufComments.Write([]byte(`
 				<div class="found">Comment by ` + f.CreatedBy + ` on ` + f.DateCreated + `
-				<label for="search-content" class="search-collapsible">`+ f.Title +`</label>
+				<label for="search-content" class="search-collapsible">` + f.Title + `</label>
 				<div id="search-content" class="comment-content">
 				<pre><code>` + f.Body + `</code></pre></div></div>`))
 	}
@@ -150,7 +150,6 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
-
 
 	buf := bytes.NewBuffer(nil)
 	wikiPages := database.LoadPageLast25(w, r)
@@ -233,7 +232,7 @@ func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId str
 
 	wpr.UserLoggedIn = username
 	err = t.ExecuteTemplate(w, "revision.html",
-		struct{WikiPageRevision, WikiPage interface{}}{wpr, wp})
+		struct{ WikiPageRevision, WikiPage interface{} }{wpr, wp})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -417,7 +416,6 @@ func SaveHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		s.LastModified = date.Format("20060102150405")
 		s.LastModifiedBy = username
 
-
 		previewId := database.CreateEditPreviewPage(w, r, s)
 		http.Redirect(w, r, "/preview/view/"+strconv.Itoa(previewId), http.StatusFound)
 
@@ -456,12 +454,10 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	buf := bytes.NewBuffer(nil)
 
-
 	if len(searchKey) == 0 {
 		buf.Write([]byte(`
 					<div class="found">Please search for something else than empty.</div>`))
-	} else
-	{
+	} else {
 		buf.Write([]byte(`<div id="items"></div>`))
 		existingCategories := database.FetchCategories(w, r)
 		if len(existingCategories) == 0 {
@@ -501,7 +497,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
 						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a> ` +
 						` | Categories: ` + categories +
-					`<label for="search-content" class="search-collapsible">
+						`<label for="search-content" class="search-collapsible">
 					` + f.Title + `</label>
 					<div id="search-content" class="search-content">`))
 				}
@@ -576,11 +572,11 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 	for _, f := range wikiRevisionPages {
 		if len(wikiRevisionPages) == f.RevisionId {
 			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `" target="_parent">Latest version </a> | ` + `Last Modified by ` +
-				f.LastModifiedBy + ` on ` + f.LastModified ))
+				f.LastModifiedBy + ` on ` + f.LastModified))
 			buf.Write([]byte(`<br>`))
 		} else {
 			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `" target="_parent">Revision ` + strconv.Itoa(f.RevisionId) + `</a> | ` + `Last Modified by ` +
-				f.LastModifiedBy + ` on ` + f.LastModified ))
+				f.LastModifiedBy + ` on ` + f.LastModified))
 			buf.Write([]byte(`<br>`))
 		}
 	}
@@ -593,7 +589,6 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
 
 func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 	p := database.WikiPage{}
@@ -637,7 +632,6 @@ func RestoreHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 
 	database.RestorePage(w, r, id)
 }
-
 
 func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	err := templates.ExecuteTemplate(w, tmpl+".html", p)

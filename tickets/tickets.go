@@ -21,24 +21,24 @@ var (
 // Struct
 
 type Page struct {
-	DisplayBody		template.HTML
-	UserLoggedIn    string
+	DisplayBody  template.HTML
+	UserLoggedIn string
 }
 
 type New struct {
-	NowServing		int
-	InQueue			int
-	EstimatedTime	string
+	NowServing    int
+	InQueue       int
+	EstimatedTime string
 }
 
 type Queue struct {
-	InternalId	     int
-	Name         	 string
-	CompletedDate	 string
-	CreatedDate		 string
-	Question	 	 string
-	Assigned	 	 string
-	Status		 	 string
+	InternalId    int
+	Name          string
+	CompletedDate string
+	CreatedDate   string
+	Question      string
+	Assigned      string
+	Status        string
 }
 
 // DB
@@ -112,12 +112,12 @@ func ShowTicket(w http.ResponseWriter, r *http.Request, InternalId int) *Queue {
 	}
 	defer db.Close()
 	var (
-		name string
-		question string
-		dateCreated string
+		name          string
+		question      string
+		dateCreated   string
 		dateCompleted string
-		assigned string
-		status string
+		assigned      string
+		status        string
 	)
 	err = db.QueryRow(`
 		SELECT name, question, date_created, date_completed, COALESCE(assigned, '') as assigned, status FROM queue WHERE internal_id = ?
@@ -136,14 +136,14 @@ func FetchQueue(w http.ResponseWriter, r *http.Request) []Queue {
 	}
 	defer db.Close()
 	var (
-		queue []Queue
-		id int
-		name string
-		question string
-		dateCreated string
+		queue         []Queue
+		id            int
+		name          string
+		question      string
+		dateCreated   string
 		dateCompleted string
-		assigned string
-		status string
+		assigned      string
+		status        string
 	)
 	rows, err := db.Query("SELECT internal_id, name, question, date_created, date_completed, COALESCE(assigned, '') as assigned, status FROM queue ORDER BY internal_id")
 	if err != nil {
@@ -164,7 +164,6 @@ func FetchQueue(w http.ResponseWriter, r *http.Request) []Queue {
 	return queue
 }
 
-
 func FetchNewQueue(w http.ResponseWriter, r *http.Request) []Queue {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
@@ -172,14 +171,14 @@ func FetchNewQueue(w http.ResponseWriter, r *http.Request) []Queue {
 	}
 	defer db.Close()
 	var (
-		queue []Queue
-		id int
-		name string
-		question string
-		dateCreated string
+		queue         []Queue
+		id            int
+		name          string
+		question      string
+		dateCreated   string
 		dateCompleted string
-		assigned string
-		status string
+		assigned      string
+		status        string
 	)
 	rows, err := db.Query("SELECT internal_id, name, question, date_created, date_completed, COALESCE(assigned, '') as assigned, status FROM queue WHERE status = ? ORDER BY internal_id", "New")
 	if err != nil {
@@ -203,7 +202,7 @@ func FetchNewQueue(w http.ResponseWriter, r *http.Request) []Queue {
 // Func
 
 func secondsToDuration(inSeconds int) string {
-	hours   := inSeconds / 3600
+	hours := inSeconds / 3600
 	minutes := (inSeconds - (hours * 3600)) / 60
 	seconds := inSeconds - (hours * 3600) - (minutes * 60)
 	return fmt.Sprintf("%02d:%02d:%02d", hours, minutes, seconds)
@@ -221,7 +220,7 @@ func TicketNewHandler(w http.ResponseWriter, r *http.Request) {
 	q := Queue{}
 	p := &Page{}
 	newQ := New{}
-	
+
 	username := pages.ReadCookie(w, r)
 
 	if r.Method == "POST" {
@@ -242,7 +241,7 @@ func TicketNewHandler(w http.ResponseWriter, r *http.Request) {
 	newQ.NowServing = 0
 	var (
 		totalTimeInSecondsToResolution int
-		numOfCompletedTickets int
+		numOfCompletedTickets          int
 	)
 
 	for _, i := range queue {
@@ -256,27 +255,26 @@ func TicketNewHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			timeInSecondsToResolution := dateCompleted.Sub(dateCreated).Seconds()
-			numOfCompletedTickets =+ 1
-			totalTimeInSecondsToResolution =+ int(timeInSecondsToResolution)
+			numOfCompletedTickets = +1
+			totalTimeInSecondsToResolution = +int(timeInSecondsToResolution)
 		}
 		if i.Status == "Assigned" {
 			newQ.NowServing = i.InternalId
 		}
 	}
 	if numOfCompletedTickets != 0 {
-		newQ.EstimatedTime = secondsToDuration(totalTimeInSecondsToResolution/numOfCompletedTickets)
+		newQ.EstimatedTime = secondsToDuration(totalTimeInSecondsToResolution / numOfCompletedTickets)
 	} else {
 		newQ.EstimatedTime = "00:00:00"
 	}
 	newQ.InQueue = len(newQueue)
 	p.UserLoggedIn = username
 
-	err := t.ExecuteTemplate(w, "new.html", struct{Page, New interface{}}{p, newQ})
+	err := t.ExecuteTemplate(w, "new.html", struct{ Page, New interface{} }{p, newQ})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
 
 func TicketViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	t := template.Must(template.ParseFiles(templatePath + "view.html"))
@@ -297,7 +295,7 @@ func TicketViewHandler(w http.ResponseWriter, r *http.Request, InternalId string
 	}
 	p.UserLoggedIn = username
 
-	err = t.ExecuteTemplate(w, "view.html", struct{Page, Queue interface{}}{p, q})
+	err = t.ExecuteTemplate(w, "view.html", struct{ Page, Queue interface{} }{p, q})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -317,7 +315,6 @@ func TicketCompleteHandler(w http.ResponseWriter, r *http.Request, InternalId st
 
 	CompleteTicket(w, r, id)
 }
-
 
 func TicketAssignHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	username := pages.ReadCookie(w, r)
@@ -367,7 +364,6 @@ func TicketQueueHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
 
 var validPath = regexp.MustCompile("^/(ticket)/(view|new|queue|assign|complete)/([0-9]+)$")
 

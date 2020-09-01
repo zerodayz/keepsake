@@ -25,27 +25,27 @@ type Token struct {
 }
 
 type Tag struct {
-	InternalId	int
-	Name		string
-	DateCreated	string
+	InternalId  int
+	Name        string
+	DateCreated string
 	CreatedBy   string
 }
 type Comment struct {
-	InternalId     int
-	WikiPageId	   int
-	CreatedBy      string
-	DateCreated    string
-	Title          string
-	Body           string
+	InternalId  int
+	WikiPageId  int
+	CreatedBy   string
+	DateCreated string
+	Title       string
+	Body        string
 }
 
 type WikiPage struct {
 	InternalId     int
-	WikiPageId	   int
+	WikiPageId     int
 	CommentCount   int
 	Title          string
 	Content        string
-	Tags		   []string
+	Tags           []string
 	Username       string
 	DateCreated    string
 	LastModified   string
@@ -61,12 +61,12 @@ type WikiPage struct {
 
 type WikiPageRevision struct {
 	InternalId     int
-	WikiPageId	   int
+	WikiPageId     int
 	RevisionId     int
 	DateModified   string
 	Title          string
 	Content        string
-	Tags		   []string
+	Tags           []string
 	Username       string
 	DateCreated    string
 	LastModified   string
@@ -328,7 +328,7 @@ func CreateEditPreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) i
 	`)
 
 	var res sql.Result
-	res, err = PageInsert.Exec(s.Title, s.InternalId, s.Content,  strings.Join(s.Tags, ","), username, s.Deleted, s.LastModified, s.LastModifiedBy, dateCreated)
+	res, err = PageInsert.Exec(s.Title, s.InternalId, s.Content, strings.Join(s.Tags, ","), username, s.Deleted, s.LastModified, s.LastModifiedBy, dateCreated)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
@@ -565,7 +565,6 @@ func SearchWikiPages(w http.ResponseWriter, r *http.Request, searchKey string) [
 	return wikiPages
 }
 
-
 func DeletePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
@@ -608,7 +607,6 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 	}
 	wpr := &WikiPageRevision{Title: title, WikiPageId: wid, Content: content, Tags: strings.Split(tags, ","), RevisionId: id, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 
-
 	id, err = strconv.Atoi(wikiPageId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
@@ -619,7 +617,7 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-	wp:= &WikiPage{Title: title, Content: content, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	wp := &WikiPage{Title: title, Content: content, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 
 	return wpr, wp
 }
@@ -645,37 +643,37 @@ func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage 
 }
 
 func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
-		db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
-		if err != nil {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
 		log.Fatal(err)
 	}
-		defer db.Close()
-		var (
-		wikiPages []WikiPage
-		id int
-		title string
-		createdBy string
-		dateCreated string
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		id             int
+		title          string
+		createdBy      string
+		dateCreated    string
 		lastModifiedBy string
-		lastModified string
+		lastModified   string
 	)
-		rows, err := db.Query("SELECT internal_id, title, created_by, date_created, COALESCE(last_modified_by, '') as last_modified_by, last_modified FROM pages WHERE deleted = ? ORDER BY last_modified DESC, date_created DESC LIMIT 25 ", 0)
-		if err != nil {
+	rows, err := db.Query("SELECT internal_id, title, created_by, date_created, COALESCE(last_modified_by, '') as last_modified_by, last_modified FROM pages WHERE deleted = ? ORDER BY last_modified DESC, date_created DESC LIMIT 25 ", 0)
+	if err != nil {
 		log.Fatal(err)
 	}
-		defer rows.Close()
-		for rows.Next() {
+	defer rows.Close()
+	for rows.Next() {
 		err := rows.Scan(&id, &title, &createdBy, &dateCreated, &lastModifiedBy, &lastModified)
 		if err != nil {
-		log.Fatal(err)
-	}
+			log.Fatal(err)
+		}
 		wikiPages = append(wikiPages, WikiPage{InternalId: id, Title: title, DateCreated: dateCreated, CreatedBy: createdBy, LastModifiedBy: lastModifiedBy, LastModified: lastModified})
 	}
-		err = rows.Err()
-		if err != nil {
+	err = rows.Err()
+	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
-		return wikiPages
+	return wikiPages
 }
 
 func Top10Commented(w http.ResponseWriter, r *http.Request) []WikiPage {
@@ -685,12 +683,12 @@ func Top10Commented(w http.ResponseWriter, r *http.Request) []WikiPage {
 	}
 	defer db.Close()
 	var (
-		wikiPages []WikiPage
-		id int
+		wikiPages    []WikiPage
+		id           int
 		commentCount int
-		title string
-		createdBy string
-		dateCreated string
+		title        string
+		createdBy    string
+		dateCreated  string
 	)
 	rows, err := db.Query("SELECT comments.wiki_page_id, count(comments.wiki_page_id) as comment_count, pages.title, comments.created_by, max(comments.date_created) FROM comments, pages WHERE pages.internal_id = wiki_page_id AND deleted = ? GROUP BY comments.wiki_page_id ORDER BY max(comments.date_created) DESC limit 10", 0)
 	if err != nil {
@@ -729,7 +727,6 @@ func ShowPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) *Wi
 	return &WikiPage{Title: title, Content: content, Tags: tagsArray, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 }
 
-
 func FetchDeletedPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
@@ -738,8 +735,8 @@ func FetchDeletedPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 	defer db.Close()
 	var (
 		wikiPages []WikiPage
-		id int
-		title string
+		id        int
+		title     string
 	)
 	rows, err := db.Query("SELECT internal_id, title FROM pages WHERE deleted = ?", 1)
 	if err != nil {
@@ -774,10 +771,10 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 	`, internalId).Scan(&wikiPage)
 
 	var (
-		wikiPages []WikiPageRevision
-		revisionId int
-		title string
-		dateModified string
+		wikiPages      []WikiPageRevision
+		revisionId     int
+		title          string
+		dateModified   string
 		lastModifiedBy string
 	)
 	rows, err := db.Query(`SELECT internal_id, revision_id, title, date_modified, COALESCE(last_modified_by, '') as last_modified_by
@@ -787,7 +784,7 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&internalId, &revisionId, &title, &dateModified, &lastModifiedBy )
+		err := rows.Scan(&internalId, &revisionId, &title, &dateModified, &lastModifiedBy)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -808,11 +805,11 @@ func FetchComments(w http.ResponseWriter, r *http.Request, internalId int) []Com
 	defer db.Close()
 
 	var (
-		comment []Comment
-		createdBy string
+		comment     []Comment
+		createdBy   string
 		dateCreated string
-		title string
-		content string
+		title       string
+		content     string
 	)
 
 	rows, err := db.Query(`SELECT title, content, created_by, date_created FROM comments where wiki_page_id = ? ORDER BY date_created DESC`, internalId)
