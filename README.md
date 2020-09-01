@@ -32,7 +32,7 @@ This will generate server.key and server.crt for your Keepsake server.
 
 ## Build Keepsake server
 ~~~
-go build gowiki.go
+go build wiki.go
 ~~~
 
 ## Run gowiki
