@@ -9,7 +9,7 @@ Wiki written in Go
 docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/tcp -e MYSQL_ROOT_PASSWORD=roottoor -e MYSQL_DATABASE=gowiki -e MYSQL_USER=gowiki -e MYSQL_PASSWORD=gowiki55 -d mariadb:latest
 ```
 
-## Clone the gowiki into your own Filesystem
+## Clone the keepsake into your own Filesystem
 ~~~
 git clone git@github.com:zerodayz/keepsake.git
 ~~~
