@@ -476,15 +476,16 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			var categories string
 			var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
+			if len(f.Tags) == 1 {
+				categories = "None"
+			} else {
+				categories = strings.Join(f.Tags, " ")
+			}
 			if len(indexes) != 0 {
-				if len(f.Tags) == 1 {
-					categories = "None"
-				} else {
-					categories = strings.Join(f.Tags, ",")
-				}
 				var occurrences = strconv.Itoa(len(indexes))
 				if username == "Unauthorized" {
 					buf.Write([]byte(`
+					<div class="category `+ categories +`">
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
 						` | Categories: ` + categories +
@@ -493,6 +494,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<div id="search-content" class="search-content">`))
 				} else {
 					buf.Write([]byte(`
+					<div class="category `+ categories +`">
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
 						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a> ` +
@@ -524,24 +526,28 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					}
 					buf.Write([]byte(`</code></pre>`))
 				}
-				buf.Write([]byte(`</div></div>`))
+				buf.Write([]byte(`</div></div></div>`))
 				buf.WriteByte('\n')
 			} else {
 				if username == "Unauthorized" {
 					buf.Write([]byte(`
+					<div class="category `+ categories +`">
 					<div class="found">Matched title of the wiki page.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
+						` | Categories: ` + categories +
 						`<label for="search-content" class="search-no-collapsible">
 					` + f.Title + `</label>`))
 				} else {
 					buf.Write([]byte(`
+					<div class="category `+ categories +`">
 					<div class="found">Matched title of the wiki page.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
-						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a>
-					<label for="search-content" class="search-no-collapsible">
+						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a> ` +
+					` | Categories: ` + categories +
+					`<label for="search-content" class="search-no-collapsible">
 					` + f.Title + `</label>`))
 				}
-				buf.Write([]byte(`</div>`))
+				buf.Write([]byte(`</div></div>`))
 				buf.WriteByte('\n')
 			}
 		}
