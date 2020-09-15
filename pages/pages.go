@@ -173,8 +173,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
 						`</div>`))
 				} else {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
-						` | Not yet modified.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> Created on ` + f.DateCreated + ` by ` + f.CreatedBy + `</div>`))
 				}
 			} else {
 				dateModified, err := time.Parse("2006-01-02 15:04:05", f.LastModified)
