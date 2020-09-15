@@ -87,7 +87,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
-				highlighting.WithStyle("github"),
+				highlighting.WithStyle("solarized-dark256"),
 			),
 		),
 		goldmark.WithParserOptions(
@@ -130,7 +130,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	bufComment := bytes.NewBuffer(nil)
 	wikiPagesTop10Commented := database.Top10Commented(w, r)
-	bufComment.Write([]byte(`<div class="header-text"><h1>Keepsake Last 10 Discussed</h1></div>`))
+	bufComment.Write([]byte(`<div class="header-text"><h1>Last 10 Discussed</h1></div>`))
 	if len(wikiPagesTop10Commented) == 0 {
 		bufComment.Write([]byte(`There are no discussions.`))
 	} else {
@@ -144,16 +144,16 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 			if dateCreated.After(dateYesterday) {
-				bufComment.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/comment-24px.svg" alt="New comment!"/> | Comments: ` + strconv.Itoa(len(comments)) + ` | Last commented on ` + f.DateCreated + ` by ` + f.CreatedBy + `</div>`))
+				bufComment.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/comment-24px.svg" alt="New comment!"/> | Comments: ` + strconv.Itoa(len(comments)) + ` | Last commented on ` + f.DateCreated + ` by ` + f.CreatedBy + `</div>`))
 			} else {
-				bufComment.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Comments: ` + strconv.Itoa(len(comments)) + ` | Commented on ` + f.DateCreated + ` by ` + f.CreatedBy + `</div>`))
+				bufComment.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> Comments: ` + strconv.Itoa(len(comments)) + ` | Commented on ` + f.DateCreated + ` by ` + f.CreatedBy + `</div>`))
 			}
 		}
 	}
 
 	buf := bytes.NewBuffer(nil)
 	wikiPages := database.LoadPageLast25(w, r)
-	buf.Write([]byte(`<div class="header-text-n"><h1>Keepsake Last 25 Updated</h1></div>`))
+	buf.Write([]byte(`<div class="header-text-n"><h1>Last 25 Updated</h1></div>`))
 	if len(wikiPages) == 0 {
 		buf.Write([]byte(`There are no wiki pages.`))
 	} else {
@@ -167,10 +167,10 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if f.LastModifiedBy == "" {
 				if dateCreated.After(dateYesterday) {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
 						`</div>`))
 				} else {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
 						` | Not yet modified.</div>`))
 				}
 			} else {
@@ -179,11 +179,11 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 					http.Error(w, err.Error(), http.StatusInternalServerError)
 				}
 				if dateCreated.After(dateYesterday) && dateModified.After(dateYesterday) {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
 				} else if dateModified.After(dateYesterday) {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
 				} else {
-					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+					buf.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
 				}
 			}
 		}
@@ -215,7 +215,7 @@ func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId str
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
-				highlighting.WithStyle("github"),
+				highlighting.WithStyle("solarized-dark256"),
 			),
 		),
 		goldmark.WithParserOptions(
@@ -367,7 +367,7 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
-				highlighting.WithStyle("github"),
+				highlighting.WithStyle("solarized-dark256"),
 			),
 		),
 		goldmark.WithParserOptions(
@@ -496,8 +496,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`
 					<div class="category `+ categories +`">
 					<div class="found">Found ` + occurrences + ` occurrences.
-					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
-						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a> ` +
+					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a>` +
 						` | Categories: ` + categories +
 						`<label for="search-content" class="search-collapsible">
 					` + f.Title + `</label>
@@ -541,8 +540,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`
 					<div class="category `+ categories +`">
 					<div class="found">Matched title of the wiki page.
-					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
-						`<a href="/pages/edit/` + strconv.Itoa(f.InternalId) + `">Edit Page</a> ` +
+					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
 					` | Categories: ` + categories +
 					`<label for="search-content" class="search-no-collapsible">
 					` + f.Title + `</label>`))

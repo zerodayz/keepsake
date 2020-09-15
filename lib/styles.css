@@ -62,13 +62,26 @@ input[type="submit"] {
 
 label,
 select,
-button,
-input[type="button"],
 input[type="reset"],
-input[type="submit"],
 input[type="radio"],
 input[type="checkbox"] {
-	cursor: pointer
+	cursor: pointer;
+	color: #8a8a8a;
+}
+
+
+button,
+input[type="button"],
+input[type="submit"] {
+	cursor: pointer;
+	background-color: #1c1c1c; /* Green */
+	border: none;
+	color: #8a8a8a;
+	padding: 6px 6px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
 }
 
 input[type="search"] {
@@ -95,18 +108,18 @@ body {
 	line-height: 1.52947;
 	letter-spacing: -0.021em;
 	font-weight: 400;
-	color: #333333;
-	background-color: #f9fafa;
+	color: #D4D4D4;
+	background-color: #121212; // switch #f9fafa
 }
 
 a {
-	color: #007031;
+	color: #417393; // switch #007031
 	text-decoration: none
 }
 
 a:hover,
 a:focus {
-	color: #007031;
+	color: #417393; // switch #007031
 	text-decoration: underline
 }
 
@@ -267,7 +280,7 @@ h6 {
 	font-family: inherit;
 	font-weight: inherit;
 	line-height: 20px;
-	color: #333333;
+	color: #BEBEBE; // switch #333333
 	text-rendering: optimizelegibility;
 }
 
@@ -506,39 +519,41 @@ address {
 }
 .checkboxes {
 	color: #333333;
-	border: 1px solid #e6e6e6;
 	border-radius: 6px;
 	padding: 0.35294rem 0.94118rem;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
-	background-color: #f4f4f4;
+	background-color: #272727;
 }
 
 .categories {
-	color: #333333;
-	border: 1px solid #e6e6e6;
+	color: #417393;
 	display: inline-block;
 	border-radius: 6px;
 	padding: 3px 3px;
 	margin: 3px;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
-	background-color: #f4f4f4;
+	background-color: #272727;
 }
 
 .dashboard {
-	color: #333333;
+	color: #939393; // switch #333333
 	border: 1px solid #e6e6e6;
 	border-radius: 6px;
 	padding: 0.35294rem 0.94118rem;
 	margin-top: 10px;
 	margin-bottom: 10px;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
-	background-color: #fff;
+	background-color: #272727; // switch #fff
+}
+
+.dashboard a {
+	text-decoration: none;
 }
 
 .dashboard:hover {
-	background-color: rgb(248, 248, 248);
+	background-color: #3D3D3D; // switch rgb(248, 248, 248)
 }
 
 
@@ -552,7 +567,7 @@ address {
 }
 
 .search-no-collapsible {
-	color: #007031;
+	color: #417393;
 	cursor: pointer;
 	padding: 18px;
 	border: none;
@@ -566,7 +581,7 @@ address {
 }
 
 .comment-collapsible {
-	color: #007031;
+	color: #417393;
 	cursor: pointer;
 	padding: 18px;
 	border: none;
@@ -580,9 +595,8 @@ address {
 }
 
 .search-collapsible {
-	color: #007031;
+	color: #417393;
 	cursor: pointer;
-	padding: 18px;
 	border: none;
 	text-align: left;
 	outline: none;
@@ -667,24 +681,22 @@ address {
 code {
 	padding: 0;
 	word-wrap: break-word;
-  color: #333333;
-  border: 1px solid #e6e6e6;
+  color: #8a8a8a;
   border-radius: 6px;
   padding: 0.35294rem 0.94118rem;
   font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
 	white-space: nowrap;
-	background-color: #f4f4f4;
+	background-color: #1c1c1c;
 }
 
 pre {
 	padding: 0;
-  color: #333333;
-  border: 1px solid #e6e6e6;
+  color: #8a8a8a;
   border-radius: 6px;
 	white-space: pre-wrap;
   padding: 0.35294rem 0.94118rem;
   font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
-	background-color: #f4f4f4;
+	background-color: #1c1c1c;
 }
 
 pre.prettyprint {
@@ -738,19 +750,18 @@ label {
 }
 
 .found {
-	  color: #333333;
-	  border: 1px solid #e6e6e6;
+	  color: #939393;
 	  border-radius: 6px;
 	  padding: 0.35294rem 0.94118rem;
 	margin-top: 20px;
 	margin-bottom: 20px;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
-		background-color: #fff;
+		background-color: #272727;
 }
 
 
 .found:hover {
-	background-color: rgb(248, 248, 248);
+	background-color: #3D3D3D;
 }
 
 .loginbdy {
@@ -764,14 +775,14 @@ label {
 
 div.login {
 	width: 300px;
-    height: 220px;
+    height: 240px;
     position: fixed;
     margin-left: -150px;
     margin-top: -150px;
     top: 77%;
 	left: 20%;
-	color: #d9d9d9;
-	background-color: #353535;
+	color: #8a8a8a;
+	background-color: #272727;
 	padding: 0.35294rem 0.94118rem;
 	border-radius: 6px;
 	font-family:  -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
@@ -783,11 +794,11 @@ textarea,
 .uneditable-input {
 	box-sizing: border-box;
 	font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
-	color: #333333;
-	border: 1px solid #e6e6e6;
+	color: #8a8a8a;
+	border: 1px solid #1c1c1c;
 	border-radius: 6px;
 	padding: 0.94118rem 0.94118rem;
-	background-color: #f4f4f4;
+	background-color: #1c1c1c;
 	display: inline-block;
 	height: 20px;
 	margin: 10px 5px;
@@ -811,11 +822,11 @@ input[type="url"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input {
-	color: #333333;
-	border: 1px solid #e6e6e6;
+	color: #8a8a8a;
+	border: 1px solid #1c1c1c;
 	padding: 0.94118rem 0.94118rem;
 	border-radius: 6px;
-	background-color: #f9fafa;
+	background-color: #1c1c1c;
 	display: inline-block;
 	height: 20px;
 	font-size: 18px;
@@ -927,7 +938,7 @@ legend+.control-group {
 	margin: 0;
 	padding: 0;
 	overflow: hidden;
-	background-color: #353535;
+	background-color: #272727; // switch #333333
 }
   
 .navvy>ul>li {
@@ -1019,7 +1030,7 @@ legend+.control-group {
 .number {
 	margin: 0;
 	font-size: 52px;
-	color: #007031;
+	color: #417393;
 	text-rendering: optimizelegibility;
 }
 
@@ -1090,11 +1101,11 @@ legend+.control-group {
 
 .navvy
 input[type="search"] {
-	color: #333333;
-	border: 1px solid #e6e6e6;
+	color: #8a8a8a;
+	border: 1px solid #1c1c1c;
 	padding: 0.35294rem 0.94118rem;
 	border-radius: 3px;
-	background-color: #f9fafa;
+	background-color: #1c1c1c;
 	display: inline-block;
 	height: 20px;
 	font-size: 18px;
@@ -1154,7 +1165,8 @@ div.header-text-n {
 
   /* Modal Content/Box */
   .modal-content {
-	background-color: #fefefe;
+	background-color: #121212;
+	  border-radius: 6px;
 	margin: 15% auto; /* 15% from the top and centered */
 	padding: 20px;
 	box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
@@ -1162,8 +1174,9 @@ div.header-text-n {
   }
 
   .modal-content-create-page {
-	  background-color: #fefefe;
+	  background-color: #121212;
 	  padding: 20px;
+	  border-radius: 6px;
 	  margin: 5% auto; /* 15% from the top and centered */
 	  box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
 	  width: 80%; /* Could be more or less, depending on screen size */
@@ -1171,8 +1184,9 @@ div.header-text-n {
   }
 
 	.modal-content-history-page {
-		background-color: #fefefe;
+		background-color: #121212;
 		padding: 20px;
+		border-radius: 6px;
 		margin: 5% auto; /* 15% from the top and centered */
 		box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
 		width: 600px; /* Could be more or less, depending on screen size */
