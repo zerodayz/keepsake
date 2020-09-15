@@ -25,6 +25,8 @@ func main() {
 	database.InitializeDatabase()
 
 	http.Handle("/lib/", http.StripPrefix("/lib/", http.FileServer(http.Dir("lib"))))
+	http.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir("uploads"))))
+
 	http.HandleFunc("/revisions/view/", pages.MakeHandler(pages.RevisionsViewHandler))
 	http.HandleFunc("/revisions/rollback/", pages.MakeHandler(pages.RevisionRollbackHandler))
 	http.HandleFunc("/preview/view/", pages.MakeHandler(pages.PreviewHandler))
@@ -35,6 +37,7 @@ func main() {
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
 	http.HandleFunc("/pages/delete/", pages.MakeHandler(pages.DeleteHandler))
 	http.HandleFunc("/pages/create/", pages.CreateHandler)
+	http.HandleFunc("/pages/upload/", pages.UploadFile)
 	http.HandleFunc("/pages/save/", pages.MakeHandler(pages.SaveHandler))
 	http.HandleFunc("/pages/trash/", pages.RecycleBinHandler)
 	http.HandleFunc("/pages/restore/", pages.MakeHandler(pages.RestoreHandler))

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ .Name }}</title>
+    <link type="text/css" rel="stylesheet" href="/lib/styles.css">
+    <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <meta charset='utf-8'>
+</head>
+
+<body style="background-color: #121212">
+<div class="container">
+    <h1>Successfully Uploaded File</h1>
+    To use the file, please use following syntax:
+    <br><br>
+    <h2>For an image:</h2>
+    <code>![This is example picture](/{{ .Name }})</code>
+    <br>
+    <h2>Clickable link</h2>
+    <code>[Please see the example script](/{{ .Name }})</code>
+</div>
+</body>
+
+</html>

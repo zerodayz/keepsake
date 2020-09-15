@@ -19,6 +19,10 @@ type User struct {
 	Errors       map[string]string
 }
 
+type File struct {
+	Name	string
+}
+
 type Token struct {
 	Token   string
 	Expires string

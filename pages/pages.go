@@ -2,12 +2,15 @@ package pages
 
 import (
 	"bytes"
+	"fmt"
 	"github.com/yuin/goldmark"
 	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/zerodayz/keepsake/database"
 	"html/template"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -382,6 +385,35 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 
 	s.UserLoggedIn = username
 	err = t.ExecuteTemplate(w, "preview.html", s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func UploadFile(w http.ResponseWriter, r *http.Request) {
+	t := template.Must(template.ParseFiles(templatePath + "upload.html"))
+	f := database.File{}
+
+	r.ParseMultipartForm(10 << 20)
+	file, _, err := r.FormFile("uploadMyFile")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	defer file.Close()
+	tempFile, err := ioutil.TempFile("uploads", "upload-*")
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer tempFile.Close()
+	fileBytes, err := ioutil.ReadAll(file)
+	if err != nil {
+		log.Println(err)
+	}
+	tempFile.Write(fileBytes)
+	f.Name = tempFile.Name()
+
+	err = t.ExecuteTemplate(w, "upload.html", f)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
