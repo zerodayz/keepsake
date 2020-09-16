@@ -112,6 +112,51 @@ body {
 	background-color: #121212; // switch #f9fafa
 }
 
+
+table {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 100%;
+}
+
+table td, table th {
+	word-break: break-all;
+	border-top: 9px solid #121212;
+	border-bottom: 9px solid #121212;
+	padding: 8px;
+}
+
+table tr:nth-child(even){background-color: #272727;}
+
+table tr:nth-child(odd){background-color: #3D3D3D;}
+
+table thead tr th:first-child,
+table tbody tr td:first-child {
+	width: 4em;
+	text-align: center;
+	min-width: 4em;
+	max-width: 4em;
+	word-break: break-all;
+}
+
+table thead tr th:nth-child(2),
+table tbody tr td:nth-child(2) {
+	width: 5em;
+	text-align: center;
+	min-width: 5em;
+	max-width: 5em;
+	word-break: break-all;
+}
+
+table th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #272727;
+	color: white;
+}
+
 a {
 	color: #417393; // switch #007031
 	text-decoration: none
@@ -556,6 +601,66 @@ address {
 	background-color: #3D3D3D; // switch rgb(248, 248, 248)
 }
 
+.dashboard table,
+.create-user table,
+.login table{
+	font-family: inherit;
+	width: inherit;
+	border-collapse: inherit;
+	table-layout: inherit;
+}
+
+.dashboard table td, table th,
+.create-user table td, table th,
+.login table td, table th{
+	border-top: inherit;
+	border-bottom: inherit;
+	padding: inherit;
+}
+
+.dashboard table tr:nth-child(even),
+.create-user table tr:nth-child(even),
+.login table tr:nth-child(even) {background-color: inherit;}
+
+.dashboard table tr:nth-child(odd),
+.create-user table tr:nth-child(odd),
+.login table tr:nth-child(odd) {background-color: inherit;}
+
+.dashboard table thead tr th:first-child,
+.dashboard table tbody tr td:first-child,
+.create-user table thead tr th:first-child,
+.create-user table tbody tr td:first-child,
+.login table thead tr th:first-child,
+.login table tbody tr td:first-child {
+	width: inherit;
+	text-align: inherit;
+	min-width: inherit;
+	max-width: inherit;
+	word-break: inherit;
+}
+
+.dashboard table thead tr th:nth-child(2),
+.dashboard table tbody tr td:nth-child(2),
+.create-user table thead tr th:nth-child(2),
+.create-user table tbody tr td:nth-child(2),
+.login table thead tr th:nth-child(2),
+.login table tbody tr td:nth-child(2){
+	width: inherit;
+	text-align: inherit;
+	min-width: inherit;
+	max-width: inherit;
+	word-break: inherit;
+}
+
+.dashboard table th,
+.create-user table th,
+.login table th{
+	padding-top: inherit;
+	padding-bottom: inherit;
+	text-align: inherit;
+	background-color: inherit;
+	color: inherit;
+}
 
 .dashboard-title {
 	text-align: left;

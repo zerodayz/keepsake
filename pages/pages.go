@@ -618,6 +618,9 @@ func RevisionsHandler(w http.ResponseWriter, r *http.Request, InternalId string)
 
 	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(wikiRevisionPages)) + ` revision(s) available.</div>`))
 	for _, f := range wikiRevisionPages {
+		if len(f.Title) == 0 {
+			f.Title = "Missing title"
+		}
 		if len(wikiRevisionPages) == f.RevisionId {
 			buf.Write([]byte(`<b>` + f.Title + `</b><br><a href="/revisions/view/` + strconv.Itoa(f.InternalId) + `" target="_parent">Latest version </a> | ` + `Last Modified by ` +
 				f.LastModifiedBy + ` on ` + f.LastModified))

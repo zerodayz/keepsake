@@ -2,6 +2,7 @@ data/*
 data/pages/*
 data/mysql/*
 wiki
+uploads
 server.key
 server.crt
 .DS_Store
