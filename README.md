@@ -49,11 +49,22 @@ Navigate to `https://localhost` and enjoy.
 ## Create new user
 ![Create_User](screenshots/Create_User.jpg)
 
+![Create_User_2](screenshots/Create_User_2.jpg)
+
 ## Login to the Wiki
 ![Login](screenshots/Login.jpg)
 
+## Create new category
+![Create_Category](screenshots/Create_Category.jpg)
+
+![Create_Category_2](screenshots/Create_Category_2.jpg)
+
 ## Create new page
 ![Create_Page](screenshots/Create_Page.jpg)
+
+## Dashboard
+![Dashboard_2](screenshots/Dashboard_2.jpg)
+
 
 ---
 This is free wiki written in Go, for personal development purposes. 
