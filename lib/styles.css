@@ -1139,6 +1139,50 @@ input[type="search"] {
 	background-color: #626262;
 }
 
+#table-css {
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	border-collapse: collapse;
+	table-layout: fixed;
+	width: 100%;
+}
+
+#table-css td, #table-css th {
+	word-break: break-all;
+	border-top: 9px solid #121212;
+	border-bottom: 9px solid #121212;
+	padding: 8px;
+}
+
+#table-css tr:nth-child(even){background-color: #272727;}
+
+#table-css tr:nth-child(odd){background-color: #3D3D3D;}
+
+#table-css thead tr th:first-child,
+#table-css tbody tr td:first-child {
+	width: 4em;
+	text-align: center;
+	min-width: 4em;
+	max-width: 4em;
+	word-break: break-all;
+}
+
+#table-css thead tr th:nth-child(2),
+#table-css tbody tr td:nth-child(2) {
+	width: 5em;
+	text-align: center;
+	min-width: 5em;
+	max-width: 5em;
+	word-break: break-all;
+}
+
+#table-css th {
+	padding-top: 12px;
+	padding-bottom: 12px;
+	text-align: left;
+	background-color: #272727;
+	color: white;
+}
+
 div.header-text {
 	padding-top: 75px;
 	padding-bottom: 23px;

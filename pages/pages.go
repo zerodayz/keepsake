@@ -7,6 +7,7 @@ import (
 	highlighting "github.com/yuin/goldmark-highlighting"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 	"github.com/zerodayz/keepsake/database"
 	"html/template"
 	"io/ioutil"
@@ -87,6 +88,10 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		return
 	}
 	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			html.WithXHTML(),
+			html.WithUnsafe(),
+		),
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
@@ -214,6 +219,10 @@ func RevisionsViewHandler(w http.ResponseWriter, r *http.Request, InternalId str
 	wpr, wp := LoadRevisionPage(w, r, id)
 
 	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			html.WithXHTML(),
+			html.WithUnsafe(),
+		),
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
@@ -366,6 +375,10 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	}
 
 	md := goldmark.New(
+		goldmark.WithRendererOptions(
+			html.WithXHTML(),
+			html.WithUnsafe(),
+		),
 		goldmark.WithExtensions(
 			extension.GFM,
 			highlighting.NewHighlighting(
