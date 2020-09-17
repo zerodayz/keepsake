@@ -1,7 +1,12 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zerodayz/keepsake)](https://goreportcard.com/report/github.com/zerodayz/keepsake)
 
 # Keepsake
-Wiki written in Go
+This is Open Source Wiki written in Go, aims for simplicity over complexity. It is actively maintained and serves as Go development project.
+
+Initial Wiki started off the Go Learning project (Web Go Application)[https://golang.org/doc/articles/wiki/]
+Insipiration of some features from (jmoiron's gowiki)[https://github.com/jmoiron/gowiki] project last updated 4 years ago and from (ieyasu's go-bwiki)[https://github.com/ieyasu/go-bwiki] which had updates couple of months back.
+
+The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
 
 # How to use
 ## Run the DB container
@@ -64,13 +69,4 @@ Navigate to `https://localhost` and enjoy.
 
 ## Dashboard
 ![Dashboard_2](screenshots/Dashboard_2.jpg)
-
-
----
-This is free wiki written in Go, for personal development purposes. 
-
-Initial Wiki started off the Go Learning project (Web Go Application)[https://golang.org/doc/articles/wiki/]
-Insipiration of some features from (jmoiron's gowiki)[https://github.com/jmoiron/gowiki] project last updated 4 years ago and from (ieyasu's go-bwiki)[https://github.com/ieyasu/go-bwiki] which had updates couple of months back.
-
-The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
 
