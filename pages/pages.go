@@ -529,7 +529,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 				var occurrences = strconv.Itoa(len(indexes))
 				if username == "Unauthorized" {
 					buf.Write([]byte(`
-					<div class="category `+ categories +`">
+					<div class="category ` + categories + `">
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
 						` | Categories: ` + categories +
@@ -538,7 +538,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<div id="search-content" class="search-content">`))
 				} else {
 					buf.Write([]byte(`
-					<div class="category `+ categories +`">
+					<div class="category ` + categories + `">
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a>` +
 						` | Categories: ` + categories +
@@ -574,7 +574,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			} else {
 				if username == "Unauthorized" {
 					buf.Write([]byte(`
-					<div class="category `+ categories +`">
+					<div class="category ` + categories + `">
 					<div class="found">Matched title of the wiki page.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
 						` | Categories: ` + categories +
@@ -582,11 +582,11 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					` + f.Title + `</label>`))
 				} else {
 					buf.Write([]byte(`
-					<div class="category `+ categories +`">
+					<div class="category ` + categories + `">
 					<div class="found">Matched title of the wiki page.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
-					` | Categories: ` + categories +
-					`<label for="search-content" class="search-no-collapsible">
+						` | Categories: ` + categories +
+						`<label for="search-content" class="search-no-collapsible">
 					` + f.Title + `</label>`))
 				}
 				buf.Write([]byte(`</div></div>`))

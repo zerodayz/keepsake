@@ -20,7 +20,7 @@ type User struct {
 }
 
 type File struct {
-	Name	string
+	Name string
 }
 
 type Token struct {
