@@ -655,7 +655,7 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 
 	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(wikiPages)) + ` files in Recycle Bin.</div>`))
 	for _, f := range wikiPages {
-		buf.Write([]byte(`<div class="dashboard"> <a href="/pages/view/` + strconv.Itoa(f.InternalId) + `" class="dashboard-title-recycle-bin"> `+ f.Title + `</a><br> <a class="link-recycle-bin" href="/pages/restore/` + strconv.Itoa(f.InternalId) + `">Remove from Bin</a></div>`))
+		buf.Write([]byte(`<div class="dashboard"> <a href="/pages/view/` + strconv.Itoa(f.InternalId) + `" class="dashboard-title-recycle-bin"> ` + f.Title + `</a><br> <a class="link-recycle-bin" href="/pages/restore/` + strconv.Itoa(f.InternalId) + `">Remove from Bin</a></div>`))
 	}
 
 	p.DisplayBody = template.HTML(buf.String())
