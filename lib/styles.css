@@ -671,6 +671,26 @@ address {
 	letter-spacing: .015em;
 }
 
+.link-recycle-bin {
+	color: #8a8a8a;
+}
+
+.link-recycle-bin:hover {
+	color: #417393;
+	text-decoration: underline;
+}
+
+.dashboard-title-recycle-bin {
+	text-align: left;
+	outline: none;
+	color: #417393;
+	font-size: 24px;
+	line-height: 1.20849;
+	font-weight: 500;
+	letter-spacing: .015em;
+}
+
+
 .search-no-collapsible {
 	color: #417393;
 	cursor: pointer;

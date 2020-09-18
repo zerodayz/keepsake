@@ -56,7 +56,7 @@ func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 
 func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
 	s := database.ShowPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, Deleted: s.Deleted, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
 }
 
 func LoadPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
@@ -655,10 +655,7 @@ func RecycleBinHandler(w http.ResponseWriter, r *http.Request) {
 
 	buf.Write([]byte(`<div>There are ` + strconv.Itoa(len(wikiPages)) + ` files in Recycle Bin.</div>`))
 	for _, f := range wikiPages {
-		buf.Write([]byte(`<b>` + f.Title + ` </b><br>
-			<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` + ` | ` +
-			`<a href="/pages/restore/` + strconv.Itoa(f.InternalId) + `">Remove from Bin</a>`))
-		buf.Write([]byte(`<br>`))
+		buf.Write([]byte(`<div class="dashboard"> <a href="/pages/view/` + strconv.Itoa(f.InternalId) + `" class="dashboard-title-recycle-bin"> `+ f.Title + `</a><br> <a class="link-recycle-bin" href="/pages/restore/` + strconv.Itoa(f.InternalId) + `">Remove from Bin</a></div>`))
 	}
 
 	p.DisplayBody = template.HTML(buf.String())

@@ -632,18 +632,19 @@ func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage 
 		log.Fatal(err)
 	}
 	defer db.Close()
-	var title, content, tags, dateCreated, lastModified, lastModifiedBy, username string
+	var title, content, tags, deleted, dateCreated, lastModified, lastModifiedBy, username string
 
 	err = db.QueryRow(`
-	SELECT title, content, COALESCE(tags, '') as tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
-	`, InternalId).Scan(&title, &content, &tags, &dateCreated, &lastModified, &lastModifiedBy, &username)
+	SELECT title, content, COALESCE(tags, '') as tags, deleted, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages WHERE internal_id = ?
+	`, InternalId).Scan(&title, &content, &tags, &deleted, &dateCreated, &lastModified, &lastModifiedBy, &username)
 	if len(tags) == 0 {
 		tags = "None"
 	}
+	deletedString, _ := strconv.Atoi(deleted)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
-	return &WikiPage{Title: title, Content: content, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	return &WikiPage{Title: title, Content: content, Deleted: deletedString, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
 }
 
 func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {

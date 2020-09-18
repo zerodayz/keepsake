@@ -97,7 +97,7 @@
         <div class="clearfix"></div>
         <div class="container">
             <div class="header-text">
-                <h1>{{.Title}}</h1>
+                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}}</h1>
             </div>
             <div>
                 Created by {{.CreatedBy}} on {{.DateCreated}} UTC
