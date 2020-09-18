@@ -40,7 +40,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 
 	bufCategories := bytes.NewBuffer(nil)
 	existingCategories := database.FetchCategories(w, r)
-	bufCategories.Write([]byte(`<div class="header-text"><h1>Create Keepsake Category</h1></div>`))
+	bufCategories.Write([]byte(`<div class="header-text"><h1>Create Category</h1></div>`))
 	if len(existingCategories) == 0 {
 		bufCategories.Write([]byte(`There are no categories yet.`))
 	} else {

@@ -138,7 +138,21 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	bufComment := bytes.NewBuffer(nil)
 	wikiPagesTop10Commented := database.Top10Commented(w, r)
-	bufComment.Write([]byte(`<div class="header-text"><h1>Last 10 Discussed</h1></div>`))
+	bufComment.Write([]byte(`<div class="container-d">
+			<div class="header-text left-d"><h1>Last 10 Discussed</h1></div>
+    <form id="searchForm" action="/pages/search" method="GET">
+        <div class="control-group search-container right-d">
+            <div class="controls">
+              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="navbar-search-button" id="submit" type="submit" value="Search">
+                </div>
+            </div>
+        </div>
+    </form>
+			</div>`))
 	if len(wikiPagesTop10Commented) == 0 {
 		bufComment.Write([]byte(`There are no discussions.`))
 	} else {
@@ -373,6 +387,7 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
 		return
 	}
+
 
 	md := goldmark.New(
 		goldmark.WithRendererOptions(

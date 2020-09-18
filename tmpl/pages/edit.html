@@ -2,16 +2,77 @@
 <html>
 
 <head>
-    <title>{{.Title}}</title>
+    <title>Editing {{.Title}}</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
     <meta charset='utf-8'>
 </head>
 
-<body style="background-color: #121212">
+<body>
+<div id="Modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h1>Are you sure ?</h1>
+        <br>
+        <p>Do you really want to delete the page {{.Title}}</p>
+        <a href="/pages/delete/{{.InternalId}}">Yes!</a> Please delete the page.<br>
+    </div>
+</div>
+<div id="ModalHistory" class="modal">
+    <div class="modal-content-history-page">
+        <span class="close-history">&times;</span>
+        <iframe style="border: 0px; width: calc(100% - 20px);" height="600" src="/pages/revisions/{{.InternalId}}"></iframe>
+    </div>
+</div>
+<div class="navvy">
+    <ul>
+        <li class="menu-home"><a href="/"></a></li>
+        {{if eq .UserLoggedIn "Unauthorized"}}
+            <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
+        {{else}}
+            <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
+            <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
+        {{end}}
+        <li>
+            {{if eq .UserLoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn user"></button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+            {{else}}
+                <div class="dropdown">
+                    <button class="dropbtn user"></button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/logout">Logout</a>
+                    </div>
+                </div>
+            {{end}}
+        </li>
+        <li>
+            <div class="dropdown">
+                <button class="dropbtn setting">
+                </button>
+                <div class="dropdown-content">
+                    {{if eq .UserLoggedIn "Unauthorized"}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                    {{else}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
+                        <a class="menu-category" href="/categories/create">Add category</a>
+                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                    {{end}}
+                </div>
+            </div>
+        </li>
+        <li class="menu-help"><a href="/ticket/new"></a></li>
+    </ul>
+</div>
+<div class="clearfix"></div>
 <div class="container">
     <script type="text/javascript" src="/lib/edit.js"></script>
-    <h1>Edit Wiki Page</h1>
+    <div class="header-text"><h1>Editing {{.Title}}</h1></div>
     <form action="/pages/save/{{.InternalId}}" method="POST">
         <div class="control-group">
             <div class="controls">

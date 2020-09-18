@@ -169,10 +169,48 @@ a:focus {
 }
 
 .container {
-	margin-left: 20px;
+	margin-left: 64px;
 	margin-right: 20px;
 	*zoom: 1
 }
+
+.container-d {
+	*zoom: 1
+}
+.container-d:before,
+.container-d:after {
+	display: table;
+	line-height: 0;
+	content: ""
+}
+
+.container-d:after {
+	clear: both
+}
+
+.left-d {
+	float: left;
+	text-align: left;
+	width: 50%;
+	box-sizing: border-box;
+}
+
+.right-d {
+	float: right;
+	text-align: right;
+	width: 350px;
+	box-sizing: border-box;
+}
+
+.left-d {
+	padding-right: 16px;
+}
+
+.right-d {
+	padding-left: 16px;
+	margin-left: -4px;
+}
+
 
 .left,
 .right {
@@ -1050,29 +1088,30 @@ legend+.control-group {
 
 .navvy {
 	position: fixed;
-	right: 0;
-	left: 0;
+	top: 0;
+	width: 44px;
+	height: 100%;
 	z-index: 1030;
 	margin-bottom: 0;
-	height: 48px;
 }
 
 .navvy>ul {
 	list-style-type: none;
 	margin: 0;
+	height: 100%;
 	padding: 0;
-	overflow: hidden;
 	background-color: #272727; // switch #333333
 }
   
 .navvy>ul>li {
 	float: left;
+	position: relative;
 }
   
 .navvy>ul>li a {
 	display: block;
 	color: white;
-	text-align: center;
+	text-align: left;
 	vertical-align: middle;
 	padding: 10px 10px;
 	text-decoration: none;
@@ -1185,8 +1224,12 @@ legend+.control-group {
 .dropdown-content {
 	display: none;
 	position: absolute;
+	left: 0;
 	background-color: #353535;
 	min-width: 160px;
+	margin-left: 44px;
+	margin-top: -48px;
+	top: 100%;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
 }
@@ -1194,11 +1237,13 @@ legend+.control-group {
 .dropdown-content-right {
 	display: none;
 	position: absolute;
+	left: 0;
+	margin-left: 44px;
+	margin-top: -48px;
 	background-color: #353535;
 	min-width: 160px;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
-	right: 0;
 }
   
 .dropdown-content a {
@@ -1238,15 +1283,27 @@ input[type="search"] {
 	vertical-align: middle;
 }
 
-.navvy .search-container {
-	width: 100%;
+.search-container {
+	padding-top: 23px;
+	padding-bottom: 23px;
 }
-.navvy .search-input {
+.search-input {
 	float: left;
 	width: 200px;
+	font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
+	color: #8a8a8a;
+	border: 1px solid #1c1c1c;
+	border-radius: 6px;
+	padding: 0.44118rem 0.44118rem;
+	background-color: #1c1c1c;
+	display: inline-block;
+	height: 20px;
+	font-size: 18px;
+	line-height: 20px;
+	vertical-align: middle;
 }
 
-.navvy .navbar-search-button {
+.navbar-search-button {
 	font-size: 10px;
 	margin: 3.2px;
 	border-radius: 3px;
@@ -1308,7 +1365,7 @@ input[type="search"] {
 }
 
 div.header-text {
-	padding-top: 75px;
+	padding-top: 23px;
 	padding-bottom: 23px;
 }
 

@@ -332,7 +332,6 @@ func CreateEditPreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) i
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Set deleted to 0 during creation.
 	s.Deleted = 0
 	PageInsert, err := db.Prepare(`
@@ -395,7 +394,6 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	ep, _ := strconv.Atoi(existingPage)
 	d, err := strconv.Atoi(deleted)
 	if err != nil {
@@ -447,7 +445,6 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 			http.Redirect(w, r, "/pages/view/"+strconv.Itoa(ep), http.StatusFound)
 			return
 		}
-
 		// Get latest revision_number
 		rows, err := db.Query("SELECT revision_id FROM pages_rev WHERE wiki_page_id = ?", existingPage)
 		if err != nil {

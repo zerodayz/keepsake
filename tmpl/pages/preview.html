@@ -2,17 +2,60 @@
 <html>
 
 <head>
-    <title>{{.Title}}</title>
+    <title>Preview of {{.Title}}</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
     <meta charset='utf-8'>
 </head>
 
-<body style="background-color: #121212">
+<body>
+<div class="navvy">
+    <ul>
+        <li class="menu-home"><a href="/"></a></li>
+        {{if eq .UserLoggedIn "Unauthorized"}}
+            <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
+        {{else}}
+        {{end}}
+        <li>
+            {{if eq .UserLoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn user"></button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/login">Login</a>
+                    </div>
+                </div>
+            {{else}}
+                <div class="dropdown">
+                    <button class="dropbtn user"></button>
+                    <div class="dropdown-content-right menu-login">
+                        <a href="/users/logout">Logout</a>
+                    </div>
+                </div>
+            {{end}}
+        </li>
+        <li>
+            <div class="dropdown">
+                <button class="dropbtn setting">
+                </button>
+                <div class="dropdown-content">
+                    {{if eq .UserLoggedIn "Unauthorized"}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                    {{else}}
+                        <a class="menu-user-add" href="/users/create">Create user</a>
+                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
+                        <a class="menu-category" href="/categories/create">Add category</a>
+                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                    {{end}}
+                </div>
+            </div>
+        </li>
+        <li class="menu-help"><a href="/ticket/new"></a></li>
+    </ul>
+</div>
     <div class="clearfix"></div>
     <div class="container">
         <script type="text/javascript" src="/lib/view.js"></script>
-            <h1>Preview of {{.Title}}</h1>
+        <div class="header-text"><h1>Preview of {{.Title}}</h1></div>
         <div>
             Created by {{.CreatedBy}} on {{.DateCreated}} UTC
             {{ if .LastModifiedBy }}
@@ -36,7 +79,7 @@
                 window.history.back();
             }
         </script>
-        <form target='_parent' style="display: inline" action="/preview/create/{{.InternalId}}">
+        <form style="display: inline" action="/preview/create/{{.InternalId}}">
             <input type="submit" value="Save" />
         </form>
 

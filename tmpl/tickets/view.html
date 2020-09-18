@@ -3,55 +3,38 @@
 <html>
 
 <head>
-    <title>Keepsake - Tickets</title>
+    <title>Tickets</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
     <meta charset='utf-8'>
 </head>
 
 <body>
-<div id="ModalCreate" class="modal">
-    <div class="modal-content-create-page">
-        <span class="close-create">&times;</span>
-        <iframe style="border: 0px; width: calc(100% - 20px);" height="727" src="/pages/create/"></iframe>
-    </div>
-</div>
 <div class="navvy">
     <ul>
         <li class="menu-home"><a href="/"></a></li>
         {{if eq .Page.UserLoggedIn "Unauthorized"}}
         {{else}}
-            <li class="menu-create"><a id="ModalButtonCreate" href="#"></a></li>
+            <li class="menu-create"><a href="/pages/create"></a></li>
         {{end}}
-        <li id="search">
-            <div class="search-container">
-                <form action="/pages/search" method="GET">
-                    <input type="search" class="search-input" id="input-query" name="q" placeholder="Search"
-                           value="">
-                    <button class="navbar-search-button" type="submit">Search</button>
-                </form>
-            </div>
-        </li>
-        <li style="float:right">
+        <li>
             {{if eq .Page.UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
-                    <button class="dropbtn user">Hello, Guest!
-                    </button>
+                    <button class="dropbtn user"></button>
                     <div class="dropdown-content-right menu-login">
                         <a href="/users/login">Login</a>
                     </div>
                 </div>
             {{else}}
                 <div class="dropdown">
-                    <button class="dropbtn user">Hello, {{.Page.UserLoggedIn}}!
-                    </button>
+                    <button class="dropbtn user"></button>
                     <div class="dropdown-content-right menu-login">
                         <a href="/users/logout">Logout</a>
                     </div>
                 </div>
             {{end}}
         </li>
-        <li style="float:right">
+        <li>
             <div class="dropdown">
                 <button class="dropbtn setting">
                 </button>
@@ -67,7 +50,7 @@
                 </div>
             </div>
         </li>
-        <li style="float:right" class="menu-help"><a href="/ticket/new"></a></li>
+        <li class="menu-help"><a href="/ticket/new"></a></li>
     </ul>
 </div>
 <div class="clearfix"></div>
