@@ -396,10 +396,7 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		log.Fatal(err)
 	}
 
-	ep, err := strconv.Atoi(existingPage)
-	if err != nil {
-		log.Fatal(err)
-	}
+	ep, _ := strconv.Atoi(existingPage)
 	d, err := strconv.Atoi(deleted)
 	if err != nil {
 		log.Fatal(err)
