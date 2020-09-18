@@ -397,15 +397,22 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	}
 
 	ep, err := strconv.Atoi(existingPage)
+	if err != nil {
+		log.Fatal(err)
+	}
 	d, err := strconv.Atoi(deleted)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	s := &WikiPage{Title: title, InternalId: ep, Content: content, Tags: strings.Split(tags, ","), LastModified: lastModified, LastModifiedBy: lastModifiedBy, Deleted: d, DateCreated: dateCreated}
 
 	if existingPage == "" {
 		PageInsert, err := db.Prepare(`
 		INSERT INTO pages (title, content, tags, created_by, deleted, date_created) VALUES ( ?, ?, ?, ?, ?, ? )
 		`)
-
+		if err != nil {
+			log.Fatal(err)
+		}
 		var res sql.Result
 
 		res, err = PageInsert.Exec(title, content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated)
@@ -463,6 +470,9 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		}
 
 		i, err := strconv.Atoi(revisionId)
+		if err != nil {
+			log.Fatal(err)
+		}
 		i++
 		// Insert into revisions
 		PageRevisionInsert, err := db.Prepare(`
@@ -541,7 +551,9 @@ func RollbackPage(w http.ResponseWriter, r *http.Request, RollbackId int) string
 	UPDATE pages SET title = ?, content = ?, tags = ?, created_by = ?, deleted = ?, last_modified = ?, last_modified_by = ?, date_created = ?
 	WHERE internal_id = ?
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = PageUpdate.Exec(title, content, tags, username, deleted, lastModified, lastModifiedBy, dateCreated, wikiPageId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusFound)
@@ -796,7 +808,9 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 	err = db.QueryRow(`
 	SELECT title FROM pages WHERE internal_id = ?
 	`, internalId).Scan(&wikiPage)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	var (
 		wikiPages      []WikiPageRevision
 		revisionId     int
