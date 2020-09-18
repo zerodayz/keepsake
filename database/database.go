@@ -219,7 +219,9 @@ func InsertToken(w http.ResponseWriter, r *http.Request, u User, tk Token) {
 	TokenInsert, err := db.Prepare(`
 	INSERT INTO tokens (username, token, expires) VALUES ( ?, ?, ? ) ON DUPLICATE KEY UPDATE token = ?, expires = ?
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = TokenInsert.Exec(u.Username, tk.Token, tk.Expires, tk.Token, tk.Expires)
 	if err != nil {
 		log.Fatal(err)
@@ -236,7 +238,9 @@ func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 	CommentInsert, err := db.Prepare(`
 	INSERT INTO comments (title, content, wiki_page_id, created_by, date_created) VALUES ( ?, ?, ?, ?, ? )
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = CommentInsert.Exec(c.Title, c.Body, c.WikiPageId, c.CreatedBy, c.DateCreated)
 	if err != nil {
 		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusInternalServerError)
@@ -254,7 +258,9 @@ func CreateCategory(w http.ResponseWriter, r *http.Request, c Tag) {
 	UserInsert, err := db.Prepare(`
 	INSERT INTO tags (name, created_by, date_created) VALUES ( ?, ?, ? )
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = UserInsert.Exec(c.Name, c.CreatedBy, c.DateCreated)
 	if err != nil {
 		http.Redirect(w, r, "/categories/create/", http.StatusFound)
@@ -301,7 +307,9 @@ func CreateUser(w http.ResponseWriter, r *http.Request, u User) {
 	UserInsert, err := db.Prepare(`
 	INSERT INTO users (name, username, email, password) VALUES ( ?, ?, ?, ? )
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = UserInsert.Exec(u.Name, u.Username, u.Email, u.Password)
 	if err != nil {
 		http.Redirect(w, r, "/users/create/", http.StatusFound)
@@ -330,7 +338,9 @@ func CreateEditPreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) i
 	PageInsert, err := db.Prepare(`
 	INSERT INTO pages_preview (title, wiki_page_id, content, tags, created_by, deleted, last_modified, last_modified_by, date_created) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	var res sql.Result
 	res, err = PageInsert.Exec(s.Title, s.InternalId, s.Content, strings.Join(s.Tags, ","), username, s.Deleted, s.LastModified, s.LastModifiedBy, dateCreated)
 	if err != nil {
@@ -354,7 +364,9 @@ func CreatePreviewPage(w http.ResponseWriter, r *http.Request, s WikiPage) int {
 	PageInsert, err := db.Prepare(`
 	INSERT INTO pages_preview (title, content, tags, created_by, deleted, date_created) VALUES ( ?, ?, ?, ?, ?, ? )
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	var res sql.Result
 	res, err = PageInsert.Exec(s.Title, s.Content, strings.Join(s.Tags, ","), s.Username, s.Deleted, s.DateCreated)
 	if err != nil {
@@ -410,7 +422,9 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, tags, created_by, deleted, date_created, last_modified_by, last_modified)
 		VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
 		`)
-
+		if err != nil {
+			log.Fatal(err)
+		}
 		_, err = PageRevisionInsert.Exec(wikiPageId, 1, title, content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated, lastModifiedBy, lastModified)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
@@ -455,7 +469,9 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		INSERT INTO pages_rev (wiki_page_id, revision_id, title, content, tags, created_by, deleted, date_created, last_modified_by, last_modified)
 		VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
 		`)
-
+		if err != nil {
+			log.Fatal(err)
+		}
 		_, err = PageRevisionInsert.Exec(existingPage, i, s.Title, s.Content, strings.Join(s.Tags, ","), createdBy, deleted, dateCreated, s.LastModifiedBy, s.LastModified)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusInternalServerError)
@@ -468,7 +484,9 @@ func CreatePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 		UPDATE pages SET title = ?, content = ?, tags = ?, deleted = ?, last_modified = ?, last_modified_by = ?
 		WHERE internal_id = ?
 		`)
-
+		if err != nil {
+			log.Fatal(err)
+		}
 		_, err = PageUpdate.Exec(s.Title, s.Content, strings.Join(s.Tags, ","), s.Deleted, s.LastModified, s.LastModifiedBy, s.InternalId)
 		if err != nil {
 			http.Redirect(w, r, "/", http.StatusFound)
@@ -490,7 +508,9 @@ func RestorePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	UPDATE pages SET deleted = ?
 	WHERE internal_id = ?
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = PageUpdate.Exec(0, InternalId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
@@ -580,7 +600,9 @@ func DeletePage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	UPDATE pages SET deleted = ?
 	WHERE internal_id = ?
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = PageUpdate.Exec(1, InternalId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)

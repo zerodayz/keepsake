@@ -54,6 +54,9 @@ func AssignTicket(w http.ResponseWriter, r *http.Request, InternalId int, userna
 	UPDATE queue SET status = ?, assigned = ?
 	WHERE internal_id = ?
 	`)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	_, err = PageUpdate.Exec("Assigned", username, InternalId)
 	if err != nil {
@@ -73,7 +76,9 @@ func CompleteTicket(w http.ResponseWriter, r *http.Request, InternalId int) {
 	UPDATE queue SET status = ?
 	WHERE internal_id = ?
 	`)
-
+	if err != nil {
+		log.Fatal(err)
+	}
 	_, err = PageUpdate.Exec("Completed", InternalId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusNotFound)
@@ -91,6 +96,9 @@ func CreateTicket(w http.ResponseWriter, r *http.Request, q Queue) int {
 	TicketInsert, err := db.Prepare(`
 	INSERT INTO queue (name, question, status, date_created) VALUES ( ?, ?, ?, ?)
 	`)
+	if err != nil {
+		log.Fatal(err)
+	}
 	q.Status = "New"
 	var res sql.Result
 	res, err = TicketInsert.Exec(q.Name, q.Question, q.Status, q.CreatedDate)
