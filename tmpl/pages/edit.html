@@ -76,32 +76,32 @@
     <form action="/pages/save/{{.InternalId}}" method="POST">
         <div class="control-group">
             <div class="controls">
-                {{ with .Errors.Title }}
-                <p>{{ . }}</p>
-                {{ end }}
-                Title: <textarea name="title" cols="1" rows="1">{{printf "%s" .Title}}</textarea>
+                <textarea name="title" cols="1" rows="1" placeholder="Enter Wiki page title here">{{printf "%s" .Title}}</textarea>
             </div>
-            Tags:
-            </br>
             {{.DisplayComment}}
             <div class="controls">
-                {{ with .Errors.Content }}
-                <p>{{ . }}</p>
-                {{ end }}
-                Body: <textarea name="body" rows="14" cols="80">{{printf "%s" .Body}}</textarea>
+                <textarea name="body" rows="14" cols="80">{{printf "%s" .Body}}</textarea>
             </div>
             <div class="control-group">
                 <div class="controls">
-                    <input type="submit" value="Preview & Save">
+                    <input id="submit" type="submit" value="Preview & Save">
                 </div>
             </div>
         </div>
     </form>
-    <h1>Upload Files</h1>
+
     <form enctype="multipart/form-data" action="/pages/upload/" target="_blank" method="POST">
-        <input type="file" name="uploadMyFile" />
-        <input type="submit" value="upload" />
+        <div class="container-d">
+            <div class="file-upload-wrapper left-no-border" data-text="Select file to upload">
+                <input name="file-upload-field" id="file-upload-field" type="file" class="file-upload-field" value="">
+            </div>
+            <div class="right-no-border">
+                <input type="submit" value="Upload" />
+            </div>
+        </div>
     </form>
+    <script type="text/javascript" src="/lib/upload.js"></script>
+
 </div>
 </body>
 

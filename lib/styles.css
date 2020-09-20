@@ -230,6 +230,23 @@ a:focus {
 	margin-left: -4px;
 }
 
+
+.left-no-border,
+.right-no-border {
+	float: left;
+	width: 50%;
+	box-sizing: border-box;
+}
+
+.left-no-border {
+	padding-right: 16px;
+}
+
+.right-no-border {
+	padding-left: 16px;
+	margin-left: -4px;
+}
+
 .container:before,
 .container:after {
 	display: table;
@@ -950,6 +967,9 @@ div.login {
 	font-family:  -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
 }
 
+textarea[name="body"] {
+	height: 55vh;
+}
 
 select,
 textarea,
@@ -1033,9 +1053,64 @@ input[type="checkbox"] {
 	line-height: normal
 }
 
-div.checkbox {
-	padding: 3px;
-	display: inline-block;
+.checkbox {
+	display: block;
+	position: relative;
+	padding-left: 30px;
+	padding-right: 3px;
+	padding-top: 3px;
+	cursor: pointer;
+}
+
+.checkbox input {
+	position: absolute;
+	opacity: 0;
+	cursor: pointer;
+	height: 0;
+	width: 0;
+}
+
+.checkmark {
+	position: absolute;
+	left: 9px;
+	top: 5px;
+	height: 15px;
+	width: 15px;
+	background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox:hover input ~ .checkmark {
+	background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox input:checked ~ .checkmark {
+	background-color: #272727;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+	content: "";
+	position: absolute;
+	display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox input:checked ~ .checkmark:after {
+	display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox .checkmark:after {
+	left: 4px;
+	width: 5px;
+	height: 10px;
+	border: solid white;
+	border-width: 0 3px 3px 0;
+	-webkit-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
 }
 
 input[type="file"],
@@ -1050,9 +1125,55 @@ input[type="checkbox"] {
 
 select,
 input[type="file"] {
-	height: 20px;
 	*margin-top: 4px;
 	line-height: 20px
+}
+
+
+.file-upload-wrapper {
+	position: relative;
+	width: 50%;
+	height: 52px;
+}
+
+.file-upload-wrapper:after {
+
+	font-family: "SFMono", "Roboto Mono", "Courier New", Courier, monospace;
+	color: #8a8a8a;
+	border: 1px solid #1c1c1c;
+	border-radius: 6px;
+	padding: 0.94118rem 0.94118rem;
+	background-color: #1c1c1c;
+	display: inline-block;
+	height: 20px;
+	font-size: 18px;
+	line-height: 20px;
+	vertical-align: middle;
+
+
+	 content: attr(data-text);
+	 position: absolute;
+
+	 width: calc(100% - 40px);
+	 pointer-events: none;
+	 z-index: 20;
+	 font-weight: 300;
+}
+
+.file-upload-field {
+	opacity: 0;
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 99;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	display: block;
+	cursor: pointer;
+	width: 100%;
 }
 
 select {

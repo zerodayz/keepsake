@@ -289,12 +289,12 @@ func EditHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 			matched = false
 			for _, tag := range s.Tags {
 				if f.Name == tag {
-					bufCategories.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox" checked>` + f.Name + `</div></div>`))
+					bufCategories.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox" checked>` + f.Name + `<span class="checkmark"></span></label></div>`))
 					matched = true
 				}
 			}
 			if matched != true {
-				bufCategories.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `</div></div>`))
+				bufCategories.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 			}
 		}
 	}
@@ -332,7 +332,7 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 		bufCategories.Write([]byte(`There are no categories yet.`))
 	} else {
 		for _, f := range existingCategories {
-			bufCategories.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `</div></div>`))
+			bufCategories.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 		}
 	}
 	s.DisplayComment = template.HTML(bufCategories.String())
@@ -422,7 +422,7 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 	f := database.File{}
 
 	r.ParseMultipartForm(10 << 20)
-	file, _, err := r.FormFile("uploadMyFile")
+	file, _, err := r.FormFile("file-upload-field")
 	if err != nil {
 		log.Println(err)
 		return
@@ -523,7 +523,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			buf.Write([]byte(`There are no categories yet.`))
 		} else {
 			for _, f := range existingCategories {
-				buf.Write([]byte(`<div class="categories"><div class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `</div></div>`))
+				buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 			}
 		}
 		s := database.SearchWikiPages(w, r, searchKey)
