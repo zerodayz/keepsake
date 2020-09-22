@@ -591,10 +591,10 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			var categories string
 			var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
-			if len(f.Tags) == 1 {
-				categories = "None"
-			} else {
+			if len(strings.Join(f.Tags, " ")) >= 1 {
 				categories = strings.Join(f.Tags, " ")
+			} else {
+				categories = "None"
 			}
 			if len(indexes) != 0 {
 				var occurrences = strconv.Itoa(len(indexes))
