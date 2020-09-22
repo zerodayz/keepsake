@@ -49,24 +49,19 @@ The default port the wiki is listening on is `443`.
 Navigate to `https://localhost` and enjoy.
 
 ## Dashboard
-![Dashboard](screenshots/Dashboard.jpg)
+![Dashboard](screenshots/Dashboard.png)
 
 ## Create new user
-![Create_User](screenshots/Create_User.jpg)
+![Create_User](screenshots/Create_User.png)
 
-![Create_User_2](screenshots/Create_User_2.jpg)
+![Create_User_2](screenshots/Create_User_2.png)
 
 ## Login to the Wiki
-![Login](screenshots/Login.jpg)
+![Login](screenshots/Login.png)
 
 ## Create new category
-![Create_Category](screenshots/Create_Category.jpg)
-
-![Create_Category_2](screenshots/Create_Category_2.jpg)
+![Create_Category](screenshots/Create_Category.png)
 
 ## Create new page
-![Create_Page](screenshots/Create_Page.jpg)
-
-## Dashboard
-![Dashboard_2](screenshots/Dashboard_2.jpg)
+![Create_Page](screenshots/Create_Page.png)
 
