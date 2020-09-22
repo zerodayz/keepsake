@@ -84,11 +84,6 @@ input[type="submit"] {
 	font-size: 16px;
 }
 
-button,
-input[type="button"].active {
-	color: #ffffff;
-}
-
 input[type="search"] {
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
