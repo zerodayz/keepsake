@@ -55,7 +55,26 @@
     </div>
     <div class="clearfix"></div>
     <div class="container">
-        <div>{{.DisplayComment}}</div>
+        <div><div class="container-d">
+                <div class="header-text left-d"><h1>What's New?</h1></div>
+                <form id="searchForm" action="/pages/search" method="GET">
+                    <div class="control-group search-container right-d">
+                        <div class="controls">
+                            <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <input class="navbar-search-button" id="submit" type="submit" value="Search">
+                            </div>
+                        </div>
+                    </div>
+                </form></div>
+            <div class="dashboard">
+                22 Sept 2020 - <a href="/pages/list">View All</a> has been added. Check it out!
+                <br>
+                18 Sept 2020 - <a href="/dashboard">New Vertical Design</a> introduced!
+            </div>
+            {{.DisplayComment}}</div>
         <div>{{.DisplayBody}}</div>
     </div>
     <script type="text/javascript" src="/lib/trash.js"></script>
