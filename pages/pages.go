@@ -160,18 +160,35 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 		} else {
 			buf.Write([]byte(`<div id="items"></div>`))
 			for _, f := range existingCategories {
-				buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				// Fix for the categories with space.
+				space := strings.Split(f.Name, " ")
+				if len(space) >= 2 {
+					value := strings.ReplaceAll(f.Name, " ", "-")
+					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + value + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				} else {
+					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				}
 			}
 		}
 		buf.Write([]byte(`
 		<table id="view-all-table">
 		`))
 		for _, f := range wikiPages {
+			var originalTags []string
+			for i, s := range f.Tags {
+				originalTags = append(originalTags, s)
+				space := strings.Split(s, " ")
+				if len(space) >= 2 {
+					f.Tags[i] = strings.ReplaceAll(s, " ", "-")
+				}
+			}
+			categoriesName := strings.Join(originalTags, " ")
 			categories := strings.Join(f.Tags, " ")
+
 			if len(categories) == 0 {
 				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
 			} else {
-				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categories + `</td></tr>`))
+				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
 			}
 		}
 		buf.Write([]byte(`</table>`))
@@ -565,8 +582,14 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			buf.Write([]byte(`There are no categories yet.`))
 		} else {
 			for _, f := range existingCategories {
-				buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
-			}
+				// Fix for the categories with space.
+				space := strings.Split(f.Name, " ")
+				if len(space) >= 2 {
+					value := strings.ReplaceAll(f.Name, " ", "-")
+					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + value + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				} else {
+					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				}			}
 		}
 		s := database.SearchWikiPages(w, r, searchKey)
 		for _, f := range s {
@@ -577,10 +600,22 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			var categories string
 			var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
+
+			var originalTags []string
+			for i, s := range f.Tags {
+				originalTags = append(originalTags, s)
+				space := strings.Split(s, " ")
+				if len(space) >= 2 {
+					f.Tags[i] = strings.ReplaceAll(s, " ", "-")
+				}
+			}
+			var categoriesName string
 			if len(strings.Join(f.Tags, " ")) >= 1 {
+				categoriesName = strings.Join(originalTags, " ")
 				categories = strings.Join(f.Tags, " ")
 			} else {
 				categories = "None"
+				categoriesName = "None"
 			}
 			if len(indexes) != 0 {
 				var occurrences = strconv.Itoa(len(indexes))
@@ -589,7 +624,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<div class="category ` + categories + `">
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
-						` | Categories: ` + categories +
+						` | Categories: ` + categoriesName +
 						`<label for="search-content" class="search-collapsible">
 					` + f.Title + `</label>
 					<div id="search-content" class="search-content">`))
@@ -598,7 +633,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<div class="category ` + categories + `">
 					<div class="found">Found ` + occurrences + ` occurrences.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a>` +
-						` | Categories: ` + categories +
+						` | Categories: ` + categoriesName +
 						`<label for="search-content" class="search-collapsible">
 					` + f.Title + `</label>
 					<div id="search-content" class="search-content">`))
@@ -634,7 +669,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<div class="category ` + categories + `">
 					<div class="found">Matched title of the wiki page.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
-						` | Categories: ` + categories +
+						` | Categories: ` + categoriesName +
 						`<label for="search-content" class="search-no-collapsible">
 					` + f.Title + `</label>`))
 				} else {
@@ -642,7 +677,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<div class="category ` + categories + `">
 					<div class="found">Matched title of the wiki page.
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
-						` | Categories: ` + categories +
+						` | Categories: ` + categoriesName +
 						`<label for="search-content" class="search-no-collapsible">
 					` + f.Title + `</label>`))
 				}
