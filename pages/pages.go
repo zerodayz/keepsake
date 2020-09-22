@@ -195,7 +195,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	bufComment := bytes.NewBuffer(nil)
 	wikiPagesTop10Commented := database.Top10Commented(w, r)
 	bufComment.Write([]byte(`<div class="container-d">
-			<div class="header-text left-d"><h1>Last 10 Discussed</h1></div>
+			<div class="header-text left-d"><h1>What's New?</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
             <div class="controls">
@@ -207,8 +207,13 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
                 </div>
             </div>
         </div>
-    </form>
-			</div>`))
+    </form></div>
+	<div class="dashboard">
+	22 Sept 2020 - <a href="/pages/list">View All</a> has been added. Check it out!
+	<br>
+	18 Sept 2020 - <a href="/dashboard">New Vertical Design</a> introduced!
+	</div>
+	<div class="header-text"><h1>Last 10 Discussed</h1></div>`))
 	if len(wikiPagesTop10Commented) == 0 {
 		bufComment.Write([]byte(`There are no discussions.`))
 	} else {
