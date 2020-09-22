@@ -709,6 +709,41 @@ func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
 	return wikiPages
 }
 
+func LoadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		id             int
+		title          string
+		createdBy      string
+		tags		   string
+		dateCreated    string
+		lastModifiedBy string
+		lastModified   string
+	)
+	rows, err := db.Query("SELECT internal_id, title, created_by, COALESCE(tags, '') as tags, date_created, COALESCE(last_modified_by, '') as last_modified_by, last_modified FROM pages WHERE deleted = ? ORDER BY last_modified DESC, date_created DESC", 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&id, &title, &createdBy, &tags, &dateCreated, &lastModifiedBy, &lastModified)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, Title: title, Tags: strings.Split(tags, ","), DateCreated: dateCreated, CreatedBy: createdBy, LastModifiedBy: lastModifiedBy, LastModified: lastModified})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+}
+
 func Top10Commented(w http.ResponseWriter, r *http.Request) []WikiPage {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {

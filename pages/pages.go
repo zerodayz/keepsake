@@ -129,6 +129,62 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	}
 }
 
+func ListHandler(w http.ResponseWriter, r *http.Request) {
+	p := database.WikiPage{}
+	t := template.Must(template.ParseFiles(templatePath + "list.html"))
+
+	username := ReadCookie(w, r)
+	buf := bytes.NewBuffer(nil)
+	wikiPages := database.LoadAllPages(w, r)
+	buf.Write([]byte(`<div class="container-d">
+			<div class="header-text left-d"><h1>View All</h1></div>
+    <form id="searchForm" action="/pages/search" method="GET">
+        <div class="control-group search-container right-d">
+            <div class="controls">
+              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="navbar-search-button" id="submit" type="submit" value="Search">
+                </div>
+            </div>
+        </div>
+    </form>
+	</div>`))
+	if len(wikiPages) == 0 {
+		buf.Write([]byte(`There are no wiki pages.`))
+	} else {
+		existingCategories := database.FetchCategories(w, r)
+		if len(existingCategories) == 0 {
+			buf.Write([]byte(`There are no categories yet.`))
+		} else {
+			buf.Write([]byte(`<div id="items"></div>`))
+			for _, f := range existingCategories {
+				buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+			}
+		}
+		buf.Write([]byte(`
+		<table id="view-all-table">
+		`))
+		for _, f := range wikiPages {
+			categories := strings.Join(f.Tags, " ")
+			if len(categories) == 0 {
+				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
+			} else {
+				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categories + `</td></tr>`))
+			}
+		}
+		buf.Write([]byte(`</table>`))
+	}
+	p.DisplayBody = template.HTML(buf.String())
+
+	p.UserLoggedIn = username
+	err := t.ExecuteTemplate(w, "list.html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	p := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "dashboard.html"))

@@ -84,6 +84,11 @@ input[type="submit"] {
 	font-size: 16px;
 }
 
+button,
+input[type="button"].active {
+	color: #ffffff;
+}
+
 input[type="search"] {
 	-webkit-box-sizing: content-box;
 	-moz-box-sizing: content-box;
@@ -932,8 +937,8 @@ label {
 	  color: #939393;
 	  border-radius: 6px;
 	  padding: 0.35294rem 0.94118rem;
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 	font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Text", Roboto, Helvetica, Arial, sans-serif;
 		background-color: #272727;
 }
@@ -1246,6 +1251,10 @@ legend+.control-group {
 	content: url(/lib/icons/home-24px.svg);
 }
 
+.navvy>ul>li.menu-list>a::before {
+	content: url(/lib/icons/list-24px.svg);
+}
+
 .navvy>ul>li.menu-help>a::before {
 	content: url(/lib/icons/help-24px.svg);
 }
@@ -1439,6 +1448,14 @@ input[type="search"] {
   
 .navvy .navbar-search-button:hover {
 	background-color: #626262;
+}
+
+#view-all-table tr {
+	background-color: #121212;
+}
+#view-all-table td {
+	text-align: left;
+	border-radius: 13px;
 }
 
 #table-css {

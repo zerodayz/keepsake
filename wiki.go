@@ -33,6 +33,7 @@ func main() {
 	http.HandleFunc("/preview/create/", pages.MakeHandler(pages.PreviewCreateHandler))
 
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
+	http.HandleFunc("/pages/list", pages.ListHandler)
 	http.HandleFunc("/pages/revisions/", pages.MakeHandler(pages.RevisionsHandler))
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
 	http.HandleFunc("/pages/delete/", pages.MakeHandler(pages.DeleteHandler))
