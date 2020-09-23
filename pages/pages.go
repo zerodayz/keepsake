@@ -86,7 +86,8 @@ func ViewRawHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	}
 	data := "# " + s.Title + "\n" + s.Body
 	tmpl, err := text.New("/lib/pages/raw.md").Parse(data)
-
+	w.Header().Set("content-type", "text/markdown")
+	
 	err = tmpl.Execute(w, s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
