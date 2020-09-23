@@ -74,7 +74,7 @@
         <div class="clearfix"></div>
         <div class="container">
             <div class="header-text">
-                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}}</h1>
+                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}} <a href="/pages/raw/{{.InternalId}}"><img src="/lib/icons/save-24px.svg"></a></h1>
             </div>
             <div>
                 Created by {{.CreatedBy}} on {{.DateCreated}} UTC

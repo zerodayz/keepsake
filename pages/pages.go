@@ -72,6 +72,27 @@ func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 
 // Handlers
 
+func ViewRawHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	t := template.Must(template.ParseFiles(templatePath + "raw.html"))
+
+	id, err := strconv.Atoi(InternalId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+	s, err := LoadPage(w, r, id)
+	if err != nil {
+		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
+		return
+	}
+
+	s.DisplayBody = template.HTML(s.Body)
+	err = t.ExecuteTemplate(w, "raw.html", s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	t := template.Must(template.ParseFiles(templatePath + "view.html"))
 
@@ -780,7 +801,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(edit|raw|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
