@@ -17,6 +17,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	text "text/template"
 	"time"
 	"unicode/utf8"
 )
@@ -73,8 +74,6 @@ func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 // Handlers
 
 func ViewRawHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
-	t := template.Must(template.ParseFiles(templatePath + "raw.html"))
-
 	id, err := strconv.Atoi(InternalId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
@@ -85,9 +84,10 @@ func ViewRawHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
 		return
 	}
+	data := "# " + s.Title + "\n" + s.Body
+	tmpl, err := text.New("/lib/pages/raw.md").Parse(data)
 
-	s.DisplayBody = template.HTML(s.Body)
-	err = t.ExecuteTemplate(w, "raw.html", s)
+	err = tmpl.Execute(w, s)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
