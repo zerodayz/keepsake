@@ -33,7 +33,7 @@ func main() {
 	http.HandleFunc("/preview/create/", pages.MakeHandler(pages.PreviewCreateHandler))
 
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
-	http.HandleFunc("/pages/raw/", pages.MakeHandler(pages.ViewRawHandler))
+	http.HandleFunc("/pages/view/raw/", pages.ViewRawHandler)
 	http.HandleFunc("/pages/list", pages.ListHandler)
 	http.HandleFunc("/pages/revisions/", pages.MakeHandler(pages.RevisionsHandler))
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))
@@ -44,6 +44,7 @@ func main() {
 	http.HandleFunc("/pages/trash/", pages.RecycleBinHandler)
 	http.HandleFunc("/pages/restore/", pages.MakeHandler(pages.RestoreHandler))
 	http.HandleFunc("/pages/search/", pages.SearchHandler)
+	http.HandleFunc("/pages/search/raw/", pages.SearchRawHandler)
 
 	http.HandleFunc("/comments/create/", comments.MakeHandler(comments.CreateHandler))
 

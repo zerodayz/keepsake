@@ -73,7 +73,14 @@ func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 
 // Handlers
 
-func ViewRawHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+func ViewRawHandler(w http.ResponseWriter, r *http.Request) {
+	var validPathRaw = regexp.MustCompile("^/pages/view/raw/([0-9]+)$")
+	m := validPathRaw.FindStringSubmatch(r.URL.Path)
+	if m == nil {
+		http.NotFound(w, r)
+		return
+	}
+	InternalId := m[1]
 	id, err := strconv.Atoi(InternalId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
@@ -81,14 +88,90 @@ func ViewRawHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	}
 	s, err := LoadPage(w, r, id)
 	if err != nil {
-		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
+		http.Redirect(w, r, "/", http.StatusNotFound)
 		return
 	}
 	data := "# " + s.Title + "\n" + s.Body
 	tmpl, err := text.New("/lib/pages/raw.md").Parse(data)
 	w.Header().Set("content-type", "text/markdown")
-	
+
 	err = tmpl.Execute(w, s)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func SearchRawHandler(w http.ResponseWriter, r *http.Request) {
+	u, err := url.Parse(r.URL.String())
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	params := u.Query()
+	searchKey := params.Get("q")
+	var searchQuery = regexp.MustCompile(`(?i)` + searchKey)
+
+	buf := bytes.NewBuffer(nil)
+
+	if len(searchKey) == 0 {
+		buf.Write([]byte(`Please search for something else than empty.`))
+	} else {
+		s := database.SearchWikiPages(w, r, searchKey)
+		for _, f := range s {
+			var contentLength = len(f.Content)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			var indexes = searchQuery.FindAllIndex([]byte(f.Content), -1)
+
+			var originalTags []string
+			for i, s := range f.Tags {
+				originalTags = append(originalTags, s)
+				space := strings.Split(s, " ")
+				if len(space) >= 2 {
+					f.Tags[i] = strings.ReplaceAll(s, " ", "-")
+				}
+			}
+			if len(indexes) != 0 {
+				buf.Write([]byte("\n" + ` ================== ` + "\n"))
+				buf.Write([]byte(`>> Matched Article: ` + f.Title +
+					"\n" + `For more information please curl endpoint at /pages/view/raw/` + strconv.Itoa(f.InternalId)))
+				buf.Write([]byte("\n" + ` ================== ` + "\n"))
+				buf.Write([]byte("\n" + ` @@@@@@@@@@@@@@@@@@ ` + "\n"))
+				for _, k := range indexes {
+					var start = k[0]
+					var end = k[1]
+
+					var showStart = max(start-100, 0)
+					var showEnd = min(end+100, contentLength-1)
+
+					for !utf8.RuneStart(f.Content[showStart]) {
+						showStart = max(showStart-1, 0)
+					}
+					for !utf8.RuneStart(f.Content[showEnd]) {
+						showEnd = min(showEnd-1, contentLength)
+					}
+					buf.WriteString(f.Content[showStart:start])
+					buf.WriteString(f.Content[start:end])
+					if (end - 1) != showEnd {
+						buf.WriteString(f.Content[end:showEnd])
+					}
+				}
+				buf.Write([]byte("\n" + ` @@@@@@@@@@@@@@@@@@ ` + "\n"))
+			} else {
+				buf.Write([]byte("\n" + ` ================== ` + "\n"))
+				buf.Write([]byte(`>> Matched Title: ` + f.Title +
+					"\n" + `For more please visit /pages/view/` + strconv.Itoa(f.InternalId)))
+				buf.Write([]byte("\n" + ` ================== ` + "\n"))
+			}
+		}
+	}
+	data := buf.String()
+	tmpl, err := text.New("/lib/pages/search.md").Parse(data)
+	w.Header().Set("content-type", "text/markdown")
+
+	err = tmpl.Execute(w, data)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
@@ -802,7 +885,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(edit|raw|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
