@@ -139,6 +139,10 @@ func SearchRawHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if len(indexes) != 0 {
 				buf.Write([]byte("\n" + ` ================== ` + "\n"))
+				if f.Deleted == 1 {
+					buf.Write([]byte(`>> Matched Article: ` + f.Title + ` (deleted)` +
+						"\n" + `For more information please curl endpoint at /pages/view/raw/` + strconv.Itoa(f.InternalId)))
+				}
 				buf.Write([]byte(`>> Matched Article: ` + f.Title +
 					"\n" + `For more information please curl endpoint at /pages/view/raw/` + strconv.Itoa(f.InternalId)))
 				buf.Write([]byte("\n" + ` ================== ` + "\n"))
@@ -728,7 +732,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			if len(indexes) != 0 {
 				var occurrences = strconv.Itoa(len(indexes))
-				if username == "Unauthorized" {
+				if f.Deleted == 0 {
 					buf.Write([]byte(`
 					<div class="category ` + categories + `">
 					<div class="found">Found ` + occurrences + ` occurrences.
@@ -744,7 +748,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a>` +
 						` | Categories: ` + categoriesName +
 						`<label for="search-content" class="search-collapsible">
-					` + f.Title + `</label>
+					` + f.Title + ` (deleted)</label>
 					<div id="search-content" class="search-content">`))
 				}
 				for _, k := range indexes {
@@ -773,7 +777,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 				buf.Write([]byte(`</div></div></div>`))
 				buf.WriteByte('\n')
 			} else {
-				if username == "Unauthorized" {
+				if f.Deleted == 0 {
 					buf.Write([]byte(`
 					<div class="category ` + categories + `">
 					<div class="found">Matched title of the wiki page.
@@ -788,7 +792,7 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					<a href="/pages/view/` + strconv.Itoa(f.InternalId) + `">Visit Page</a> ` +
 						` | Categories: ` + categoriesName +
 						`<label for="search-content" class="search-no-collapsible">
-					` + f.Title + `</label>`))
+					` + f.Title + ` (deleted)</label>`))
 				}
 				buf.Write([]byte(`</div></div>`))
 				buf.WriteByte('\n')
