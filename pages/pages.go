@@ -107,10 +107,14 @@ func SearchRawHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+	var searchTrimNum = 100
 	params := u.Query()
 	searchKey := params.Get("q")
+	searchTrim := params.Get("s")
+	if len(searchTrim) != 0 {
+		searchTrimNum, _ = strconv.Atoi(searchTrim)
+	}
 	var searchQuery = regexp.MustCompile(`(?i)` + searchKey)
-
 	buf := bytes.NewBuffer(nil)
 
 	if len(searchKey) == 0 {
@@ -143,8 +147,8 @@ func SearchRawHandler(w http.ResponseWriter, r *http.Request) {
 					var start = k[0]
 					var end = k[1]
 
-					var showStart = max(start-100, 0)
-					var showEnd = min(end+100, contentLength-1)
+					var showStart = max(start-searchTrimNum, 0)
+					var showEnd = min(end+searchTrimNum, contentLength-1)
 
 					for !utf8.RuneStart(f.Content[showStart]) {
 						showStart = max(showStart-1, 0)
