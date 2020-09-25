@@ -142,9 +142,10 @@ func SearchRawHandler(w http.ResponseWriter, r *http.Request) {
 				if f.Deleted == 1 {
 					buf.Write([]byte(`>> Matched Article: ` + f.Title + ` (deleted)` +
 						"\n" + `For more information please curl endpoint at /pages/view/raw/` + strconv.Itoa(f.InternalId)))
+				} else {
+					buf.Write([]byte(`>> Matched Article: ` + f.Title +
+						"\n" + `For more information please curl endpoint at /pages/view/raw/` + strconv.Itoa(f.InternalId)))
 				}
-				buf.Write([]byte(`>> Matched Article: ` + f.Title +
-					"\n" + `For more information please curl endpoint at /pages/view/raw/` + strconv.Itoa(f.InternalId)))
 				buf.Write([]byte("\n" + ` ================== ` + "\n"))
 				buf.Write([]byte("\n" + ` @@@@@@@@@@@@@@@@@@ ` + "\n"))
 				for _, k := range indexes {
