@@ -55,7 +55,8 @@
     </div>
     <div class="clearfix"></div>
     <div class="container">
-        <div><div class="container-d">
+        <div>
+            <div class="container-d">
                 <div class="header-text left-d"><h1>What's New?</h1></div>
                 <form id="searchForm" action="/pages/search" method="GET">
                     <div class="control-group search-container right-d">
@@ -68,7 +69,8 @@
                             </div>
                         </div>
                     </div>
-                </form></div>
+                </form>
+            </div>
             <div class="dashboard">
                 24 Sept 2020 - <a href="/pages/search/raw/?q=">Search Raw</a> has been added. <br>
                 Check it out by using <code>curl -k ${HOST}/pages/search/raw/?q=${SEARCHQUERY}&s=${SIZE}</code> in your terminal. You can also modify the trim size by appending <code>&s=${SIZE}</code>
@@ -79,6 +81,21 @@
                 22 Sept 2020 - <a href="/pages/list">View All</a> has been added. Check it out!
                 <br>
                 18 Sept 2020 - <a href="/dashboard">New Vertical Design</a> introduced!
+            </div>
+            <div class="header-text"><h1>Did you know ...</h1></div>
+            <div class="dashboard">You can use "spoilers" markdown tags<details>
+                    <summary>Spoiler warning</summary>
+                    Just copy paste following example code in your page:
+                    <pre><code>&lt;details&gt;
+&lt;summary&gt;Spoiler warning&lt;/summary&gt;
+Spoiler text. Note that it's important to have a space after the summary tag.
+You should be able to write any markdown you want inside the details tag... just make sure you close details afterward.
+
+```javascript
+console.log(&quot;I'm a code block!&quot;);
+```
+&lt;/details&gt;</code></pre>
+                    </details>
             </div>
             {{.DisplayComment}}</div>
         <div>{{.DisplayBody}}</div>
