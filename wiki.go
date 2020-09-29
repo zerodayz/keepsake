@@ -21,6 +21,14 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/dashboard", http.StatusFound)
 }
 
+func redirect(w http.ResponseWriter, r *http.Request) {
+	target := "https://" + r.Host + r.URL.Path
+	if len(r.URL.RawQuery) > 0 {
+		target += "?" + r.URL.RawQuery
+	}
+	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
+}
+
 func main() {
 	database.InitializeDatabase()
 
@@ -61,6 +69,6 @@ func main() {
 	http.HandleFunc("/users/create/", users.CreateUserHandler)
 	http.HandleFunc("/dashboard", pages.DashboardHandler)
 	http.HandleFunc("/", RootHandler)
-
+	go http.ListenAndServe(":80", http.HandlerFunc(redirect))
 	log.Fatal(http.ListenAndServeTLS(":443", "server.crt", "server.key", nil))
 }
