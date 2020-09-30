@@ -92,7 +92,7 @@ func ViewRawHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := "# " + s.Title + "\n" + s.Body
-	tmpl, err := text.New("/lib/pages/raw.md").Parse(data)
+	tmpl, err := text.New("/lib/pages/raw.md").Delims("{%i do not know what to type%{", "}%hope this solves my problem%}").Parse(data)
 	w.Header().Set("content-type", "text/markdown")
 
 	err = tmpl.Execute(w, s)
