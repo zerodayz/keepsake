@@ -283,7 +283,7 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 	buf := bytes.NewBuffer(nil)
 	wikiPages := database.LoadAllPages(w, r)
 	buf.Write([]byte(`<div class="container-d">
-			<div class="header-text left-d"><h1>View All</h1></div>
+			<div class="header-text left-d"><h1>View All <a href="/pages/download/"><img src="/lib/icons/get_app-24px.svg"></a></h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
             <div class="controls">
