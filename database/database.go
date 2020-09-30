@@ -713,6 +713,36 @@ func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
 	return wikiPages
 }
 
+func DownloadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		title          string
+		content		   string
+	)
+	rows, err := db.Query("SELECT title, content FROM pages WHERE deleted = ? ORDER BY internal_id DESC", 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&title, &content)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{Title: title, Content: content})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+}
+
 func LoadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {

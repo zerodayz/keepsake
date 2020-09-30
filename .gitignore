@@ -1,4 +1,5 @@
 data/*
+lib/keepsake-latest.tar.gz
 data/pages/*
 data/mysql/*
 wiki

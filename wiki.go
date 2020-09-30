@@ -41,6 +41,7 @@ func main() {
 	http.HandleFunc("/preview/create/", pages.MakeHandler(pages.PreviewCreateHandler))
 
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
+	http.HandleFunc("/pages/download/", pages.DownloadHandler)
 	http.HandleFunc("/pages/view/raw/", pages.ViewRawHandler)
 	http.HandleFunc("/pages/list", pages.ListHandler)
 	http.HandleFunc("/pages/revisions/", pages.MakeHandler(pages.RevisionsHandler))

@@ -9,11 +9,14 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/zerodayz/keepsake/database"
+	"github.com/zerodayz/keepsake/helpers"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
@@ -241,6 +244,35 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func DownloadHandler(w http.ResponseWriter, r *http.Request) {
+	dir, err := ioutil.TempDir("", "keepsake-latest")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer os.RemoveAll(dir)
+
+	var files []string
+	wikiPages := database.DownloadAllPages(w, r)
+	for _, f := range wikiPages {
+		fileName := strings.ReplaceAll(f.Title, " ", "_") + ".md"
+		fileName = strings.ReplaceAll(fileName, "/", "_")
+		files = append(files, dir + "/" + fileName)
+		data := "# " + f.Title + "\n" + f.Content
+		file := filepath.Join(dir, fileName)
+		if err := ioutil.WriteFile(file, []byte(data), 0666);
+			err != nil {
+			log.Fatal(err)
+		}
+	}
+	err = helpers.CreateTarball("lib/keepsake-latest.tar.gz", files)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	w.Header().Set("content-type", "application/tar+gzip")
+	http.Redirect(w, r, "/lib/keepsake-latest.tar.gz", http.StatusFound)
+	return
 }
 
 func ListHandler(w http.ResponseWriter, r *http.Request) {

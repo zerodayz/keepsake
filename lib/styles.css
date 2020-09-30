@@ -1295,6 +1295,10 @@ legend+.control-group {
 	content: url(/lib/icons/person-24px.svg);
 }
 
+.navvy>ul>li.menu-downloads>a::before {
+	content: url(/lib/icons/get_app-24px.svg);
+}
+
 .navvy>ul>li .active {
 	background-color: #575757;
 }
