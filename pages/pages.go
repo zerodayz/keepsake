@@ -354,20 +354,6 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func UnLikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
-	username := ReadCookie(w, r)
-	if username == "Unauthorized" {
-		http.Redirect(w, r, "/users/login/", http.StatusFound)
-		return
-	}
-	id, err := strconv.Atoi(InternalId)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusInternalServerError)
-		return
-	}
-	database.LikePage(w, r, id, 0, username)
-}
-
 func LikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	username := ReadCookie(w, r)
 	if username == "Unauthorized" {
@@ -379,7 +365,7 @@ func LikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 		return
 	}
-	database.LikePage(w, r, id, 1, username)
+	database.LikePage(w, r, id, username)
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {

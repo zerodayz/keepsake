@@ -265,12 +265,32 @@ func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusFound)
 }
 
-func LikePage(w http.ResponseWriter, r *http.Request, InternalId, status int, username string) {
+func LikePage(w http.ResponseWriter, r *http.Request, InternalId int, username string) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
+
+	var status int
+	var newVote = false
+
+	err = db.QueryRow(`
+	SELECT status
+	FROM likes WHERE wiki_page_id = ? AND username = ?`, InternalId, username).Scan(&status)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	} else if err == sql.ErrNoRows {
+		newVote = true
+	}
+
+	if newVote == true {
+		status = 1
+	} else if status == 0 {
+		status = 1
+	} else if status == 1 {
+		status = 0
+	}
 
 	LikePage, err := db.Prepare(`
 	INSERT INTO likes (wiki_page_id, username, status) VALUES ( ?, ?, ? ) ON DUPLICATE KEY UPDATE status = ?
@@ -763,7 +783,7 @@ func LoadTop5Voted(w http.ResponseWriter, r *http.Request) []WikiPage {
 		title          string
 		votes		   int
 	)
-	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.title,count(*) as count from pages join likes on pages.internal_id = likes.wiki_page_id where deleted = ? group by pages.internal_id order by count desc limit 5;", 0)
+	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.title,count(*) as count from pages join likes on pages.internal_id = likes.wiki_page_id where deleted = ? and status = ? group by pages.internal_id order by count desc limit 5;", 0, 1)
 	if err != nil {
 		log.Fatal(err)
 	}

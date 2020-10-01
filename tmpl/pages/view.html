@@ -79,13 +79,10 @@
                     {{else}}
                         {{if eq .Liked 2}}
                             <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
-                            <a href="/pages/unlike/{{.InternalId}}"><img src="/lib/icons/thumb_down_alt-24px.svg"></a>
                         {{else if eq .Liked 1}}
                             <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px-2.svg"></a>
-                            <a href="/pages/unlike/{{.InternalId}}"><img src="/lib/icons/thumb_down_alt-24px.svg"></a>
                         {{else if eq .Liked 0}}
                             <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
-                            <a href="/pages/unlike/{{.InternalId}}"><img src="/lib/icons/thumb_down_alt-24px-2.svg"></a>
                         {{end}}
                     {{end}}
                 </h1>
