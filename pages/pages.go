@@ -60,7 +60,7 @@ func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 
 func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
 	s := database.ShowPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, Deleted: s.Deleted, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, Deleted: s.Deleted, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated, Liked: s.Liked}, nil
 }
 
 func LoadPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
@@ -230,6 +230,12 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	var bufComments bytes.Buffer
 
 	comments := database.FetchComments(w, r, id)
+	if username == "Unauthorized" {
+		s.Liked = 2
+	} else {
+		s.Liked = database.GetLikeForPagePerUser(w, r, id, username)
+	}
+
 	bufComments.Write([]byte(`<div>There are ` + strconv.Itoa(len(comments)) + ` comment(s).</div>`))
 	for _, f := range comments {
 		bufComments.Write([]byte(`
@@ -348,6 +354,34 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func UnLikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	id, err := strconv.Atoi(InternalId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+	database.LikePage(w, r, id, 0, username)
+}
+
+func LikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	id, err := strconv.Atoi(InternalId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+	database.LikePage(w, r, id, 1, username)
+}
+
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	p := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "dashboard.html"))
@@ -414,7 +448,20 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+	bufUpVoted := bytes.NewBuffer(nil)
+	bufUpVoted.Write([]byte(`<div class="header-text-n"><h1>5 Most Voted</h1></div>`))
 
+	upVotedPages := database.LoadTop5Voted(w, r)
+
+	if len(upVotedPages) == 0 {
+		bufUpVoted.Write([]byte(`There are no wiki pages with votes.`))
+	} else {
+		for _, f := range upVotedPages {
+			bufUpVoted.Write([]byte(`<div class="dashboard">
+			<a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a><br>Votes: ` + strconv.Itoa(f.Liked) + `</div>`))
+		}
+	}
+	p.DisplayUpVoted = template.HTML(bufUpVoted.String())
 	p.DisplayBody = template.HTML(buf.String())
 	p.DisplayComment = template.HTML(bufComment.String())
 
@@ -926,7 +973,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(like|unlike|edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

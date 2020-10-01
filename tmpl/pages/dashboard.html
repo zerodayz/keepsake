@@ -72,6 +72,9 @@
                 </form>
             </div>
             <div class="dashboard">
+                1 Oct 2020 - <a href="/pages/like/1">Vote</a> has been added. <br>
+                You can vote either by clicking <img src="/lib/icons/thumb_up_alt-24px.svg"> or <img src="/lib/icons/thumb_down_alt-24px.svg"> on <a href="/pages/view/1">View Page</a>. You can check the on the <a href="/dashboard">Dashboard</a> for the most voted pages.
+                <br>
                 30 Sept 2020 - <a href="/pages/download">Download All</a> in Markdown format has been added. <br>
                 You can download all pages in Markdown either by clicking the <img src="/lib/icons/get_app-24px.svg"> on <a href="/pages/list">View All</a> page or <code>curl -L -k ${HOST}/pages/download -o ${FILE}.tar.gz</code> in your terminal.
                 <br>
@@ -100,6 +103,7 @@ console.log(&quot;I'm a code block!&quot;);
 &lt;/details&gt;</code></pre>
                     </details>
             </div>
+            {{.DisplayUpVoted}}
             {{.DisplayComment}}</div>
         <div>{{.DisplayBody}}</div>
     </div>

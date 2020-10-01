@@ -39,8 +39,9 @@ func main() {
 	http.HandleFunc("/revisions/rollback/", pages.MakeHandler(pages.RevisionRollbackHandler))
 	http.HandleFunc("/preview/view/", pages.MakeHandler(pages.PreviewHandler))
 	http.HandleFunc("/preview/create/", pages.MakeHandler(pages.PreviewCreateHandler))
-
 	http.HandleFunc("/pages/view/", pages.MakeHandler(pages.ViewHandler))
+	http.HandleFunc("/pages/like/", pages.MakeHandler(pages.LikeHandler))
+	http.HandleFunc("/pages/unlike/", pages.MakeHandler(pages.UnLikeHandler))
 	http.HandleFunc("/pages/download/", pages.DownloadHandler)
 	http.HandleFunc("/pages/view/raw/", pages.ViewRawHandler)
 	http.HandleFunc("/pages/list", pages.ListHandler)

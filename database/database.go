@@ -34,6 +34,7 @@ type Tag struct {
 	DateCreated string
 	CreatedBy   string
 }
+
 type Comment struct {
 	InternalId  int
 	WikiPageId  int
@@ -47,6 +48,7 @@ type WikiPage struct {
 	InternalId     int
 	WikiPageId     int
 	CommentCount   int
+	Liked		   int
 	Title          string
 	Content        string
 	Tags           []string
@@ -58,6 +60,7 @@ type WikiPage struct {
 	UserLoggedIn   string
 	CreatedBy      string
 	Body           string
+	DisplayUpVoted template.HTML
 	DisplayBody    template.HTML
 	DisplayComment template.HTML
 	Errors         map[string]string
@@ -119,6 +122,20 @@ func InitializeDatabase() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	_, err = db.Exec(`
+	CREATE TABLE IF NOT EXISTS likes (
+		internal_id int NOT NULL AUTO_INCREMENT,
+		wiki_page_id int,
+		username varchar(15) NOT NULL,
+		status int,
+		PRIMARY KEY (internal_id),
+		CONSTRAINT wiki_id_user UNIQUE (username , wiki_page_id)
+		) CHARACTER SET utf8;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	_, err = db.Exec(`
 	CREATE TABLE IF NOT EXISTS tokens (
 		internal_id int NOT NULL AUTO_INCREMENT,
@@ -246,6 +263,26 @@ func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusInternalServerError)
 	}
 	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusFound)
+}
+
+func LikePage(w http.ResponseWriter, r *http.Request, InternalId, status int, username string) {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	LikePage, err := db.Prepare(`
+	INSERT INTO likes (wiki_page_id, username, status) VALUES ( ?, ?, ? ) ON DUPLICATE KEY UPDATE status = ?
+	`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = LikePage.Exec(InternalId, username, status, status)
+	if err != nil {
+		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusInternalServerError)
+	}
+	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusFound)
 }
 
 func CreateCategory(w http.ResponseWriter, r *http.Request, c Tag) {
@@ -713,6 +750,38 @@ func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
 	return wikiPages
 }
 
+func LoadTop5Voted(w http.ResponseWriter, r *http.Request) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		id             int
+		deleted		   int
+		title          string
+		votes		   int
+	)
+	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.title,count(*) as count from pages join likes on pages.internal_id = likes.wiki_page_id where deleted = ? group by pages.internal_id order by count desc limit 5;", 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&id, &deleted, &title, &votes)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, Deleted: deleted, Title: title, Liked: votes})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+}
+
 func DownloadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
@@ -899,6 +968,25 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 	return wikiPages, wikiPage
+}
+
+func GetLikeForPagePerUser(w http.ResponseWriter, r *http.Request, internalId int, username string) int {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var status int
+
+	err = db.QueryRow(`
+	SELECT status FROM likes where wiki_page_id = ? and username = ?
+	`, internalId, username).Scan(&status)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	} else if err == sql.ErrNoRows {
+		return 2
+	}
+	return status
 }
 
 func FetchComments(w http.ResponseWriter, r *http.Request, internalId int) []Comment {

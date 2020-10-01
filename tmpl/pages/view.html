@@ -74,7 +74,21 @@
         <div class="clearfix"></div>
         <div class="container">
             <div class="header-text">
-                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}} <a href="/pages/view/raw/{{.InternalId}}"><img src="/lib/icons/save-24px.svg"></a></h1>
+                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}} <a href="/pages/view/raw/{{.InternalId}}"><img src="/lib/icons/save-24px.svg"></a>
+                    {{if eq .UserLoggedIn "Unauthorized"}}
+                    {{else}}
+                        {{if eq .Liked 2}}
+                            <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
+                            <a href="/pages/unlike/{{.InternalId}}"><img src="/lib/icons/thumb_down_alt-24px.svg"></a>
+                        {{else if eq .Liked 1}}
+                            <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px-2.svg"></a>
+                            <a href="/pages/unlike/{{.InternalId}}"><img src="/lib/icons/thumb_down_alt-24px.svg"></a>
+                        {{else if eq .Liked 0}}
+                            <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
+                            <a href="/pages/unlike/{{.InternalId}}"><img src="/lib/icons/thumb_down_alt-24px-2.svg"></a>
+                        {{end}}
+                    {{end}}
+                </h1>
             </div>
             <div>
                 Created by {{.CreatedBy}} on {{.DateCreated}} UTC
