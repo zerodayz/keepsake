@@ -49,6 +49,7 @@ type WikiPage struct {
 	WikiPageId     int
 	CommentCount   int
 	Liked		   int
+	Repair		   int
 	Title          string
 	Content        string
 	Tags           []string
@@ -131,6 +132,17 @@ func InitializeDatabase() {
 		status int,
 		PRIMARY KEY (internal_id),
 		CONSTRAINT wiki_id_user UNIQUE (username , wiki_page_id)
+		) CHARACTER SET utf8;`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`
+	CREATE TABLE IF NOT EXISTS repairs (
+		internal_id int NOT NULL AUTO_INCREMENT,
+		wiki_page_id int NOT NULL UNIQUE,
+		status int,
+		PRIMARY KEY (internal_id)
 		) CHARACTER SET utf8;`)
 	if err != nil {
 		log.Fatal(err)
@@ -263,6 +275,46 @@ func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusInternalServerError)
 	}
 	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusFound)
+}
+
+func RepairPage(w http.ResponseWriter, r *http.Request, InternalId int) {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	var status int
+	var newRepair = false
+
+	err = db.QueryRow(`
+	SELECT status
+	FROM repairs WHERE wiki_page_id = ?`, InternalId).Scan(&status)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	} else if err == sql.ErrNoRows {
+		newRepair = true
+	}
+
+	if newRepair == true {
+		status = 1
+	} else if status == 0 {
+		status = 1
+	} else if status == 1 {
+		status = 0
+	}
+
+	RepairPage, err := db.Prepare(`
+	INSERT INTO repairs (wiki_page_id, status) VALUES ( ?, ? ) ON DUPLICATE KEY UPDATE status = ?
+	`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = RepairPage.Exec(InternalId, status, status)
+	if err != nil {
+		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusInternalServerError)
+	}
+	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusFound)
 }
 
 func LikePage(w http.ResponseWriter, r *http.Request, InternalId int, username string) {
@@ -838,6 +890,42 @@ func LoadMyVoted(w http.ResponseWriter, r *http.Request, username string) []Wiki
 	return wikiPages
 }
 
+func LoadNeedsImprovement(w http.ResponseWriter, r *http.Request) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		id             int
+		deleted		   int
+		title          string
+		createdBy      string
+		tags		   string
+		dateCreated    string
+		lastModifiedBy string
+		lastModified   string
+	)
+	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.created_by,COALESCE(tags, '') as tags,pages.date_created,COALESCE(last_modified_by, '') as last_modified_by,pages.last_modified,pages.title from pages join repairs on pages.internal_id = repairs.wiki_page_id where pages.deleted = ? and repairs.status = ? group by pages.internal_id ORDER BY pages.last_modified DESC, pages.date_created DESC", 0, 1)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&id, &deleted, &createdBy, &tags, &dateCreated, &lastModifiedBy, &lastModified, &title)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, Deleted: deleted, Title: title, Tags: strings.Split(tags, ","), DateCreated: dateCreated, CreatedBy: createdBy, LastModifiedBy: lastModifiedBy, LastModified: lastModified})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+}
+
 func DownloadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
@@ -1024,6 +1112,24 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 	}
 	return wikiPages, wikiPage
+}
+
+func GetRepairsForPage(w http.ResponseWriter, r *http.Request, internalId int) int {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var status int
+
+	err = db.QueryRow(`
+	SELECT status FROM repairs where wiki_page_id = ?`, internalId).Scan(&status)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	} else if err == sql.ErrNoRows {
+		return 2
+	}
+	return status
 }
 
 func GetLikeForPagePerUser(w http.ResponseWriter, r *http.Request, internalId int, username string) int {

@@ -84,6 +84,13 @@
                         {{else if eq .Liked 0}}
                             <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
                         {{end}}
+                        {{if eq .Repair 2}}
+                            <a href="/pages/repair/{{.InternalId}}"><img src="/lib/icons/home_repair_service-24px.svg"></a>
+                        {{else if eq .Repair 1}}
+                            <a href="/pages/repair/{{.InternalId}}"><img src="/lib/icons/home_repair_service-24px-2.svg"></a>
+                        {{else if eq .Repair 0}}
+                            <a href="/pages/repair/{{.InternalId}}"><img src="/lib/icons/home_repair_service-24px.svg"></a>
+                        {{end}}
                     {{end}}
                 </h1>
             </div>

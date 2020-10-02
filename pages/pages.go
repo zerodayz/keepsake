@@ -232,8 +232,10 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	comments := database.FetchComments(w, r, id)
 	if username == "Unauthorized" {
 		s.Liked = 2
+		s.Repair = 2
 	} else {
 		s.Liked = database.GetLikeForPagePerUser(w, r, id, username)
+		s.Repair = database.GetRepairsForPage(w, r, id)
 	}
 
 	bufComments.Write([]byte(`<div>There are ` + strconv.Itoa(len(comments)) + ` comment(s).</div>`))
@@ -281,6 +283,84 @@ func DownloadHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
+	p := database.WikiPage{}
+	t := template.Must(template.ParseFiles(templatePath + "repairs.html"))
+
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+
+	bufUpVoted := bytes.NewBuffer(nil)
+	bufUpVoted.Write([]byte(`<div class="container-d">
+			<div class="header-text left-d"><h1>View Needs Improvement</h1></div>
+    <form id="searchForm" action="/pages/search" method="GET">
+        <div class="control-group search-container right-d">
+            <div class="controls">
+              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="navbar-search-button" id="submit" type="submit" value="Search">
+                </div>
+            </div>
+        </div>
+    </form>
+	</div>`))
+
+	needsImprovementPages := database.LoadNeedsImprovement(w, r)
+
+	if len(needsImprovementPages) == 0 {
+		bufUpVoted.Write([]byte(`There are no pages that needs improvement.`))
+	} else {
+		existingCategories := database.FetchCategories(w, r)
+		if len(existingCategories) == 0 {
+			bufUpVoted.Write([]byte(`There are no categories yet.`))
+		} else {
+			bufUpVoted.Write([]byte(`<div id="items"></div>`))
+			for _, f := range existingCategories {
+				// Fix for the categories with space.
+				space := strings.Split(f.Name, " ")
+				if len(space) >= 2 {
+					value := strings.ReplaceAll(f.Name, " ", "-")
+					bufUpVoted.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + value + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				} else {
+					bufUpVoted.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				}
+			}
+		}
+		bufUpVoted.Write([]byte(`
+		<table id="view-all-table">
+		`))
+		for _, f := range needsImprovementPages {
+			var originalTags []string
+			for i, s := range f.Tags {
+				originalTags = append(originalTags, s)
+				space := strings.Split(s, " ")
+				if len(space) >= 2 {
+					f.Tags[i] = strings.ReplaceAll(s, " ", "-")
+				}
+			}
+			categoriesName := strings.Join(originalTags, " ")
+			categories := strings.Join(f.Tags, " ")
+
+			if len(categories) == 0 {
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
+			} else {
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
+			}
+		}
+		bufUpVoted.Write([]byte(`</table>`))
+	}
+	p.DisplayBody = template.HTML(bufUpVoted.String())
+
+	err := t.ExecuteTemplate(w, "repairs.html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
 
 func StarHandler(w http.ResponseWriter, r *http.Request) {
 	p := database.WikiPage{}
@@ -446,6 +526,20 @@ func LikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		return
 	}
 	database.LikePage(w, r, id, username)
+}
+
+func RepairHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+	id, err := strconv.Atoi(InternalId)
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+	database.RepairPage(w, r, id)
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {
@@ -1039,7 +1133,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string, p *database.WikiPage) {
 	}
 }
 
-var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(like|unlike|edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/(pages|revisions|preview)/(like|repair|unlike|edit|save|view|preview|delete|restore|revisions|rollback|create)/([0-9]+)$")
 
 func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

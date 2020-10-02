@@ -1251,7 +1251,11 @@ legend+.control-group {
 }
 
 .navvy>ul>li.menu-stars>a::before {
-	content: url(/lib/icons/thumb_up_alt-24px-2.svg);
+	content: url(/lib/icons/star-24px.svg);
+}
+
+.navvy>ul>li.menu-repairs>a::before {
+	content: url(/lib/icons/home_repair_service-24px-home.svg);
 }
 
 .navvy>ul>li.menu-help>a::before {
