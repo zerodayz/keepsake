@@ -313,7 +313,7 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 	needsImprovementPages := database.LoadNeedsImprovement(w, r)
 
 	if len(needsImprovementPages) == 0 {
-		bufUpVoted.Write([]byte(`There are no pages that needs improvement.`))
+		bufUpVoted.Write([]byte(`There are no pages marked as Needs Improvement. Everything is good :-)`))
 	} else {
 		existingCategories := database.FetchCategories(w, r)
 		if len(existingCategories) == 0 {
