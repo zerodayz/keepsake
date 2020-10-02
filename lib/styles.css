@@ -1250,6 +1250,10 @@ legend+.control-group {
 	content: url(/lib/icons/list-24px.svg);
 }
 
+.navvy>ul>li.menu-stars>a::before {
+	content: url(/lib/icons/thumb_up_alt-24px-2.svg);
+}
+
 .navvy>ul>li.menu-help>a::before {
 	content: url(/lib/icons/help-24px.svg);
 }

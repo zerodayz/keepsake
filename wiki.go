@@ -43,6 +43,7 @@ func main() {
 	http.HandleFunc("/pages/like/", pages.MakeHandler(pages.LikeHandler))
 	http.HandleFunc("/pages/download/", pages.DownloadHandler)
 	http.HandleFunc("/pages/view/raw/", pages.ViewRawHandler)
+	http.HandleFunc("/pages/stars", pages.StarHandler)
 	http.HandleFunc("/pages/list", pages.ListHandler)
 	http.HandleFunc("/pages/revisions/", pages.MakeHandler(pages.RevisionsHandler))
 	http.HandleFunc("/pages/edit/", pages.MakeHandler(pages.EditHandler))

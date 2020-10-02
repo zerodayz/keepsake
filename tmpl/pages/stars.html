@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Keepsake - View All</title>
+    <title>Keepsake - View My Voted</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
     <meta charset='utf-8'>
@@ -17,10 +17,7 @@
                 <li class="menu-create"><a href="/pages/create"></a></li>
             {{end}}
             <li class="menu-list"><a href="/pages/list"></a></li>
-            {{if eq .UserLoggedIn "Unauthorized"}}
-            {{else}}
-                <li class="menu-stars"><a href="/pages/stars"></a></li>
-            {{end}}
+            <li class="menu-stars"><a href="/pages/stars"></a></li>
             <li>
                 {{if eq .UserLoggedIn "Unauthorized"}}
                     <div class="dropdown">

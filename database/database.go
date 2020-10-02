@@ -777,11 +777,11 @@ func LoadTop5Voted(w http.ResponseWriter, r *http.Request) []WikiPage {
 	}
 	defer db.Close()
 	var (
-		wikiPages      []WikiPage
-		id             int
-		deleted		   int
-		title          string
-		votes		   int
+		wikiPages []WikiPage
+		id        int
+		deleted   int
+		title     string
+		votes     int
 	)
 	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.title,count(*) as count from pages join likes on pages.internal_id = likes.wiki_page_id where deleted = ? and status = ? group by pages.internal_id order by count desc limit 5;", 0, 1)
 	if err != nil {
@@ -794,6 +794,42 @@ func LoadTop5Voted(w http.ResponseWriter, r *http.Request) []WikiPage {
 			log.Fatal(err)
 		}
 		wikiPages = append(wikiPages, WikiPage{InternalId: id, Deleted: deleted, Title: title, Liked: votes})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+}
+
+func LoadMyVoted(w http.ResponseWriter, r *http.Request, username string) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		id             int
+		deleted		   int
+		title          string
+		createdBy      string
+		tags		   string
+		dateCreated    string
+		lastModifiedBy string
+		lastModified   string
+	)
+	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.created_by,COALESCE(tags, '') as tags,pages.date_created,COALESCE(last_modified_by, '') as last_modified_by,pages.last_modified,pages.title from pages join likes on pages.internal_id = likes.wiki_page_id where pages.deleted = ? and likes.status = ? and likes.username = ? group by pages.internal_id ORDER BY pages.last_modified DESC, pages.date_created DESC", 0, 1, username)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&id, &deleted, &createdBy, &tags, &dateCreated, &lastModifiedBy, &lastModified, &title)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, Deleted: deleted, Title: title, Tags: strings.Split(tags, ","), DateCreated: dateCreated, CreatedBy: createdBy, LastModifiedBy: lastModifiedBy, LastModified: lastModified})
 	}
 	err = rows.Err()
 	if err != nil {

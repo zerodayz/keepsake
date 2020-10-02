@@ -281,6 +281,86 @@ func DownloadHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+
+func StarHandler(w http.ResponseWriter, r *http.Request) {
+	p := database.WikiPage{}
+	t := template.Must(template.ParseFiles(templatePath + "stars.html"))
+
+	username := ReadCookie(w, r)
+	if username == "Unauthorized" {
+		http.Redirect(w, r, "/users/login/", http.StatusFound)
+		return
+	}
+
+	bufUpVoted := bytes.NewBuffer(nil)
+	bufUpVoted.Write([]byte(`<div class="container-d">
+			<div class="header-text left-d"><h1>View My Voted</h1></div>
+    <form id="searchForm" action="/pages/search" method="GET">
+        <div class="control-group search-container right-d">
+            <div class="controls">
+              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="navbar-search-button" id="submit" type="submit" value="Search">
+                </div>
+            </div>
+        </div>
+    </form>
+	</div>`))
+
+	upVotedPages := database.LoadMyVoted(w, r, username)
+
+	if len(upVotedPages) == 0 {
+		bufUpVoted.Write([]byte(`There are no wiki pages with votes.`))
+	} else {
+		existingCategories := database.FetchCategories(w, r)
+		if len(existingCategories) == 0 {
+			bufUpVoted.Write([]byte(`There are no categories yet.`))
+		} else {
+			bufUpVoted.Write([]byte(`<div id="items"></div>`))
+			for _, f := range existingCategories {
+				// Fix for the categories with space.
+				space := strings.Split(f.Name, " ")
+				if len(space) >= 2 {
+					value := strings.ReplaceAll(f.Name, " ", "-")
+					bufUpVoted.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + value + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				} else {
+					bufUpVoted.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
+				}
+			}
+		}
+		bufUpVoted.Write([]byte(`
+		<table id="view-all-table">
+		`))
+		for _, f := range upVotedPages {
+			var originalTags []string
+			for i, s := range f.Tags {
+				originalTags = append(originalTags, s)
+				space := strings.Split(s, " ")
+				if len(space) >= 2 {
+					f.Tags[i] = strings.ReplaceAll(s, " ", "-")
+				}
+			}
+			categoriesName := strings.Join(originalTags, " ")
+			categories := strings.Join(f.Tags, " ")
+
+			if len(categories) == 0 {
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
+			} else {
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
+			}
+		}
+		bufUpVoted.Write([]byte(`</table>`))
+	}
+	p.DisplayBody = template.HTML(bufUpVoted.String())
+
+	err := t.ExecuteTemplate(w, "stars.html", p)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func ListHandler(w http.ResponseWriter, r *http.Request) {
 	p := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "list.html"))
