@@ -392,7 +392,7 @@ func StarHandler(w http.ResponseWriter, r *http.Request) {
 	upVotedPages := database.LoadMyVoted(w, r, username)
 
 	if len(upVotedPages) == 0 {
-		bufUpVoted.Write([]byte(`There are no wiki pages with votes.`))
+		bufUpVoted.Write([]byte(`There are no wiki pages with your votes :-(`))
 	} else {
 		existingCategories := database.FetchCategories(w, r)
 		if len(existingCategories) == 0 {
