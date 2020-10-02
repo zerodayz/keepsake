@@ -347,9 +347,9 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 			categories := strings.Join(f.Tags, " ")
 
 			if len(categories) == 0 {
-				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None | Requested by ` + f.CreatedBy + `</td></tr>`))
 			} else {
-				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + ` | Requested by ` + f.CreatedBy + `</td></tr>`))
 			}
 		}
 		bufUpVoted.Write([]byte(`</table>`))
@@ -539,7 +539,7 @@ func RepairHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
 		return
 	}
-	database.RepairPage(w, r, id)
+	database.RepairPage(w, r, id, username)
 }
 
 func DashboardHandler(w http.ResponseWriter, r *http.Request) {

@@ -141,6 +141,7 @@ func InitializeDatabase() {
 	CREATE TABLE IF NOT EXISTS repairs (
 		internal_id int NOT NULL AUTO_INCREMENT,
 		wiki_page_id int NOT NULL UNIQUE,
+		username varchar(15) NOT NULL,
 		status int,
 		PRIMARY KEY (internal_id)
 		) CHARACTER SET utf8;`)
@@ -277,7 +278,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(c.WikiPageId), http.StatusFound)
 }
 
-func RepairPage(w http.ResponseWriter, r *http.Request, InternalId int) {
+func RepairPage(w http.ResponseWriter, r *http.Request, InternalId int, username string) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
 		log.Fatal(err)
@@ -305,12 +306,12 @@ func RepairPage(w http.ResponseWriter, r *http.Request, InternalId int) {
 	}
 
 	RepairPage, err := db.Prepare(`
-	INSERT INTO repairs (wiki_page_id, status) VALUES ( ?, ? ) ON DUPLICATE KEY UPDATE status = ?
+	INSERT INTO repairs (wiki_page_id, status, username) VALUES ( ?, ?, ? ) ON DUPLICATE KEY UPDATE status = ?
 	`)
 	if err != nil {
 		log.Fatal(err)
 	}
-	_, err = RepairPage.Exec(InternalId, status, status)
+	_, err = RepairPage.Exec(InternalId, status, username, status)
 	if err != nil {
 		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusInternalServerError)
 	}
@@ -907,13 +908,13 @@ func LoadNeedsImprovement(w http.ResponseWriter, r *http.Request) []WikiPage {
 		lastModifiedBy string
 		lastModified   string
 	)
-	rows, err := db.Query("select pages.internal_id,pages.deleted,pages.created_by,COALESCE(tags, '') as tags,pages.date_created,COALESCE(last_modified_by, '') as last_modified_by,pages.last_modified,pages.title from pages join repairs on pages.internal_id = repairs.wiki_page_id where pages.deleted = ? and repairs.status = ? group by pages.internal_id ORDER BY pages.last_modified DESC, pages.date_created DESC", 0, 1)
+	rows, err := db.Query("select pages.internal_id,repairs.username,pages.deleted,COALESCE(tags, '') as tags,pages.date_created,COALESCE(last_modified_by, '') as last_modified_by,pages.last_modified,pages.title from pages join repairs on pages.internal_id = repairs.wiki_page_id where pages.deleted = ? and repairs.status = ? group by pages.internal_id ORDER BY pages.last_modified DESC, pages.date_created DESC", 0, 1)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&id, &deleted, &createdBy, &tags, &dateCreated, &lastModifiedBy, &lastModified, &title)
+		err := rows.Scan(&id, &createdBy, &deleted, &tags, &dateCreated, &lastModifiedBy, &lastModified, &title)
 		if err != nil {
 			log.Fatal(err)
 		}
