@@ -549,6 +549,38 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	username := ReadCookie(w, r)
 	dateYesterday := time.Now().AddDate(0, 0, -1).UTC()
 
+	bufTodayArticles := bytes.NewBuffer(nil)
+	wikiPagesToday := database.LoadAllPagesToday(w, r)
+	bufTodayArticles.Write([]byte(`<div class="header-text-n"><h1>Today's Articles</h1></div>`))
+
+	if len(wikiPagesToday) == 0 {
+		bufTodayArticles.Write([]byte(`There are no wiki pages created or modified today yet :-(`))
+	} else {
+		for _, f := range wikiPagesToday {
+			// 2020-08-02 23:44:28
+			dateCreated := time.Now()
+
+			dateCreated, err := time.Parse("2006-01-02 15:04:05", f.DateCreated)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+			if f.LastModifiedBy == "" {
+				if dateCreated.After(dateYesterday) {
+					bufTodayArticles.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> | Created on ` + f.DateCreated + ` by ` + f.CreatedBy +
+						`</div>`))
+				}
+			} else {
+				dateModified, err := time.Parse("2006-01-02 15:04:05", f.LastModified)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+				}
+				if dateCreated.After(dateYesterday) && dateModified.After(dateYesterday) {
+					bufTodayArticles.Write([]byte(`<div class="dashboard"> <a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br> <img src="/lib/icons/fiber_new-24px.svg" alt="New post!" title="New post!"/> <img src="/lib/icons/new_releases-24px.svg" alt="New update!" title="New update!"/> | Modified on ` + f.LastModified + ` by ` + f.LastModifiedBy + `.</div>`))
+				}
+			}
+		}
+	}
+
 	bufComment := bytes.NewBuffer(nil)
 	wikiPagesTop10Commented := database.Top10Commented(w, r)
 	bufComment.Write([]byte(`<div class="header-text"><h1>Last 10 Discussed</h1></div>`))
@@ -622,6 +654,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	p.DisplayUpVoted = template.HTML(bufUpVoted.String())
+	p.DisplayToday = template.HTML(bufTodayArticles.String())
 	p.DisplayBody = template.HTML(buf.String())
 	p.DisplayComment = template.HTML(bufComment.String())
 

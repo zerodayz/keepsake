@@ -61,6 +61,7 @@ type WikiPage struct {
 	UserLoggedIn   string
 	CreatedBy      string
 	Body           string
+	DisplayToday   template.HTML
 	DisplayUpVoted template.HTML
 	DisplayBody    template.HTML
 	DisplayComment template.HTML
@@ -787,6 +788,42 @@ func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage 
 		http.Redirect(w, r, "/", http.StatusNotFound)
 	}
 	return &WikiPage{Title: title, Content: content, Deleted: deletedString, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+}
+
+func LoadAllPagesToday(w http.ResponseWriter, r *http.Request) []WikiPage {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	var (
+		wikiPages      []WikiPage
+		id             int
+		title          string
+		createdBy      string
+		dateCreated    string
+		lastModifiedBy string
+		lastModified   string
+	)
+
+	rows, err := db.Query("SELECT internal_id, title, created_by, date_created, COALESCE(last_modified_by, '') as last_modified_by, last_modified FROM pages WHERE deleted = ? AND date_created > DATE_SUB(CURRENT_TIMESTAMP, INTERVAL 1 DAY) ORDER BY date_created DESC", 0)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&id, &title, &createdBy, &dateCreated, &lastModifiedBy, &lastModified)
+		if err != nil {
+			log.Fatal(err)
+		}
+		wikiPages = append(wikiPages, WikiPage{InternalId: id, Title: title, DateCreated: dateCreated, CreatedBy: createdBy, LastModifiedBy: lastModifiedBy, LastModified: lastModified})
+	}
+	err = rows.Err()
+	if err != nil {
+		http.Redirect(w, r, "/", http.StatusInternalServerError)
+	}
+	return wikiPages
+
 }
 
 func LoadPageLast25(w http.ResponseWriter, r *http.Request) []WikiPage {
