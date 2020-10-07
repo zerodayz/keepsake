@@ -554,7 +554,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	bufTodayArticles.Write([]byte(`<div class="header-text-n"><h1>Today's Articles</h1></div>`))
 
 	if len(wikiPagesToday) == 0 {
-		bufTodayArticles.Write([]byte(`There are no wiki pages created or modified today yet :-(`))
+		bufTodayArticles.Write([]byte(`There are no Wiki pages created today yet :-(`))
 	} else {
 		for _, f := range wikiPagesToday {
 			// 2020-08-02 23:44:28
