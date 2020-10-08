@@ -33,16 +33,16 @@
             <form action="/pages/repair/{{.InternalId}}" method="POST">
                 <div class="control-group">
                     <div class="controls">
-                        <span id="comment_title"></span>
-                        Short Description: <textarea onkeyup='validate_form();' id="comment_title_value" name="comment_title" cols="1"></textarea>
+                        <span id="comment_title_needs_improvement"></span>
+                        Short Description: <textarea onkeyup='validate_form_needs_improvement();' id="comment_title_value_needs_improvement" name="comment_title_needs_improvement" cols="1"></textarea>
                     </div>
                     <div class="controls">
-                        <span id="comment_message"></span>
-                        Body: <textarea onkeyup='validate_form();' id="comment_message_value" name="comment_message" rows="10" cols="80"></textarea>
+                        <span id="comment_message_needs_improvement"></span>
+                        Body: <textarea onkeyup='validate_form_needs_improvement();' id="comment_message_value_needs_improvement" name="comment_message_needs_improvement" rows="10" cols="80"></textarea>
                     </div>
                     <div class="control-group">
                         <div class="controls">
-                            <input id="submit-button" type="submit" value="Send" disabled>
+                            <input id="submit-button_needs_improvement" type="submit" value="Send" disabled>
                         </div>
                     </div>
                 </div>

@@ -547,8 +547,8 @@ func RepairHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 	if r.Method == "POST" {
 		r.ParseForm()
 		c.WikiPageId = id
-		c.Title = "Needs Improvement Requested: " + r.PostFormValue("comment_title")
-		c.Body = r.PostFormValue("comment_message")
+		c.Title = "Needs Improvement Requested: " + r.PostFormValue("comment_title_needs_improvement")
+		c.Body = r.PostFormValue("comment_message_needs_improvement")
 		date := time.Now().UTC()
 		c.DateCreated = date.Format("20060102150405")
 		database.RepairPageAndComment(w, r, id, c)
