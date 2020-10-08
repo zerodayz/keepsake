@@ -9,6 +9,7 @@ Insipiration of some features from (jmoiron's gowiki)[https://github.com/jmoiron
 The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
 
 # What's New?
+- **07 October 2020** - Today's Articles has been added.
 - **02 October 2020** - View Needs Improvement has been added.  
 You can now tag the page as "Needs Improvement" by clicking ![home_repair_service](lib/icons/home_repair_service-24px.svg) on the page. 
 - **02 October 2020** - View My Voted has been added.  
