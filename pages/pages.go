@@ -529,14 +529,29 @@ func LikeHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 }
 
 func RepairHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
+	c := database.Comment{}
 	username := ReadCookie(w, r)
 	if username == "Unauthorized" {
 		http.Redirect(w, r, "/users/login/", http.StatusFound)
 		return
 	}
+
+	// Set username to Logged in User.
+	c.CreatedBy = username
+
 	id, err := strconv.Atoi(InternalId)
 	if err != nil {
 		http.Redirect(w, r, "/", http.StatusInternalServerError)
+		return
+	}
+	if r.Method == "POST" {
+		r.ParseForm()
+		c.WikiPageId = id
+		c.Title = "Needs Improvement Requested: " + r.PostFormValue("comment_title")
+		c.Body = r.PostFormValue("comment_message")
+		date := time.Now().UTC()
+		c.DateCreated = date.Format("20060102150405")
+		database.RepairPageAndComment(w, r, id, c)
 		return
 	}
 	database.RepairPage(w, r, id, username)

@@ -1543,7 +1543,18 @@ div.header-text-n {
 	width: 400px; /* Could be more or less, depending on screen size */
   }
 
-  .modal-content-create-page {
+.modal-content-needs-improvement {
+	background-color: #121212;
+	padding: 20px;
+	border-radius: 6px;
+	margin: 5% auto; /* 15% from the top and centered */
+	box-shadow: 15px 8px 16px 0px rgba(0,0,0,0.2);
+	width: 80%; /* Could be more or less, depending on screen size */
+	height: 550px;
+}
+
+
+.modal-content-create-page {
 	  background-color: #121212;
 	  padding: 20px;
 	  border-radius: 6px;
@@ -1570,6 +1581,18 @@ div.header-text-n {
 	font-size: 28px;
 	font-weight: bold;
   }
+.close-needs-improvement {
+	color: #aaa;
+	float: right;
+	font-size: 28px;
+	font-weight: bold;
+}
+.close-needs-improvement:hover,
+.close-needs-improvement:focus {
+	color: black;
+	text-decoration: none;
+	cursor: pointer;
+}
   .close-create {
 	color: #aaa;
 	float: right;

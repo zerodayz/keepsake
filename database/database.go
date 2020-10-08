@@ -259,6 +259,58 @@ func InsertToken(w http.ResponseWriter, r *http.Request, u User, tk Token) {
 	}
 }
 
+func RepairPageAndComment(w http.ResponseWriter, r *http.Request, InternalId int, c Comment) {
+	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	var status int
+	var newRepair = false
+
+	err = db.QueryRow(`
+	SELECT status
+	FROM repairs WHERE wiki_page_id = ?`, InternalId).Scan(&status)
+	if err != nil && err != sql.ErrNoRows {
+		log.Fatal(err)
+	} else if err == sql.ErrNoRows {
+		newRepair = true
+	}
+
+	if newRepair == true {
+		status = 1
+	} else if status == 0 {
+		status = 1
+	} else if status == 1 {
+		status = 0
+	}
+
+	RepairPage, err := db.Prepare(`
+	INSERT INTO repairs (wiki_page_id, status, username) VALUES ( ?, ?, ? ) ON DUPLICATE KEY UPDATE status = ?
+	`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = RepairPage.Exec(InternalId, status, c.CreatedBy, status)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	CommentInsert, err := db.Prepare(`
+	INSERT INTO comments (title, content, wiki_page_id, created_by, date_created) VALUES ( ?, ?, ?, ?, ? )
+	`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	_, err = CommentInsert.Exec(c.Title, c.Body, c.WikiPageId, c.CreatedBy, c.DateCreated)
+
+	if err != nil {
+		http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusInternalServerError)
+	}
+	http.Redirect(w, r, "/pages/view/"+strconv.Itoa(InternalId), http.StatusFound)
+}
+
 func CreateComment(w http.ResponseWriter, r *http.Request, c Comment) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
