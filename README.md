@@ -45,20 +45,34 @@ https://github.com/zerodayz/keepsake.git
 ~~~
 cd keepsake
 ~~~
+## Server without SSL
+### Build Keepsake server
+~~~
+go build wiki.go
+~~~
 
-## Install TLS/SSL Cert
+### Run keepsake
+~~~
+./wiki --no-ssl
+~~~
+
+The default port the wiki is listening on is `80`.
+Navigate to `http://localhost` and enjoy.
+
+## Server with SSL
+### Install TLS/SSL Cert
 ~~~
 openssl ecparam -genkey -name secp384r1 -out server.key
 openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
 ~~~
 This will generate server.key and server.crt for your Keepsake server.
 
-## Build Keepsake server
+### Build Keepsake server
 ~~~
 go build wiki.go
 ~~~
 
-## Run keepsake
+### Run keepsake
 ~~~
 ./wiki
 ~~~
