@@ -61,60 +61,6 @@
     <div class="clearfix"></div>
     <div class="container">
         <div>
-            <div class="container-d">
-                <div class="header-text left-d"><h1>What's New?</h1></div>
-                <form id="searchForm" action="/pages/search" method="GET">
-                    <div class="control-group search-container right-d">
-                        <div class="controls">
-                            <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
-                        </div>
-                        <div class="control-group">
-                            <div class="controls">
-                                <input class="navbar-search-button" id="submit" type="submit" value="Search">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="dashboard">
-                7 Oct 2020 - <a href="/dashboard">Today's Articles</a> has been added. Check it out!<br>
-                2 Oct 2020 - <a href="/pages/repairs">View Needs Improvement</a> has been added. <br>
-                You can now tag the page as "Needs Improvement" by clicking <img src="/lib/icons/home_repair_service-24px.svg"> on the <a href="/pages/view/1">page</a>.
-                <br>
-                2 Oct 2020 - <a href="/pages/stars">View My Voted</a> has been added. <br>
-                You can view all your voted pages by clicking on <img src="/lib/icons/star-24px.svg"> on the <a href="/dashboard">Dashboard</a>.
-                <br>
-                1 Oct 2020 - <a href="/pages/like/1">Vote</a> has been added. <br>
-                You can vote by clicking <img src="/lib/icons/thumb_up_alt-24px.svg"> on <a href="/pages/view/1">View Page</a>. You can check the on the <a href="/dashboard">Dashboard</a> for the most voted pages.
-                <br>
-                30 Sept 2020 - <a href="/pages/download">Download All</a> in Markdown format has been added. <br>
-                You can download all pages in Markdown either by clicking the <img src="/lib/icons/get_app-24px.svg"> on <a href="/pages/list">View All</a> page or <code>curl -L -k ${HOST}/pages/download -o ${FILE}.tar.gz</code> in your terminal.
-                <br>
-                24 Sept 2020 - <a href="/pages/search/raw/?q=">Search Raw</a> has been added. <br>
-                Check it out by using <code>curl -k ${HOST}/pages/search/raw/?q=${SEARCHQUERY}&s=${SIZE}</code> in your terminal. You can also modify the trim size by appending <code>&s=${SIZE}</code>
-                <br>
-                23 Sept 2020 - <a href="/pages/view/raw/1">View Raw</a> has been added. <br>
-                Check it out either on web by clicking the <img src="/lib/icons/save-24px.svg"> next to the title or using <code>curl -k ${HOST}/pages/raw/${ID}</code> in your terminal.
-                <br>
-                22 Sept 2020 - <a href="/pages/list">View All</a> has been added. Check it out!
-                <br>
-                18 Sept 2020 - <a href="/dashboard">New Vertical Design</a> introduced!
-            </div>
-            <div class="header-text"><h1>Did you know ...</h1></div>
-            <div class="dashboard">You can use "spoilers" markdown tags<details>
-                    <summary>Spoiler warning</summary>
-                    Just copy paste following example code in your page:
-                    <pre><code>&lt;details&gt;
-&lt;summary&gt;Spoiler warning&lt;/summary&gt;
-Spoiler text. Note that it's important to have a space after the summary tag.
-You should be able to write any markdown you want inside the details tag... just make sure you close details afterward.
-
-```javascript
-console.log(&quot;I'm a code block!&quot;);
-```
-&lt;/details&gt;</code></pre>
-                    </details>
-            </div>
             {{.DisplayToday}}
             {{.DisplayUpVoted}}
             {{.DisplayComment}}</div>

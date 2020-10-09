@@ -566,7 +566,22 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 	bufTodayArticles := bytes.NewBuffer(nil)
 	wikiPagesToday := database.LoadAllPagesToday(w, r)
-	bufTodayArticles.Write([]byte(`<div class="header-text-n"><h1>Today's Articles</h1></div>`))
+	bufTodayArticles.Write([]byte(`
+			<div class="container-d">
+                <div class="header-text left-d"><h1>Today's Articles</h1></div>
+                <form id="searchForm" action="/pages/search" method="GET">
+                    <div class="control-group search-container right-d">
+                        <div class="controls">
+                            <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+                        </div>
+                        <div class="control-group">
+                            <div class="controls">
+                                <input class="navbar-search-button" id="submit" type="submit" value="Search">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>`))
 
 	if len(wikiPagesToday) == 0 {
 		bufTodayArticles.Write([]byte(`There are no Wiki pages created today yet :-(`))
