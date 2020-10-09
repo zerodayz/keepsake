@@ -14,6 +14,7 @@ import (
 	"github.com/zerodayz/keepsake/tickets"
 	"github.com/zerodayz/keepsake/users"
 	"log"
+	"flag"
 	"net/http"
 )
 
@@ -27,6 +28,13 @@ func redirect(w http.ResponseWriter, r *http.Request) {
 		target += "?" + r.URL.RawQuery
 	}
 	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
+}
+
+var noSsl bool
+
+func init() {
+	flag.BoolVar(&noSsl, "no-ssl", false, "Disable SSL")
+	flag.Parse()
 }
 
 func main() {
@@ -73,6 +81,10 @@ func main() {
 	http.HandleFunc("/users/create/", users.CreateUserHandler)
 	http.HandleFunc("/dashboard", pages.DashboardHandler)
 	http.HandleFunc("/", RootHandler)
-	go http.ListenAndServe(":80", http.HandlerFunc(redirect))
-	log.Fatal(http.ListenAndServeTLS(":443", "server.crt", "server.key", nil))
+	if noSsl == true {
+		log.Fatal(http.ListenAndServe(":80", nil))
+	} else if noSsl == false {
+		go http.ListenAndServe(":80", http.HandlerFunc(redirect))
+		log.Fatal(http.ListenAndServeTLS(":443", "server.crt", "server.key", nil))
+	}
 }
