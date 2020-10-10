@@ -2,7 +2,6 @@ data/*
 lib/keepsake-latest.tar.gz
 data/pages/*
 data/mysql/*
-Dockerfile
 wiki
 uploads
 server.key
