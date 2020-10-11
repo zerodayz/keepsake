@@ -7,6 +7,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/zerodayz/keepsake/categories"
 	"github.com/zerodayz/keepsake/comments"
 	"github.com/zerodayz/keepsake/database"
@@ -14,8 +15,8 @@ import (
 	"github.com/zerodayz/keepsake/tickets"
 	"github.com/zerodayz/keepsake/users"
 	"log"
-	"flag"
 	"net/http"
+	"os"
 )
 
 func RootHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,11 +31,20 @@ func redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
 }
 
-var noSsl bool
+var noSsl bool = false
 
 func init() {
-	flag.BoolVar(&noSsl, "no-ssl", false, "Disable SSL")
+	flag.BoolVar(&noSsl, "no-ssl", LookupEnvOrBool("DISABLE_SSL", noSsl), "Disable SSL")
 	flag.Parse()
+}
+
+func LookupEnvOrBool(key string, defaultVal bool) bool {
+	if val, ok := os.LookupEnv(key); ok {
+		if val == "1" {
+			return true
+		}
+	}
+	return defaultVal
 }
 
 func main() {
