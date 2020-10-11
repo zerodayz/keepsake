@@ -11,4 +11,4 @@ LABEL maintainer="Robin Cernin <cerninr@gmail.com>"
 ENV KEEPSAKE_VERSION latest
 COPY --from=builder /app/keepsake-$KEEPSAKE_VERSION /app
 WORKDIR /app
-CMD ["./wiki", "--no-ssl"]
+CMD ["./wiki"]
