@@ -82,9 +82,12 @@ func main() {
 	http.HandleFunc("/dashboard", pages.DashboardHandler)
 	http.HandleFunc("/", RootHandler)
 	if noSsl == true {
+		log.Println("Starting Keepsake server at :80")
 		log.Fatal(http.ListenAndServe(":80", nil))
 	} else if noSsl == false {
+		log.Println("Starting Keepsake server at :80")
 		go http.ListenAndServe(":80", http.HandlerFunc(redirect))
+		log.Println("Starting Keepsake server at :443")
 		log.Fatal(http.ListenAndServeTLS(":443", "server.crt", "server.key", nil))
 	}
 }
