@@ -26,7 +26,18 @@ Check it out either on web by clicking the ![save](lib/icons/save-24px.svg) next
 - **22 September 2020** - View All has been added. Check it out! 
 - **18 September 2020** - New Vertical Design introduced!
 
-# How to use
+# Use Keepsake in Docker
+## Server without SSL
+### Run the DB container
+```
+docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/tcp -p 80:80/tcp -e MYSQL_ROOT_PASSWORD=roottoor -e MYSQL_DATABASE=gowiki -e MYSQL_USER=gowiki -e MYSQL_PASSWORD=gowiki55 -d mariadb:latest
+```
+### Run the Keepsake container
+```
+docker run -d --network container:gowiki-mysql --name keepsake quay.io/zerodayz/keepsake
+```
+
+# Run Keepsake in Host with DB in container
 ## Run the DB container
 ```
 docker run --name gowiki-mysql -v $PWD/data/mysql:/var/lib/mysql:Z -p 3306:3306/tcp -e MYSQL_ROOT_PASSWORD=roottoor -e MYSQL_DATABASE=gowiki -e MYSQL_USER=gowiki -e MYSQL_PASSWORD=gowiki55 -d mariadb:latest
