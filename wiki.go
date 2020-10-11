@@ -31,10 +31,16 @@ func redirect(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, target, http.StatusTemporaryRedirect)
 }
 
-var noSsl bool = false
+var (
+	noSsl bool = false
+	key string = "./certs/server.key"
+	cert string = "./certs/server.crt"
+)
 
 func init() {
-	flag.BoolVar(&noSsl, "no-ssl", LookupEnvOrBool("DISABLE_SSL", noSsl), "Disable SSL")
+	flag.BoolVar(&noSsl, "no-ssl", LookupEnvOrBool("KEEPSAKE_DISABLE_SSL", noSsl), "Disable SSL")
+	flag.StringVar(&key, "key", LookupEnvOrString("KEEPSAKE_SSL_KEY", key), "SSL Key")
+	flag.StringVar(&cert, "cert", LookupEnvOrString("KEEPSAKE_SSL_CERT", cert), "SSL Cert")
 	flag.Parse()
 }
 
@@ -43,6 +49,13 @@ func LookupEnvOrBool(key string, defaultVal bool) bool {
 		if val == "1" {
 			return true
 		}
+	}
+	return defaultVal
+}
+
+func LookupEnvOrString(key string, defaultVal string) string {
+	if val, ok := os.LookupEnv(key); ok {
+		return val
 	}
 	return defaultVal
 }
@@ -98,6 +111,7 @@ func main() {
 		log.Println("Starting Keepsake server at :80")
 		go http.ListenAndServe(":80", http.HandlerFunc(redirect))
 		log.Println("Starting Keepsake server at :443")
-		log.Fatal(http.ListenAndServeTLS(":443", "server.crt", "server.key", nil))
+		log.Println("Serving SSL Key:", key, "and SSL Cert:", cert)
+		log.Fatal(http.ListenAndServeTLS(":443", cert, key, nil))
 	}
 }

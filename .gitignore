@@ -2,6 +2,7 @@ data/*
 lib/keepsake-latest.tar.gz
 data/pages/*
 data/mysql/*
+certs/
 wiki
 uploads
 server.key
