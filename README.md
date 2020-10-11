@@ -56,7 +56,7 @@ openssl req -new -x509 -sha256 -key certs/server.key -out certs/server.crt -days
 This will generate server.key and server.crt for your Keepsake server.
 
 ```
-docker run -d --network container:gowiki-mysql -v $PWD/certs:/certs:Z -e KEEPSAKE_SSL_KEY=./certs/server.key -e KEEPSAKE_SSL_CERT=./certs/server.crt --name keepsake quay.io/zerodayz/keepsake
+docker run -d --network container:gowiki-mysql -v $PWD/certs:/certs:Z -e KEEPSAKE_SSL_KEY=/certs/server.key -e KEEPSAKE_SSL_CERT=/certs/server.crt --name keepsake quay.io/zerodayz/keepsake
 ```
 
 The default port the wiki is listening on is `443`.
