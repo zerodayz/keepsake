@@ -35,11 +35,15 @@ var (
 	noSsl bool = false
 	key string = "./certs/server.key"
 	cert string = "./certs/server.crt"
+	httpPort string = ":80"
+	httpsPort string = ":443"
 )
 
 func init() {
 	flag.BoolVar(&noSsl, "no-ssl", LookupEnvOrBool("KEEPSAKE_DISABLE_SSL", noSsl), "Disable SSL")
 	flag.StringVar(&key, "key", LookupEnvOrString("KEEPSAKE_SSL_KEY", key), "SSL Key")
+	flag.StringVar(&httpPort, "http-port", LookupEnvOrString("KEEPSAKE_HTTP_PORT", httpPort), "HTTP Port")
+	flag.StringVar(&httpsPort, "https-port", LookupEnvOrString("KEEPSAKE_HTTPS_PORT", httpsPort), "HTTPS Port")
 	flag.StringVar(&cert, "cert", LookupEnvOrString("KEEPSAKE_SSL_CERT", cert), "SSL Cert")
 	flag.Parse()
 }
@@ -105,13 +109,13 @@ func main() {
 	http.HandleFunc("/dashboard", pages.DashboardHandler)
 	http.HandleFunc("/", RootHandler)
 	if noSsl == true {
-		log.Println("Starting Keepsake server at :80")
-		log.Fatal(http.ListenAndServe(":80", nil))
+		log.Println("Starting Keepsake server at", httpPort)
+		log.Fatal(http.ListenAndServe(httpPort, nil))
 	} else if noSsl == false {
-		log.Println("Starting Keepsake server at :80")
-		go http.ListenAndServe(":80", http.HandlerFunc(redirect))
-		log.Println("Starting Keepsake server at :443")
+		log.Println("Starting Keepsake server at", httpPort)
+		go http.ListenAndServe(httpPort, http.HandlerFunc(redirect))
+		log.Println("Starting Keepsake server at", httpsPort)
 		log.Println("Serving SSL Key:", key, "and SSL Cert:", cert)
-		log.Fatal(http.ListenAndServeTLS(":443", cert, key, nil))
+		log.Fatal(http.ListenAndServeTLS(httpsPort, cert, key, nil))
 	}
 }
