@@ -1,0 +1,73 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: keepsake
+  labels:
+    name: keepsake
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: keepsake
+  namespace: keepsake
+  labels:
+    name: keepsake
+spec:
+  containers:
+    - name: keepsake
+      image: quay.io/zerodayz/keepsake:latest
+      ports:
+        - name: keepsake
+          containerPort: 8080
+      env:
+        - name: KEEPSAKE_DISABLE_SSL
+          value: "1"
+        - name: KEEPSAKE_HTTP_PORT
+          value: ":8080"
+    - name: keepsake-mysql
+      image: mariadb:latest
+      ports:
+        - name: keepsake
+          containerPort: 3306
+      env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "roottoor"
+        - name: MYSQL_DATABASE
+          value: "gowiki"
+        - name: MYSQL_USER
+          value: "gowiki"
+        - name: MYSQL_PASSWORD
+          value: "gowiki55"
+      volumeMounts:
+        - name: "keepsake-mysql-data"
+          mountPath: "/var/lib/mysql"
+  volumes:
+    - emptyDir: {}
+      name:  "keepsake-mysql-data"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keepsake-svc
+  namespace: keepsake
+spec:
+  selector:
+    name: keepsake
+  ports:
+    - nodePort: 0
+      port: 80
+      protocol: TCP
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Route
+metadata:
+  name: keepsake
+  namespace: keepsake
+spec:
+  to:
+    kind: Service
+    name: keepsake-svc
+  path: "/"
+  tls:
+    termination: edge
