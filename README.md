@@ -8,6 +8,21 @@ The idea is to keep the Wiki as close to the standard libraries as possible, avo
 ![Dashboard](screenshots/Dashboard.png)
 
 # Use Keepsake in OpenShift
+
+## Clone the keepsake into your own Filesystem
+```
+git clone git@github.com:zerodayz/keepsake.git
+```
+OR use HTTPS
+```
+https://github.com/zerodayz/keepsake.git
+```
+
+### Change directory to keepsake
+```
+cd keepsake
+```
+### Build Keepsake server
 ```
 oc apply -f keepsake-deploy.yaml
 oc get route -n keepsake
