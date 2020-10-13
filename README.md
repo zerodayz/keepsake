@@ -90,8 +90,9 @@ Navigate to `http://localhost` and enjoy.
 ## Server with SSL
 ### Install TLS/SSL Cert
 ```
-openssl ecparam -genkey -name secp384r1 -out server.key
-openssl req -new -x509 -sha256 -key server.key -out server.crt -days 3650
+mkdir certs
+openssl ecparam -genkey -name secp384r1 -out certs/server.key
+openssl req -new -x509 -sha256 -key certs/server.key -out certs/server.crt -days 3650
 ```
 This will generate server.key and server.crt for your Keepsake server.
 
