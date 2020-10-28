@@ -821,7 +821,7 @@ func ShowRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*
 	return wpr, wp
 }
 
-func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage {
+func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) (*WikiPage, error) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
 		log.Fatal(err)
@@ -836,10 +836,8 @@ func ShowPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage 
 		tags = "None"
 	}
 	deletedString, _ := strconv.Atoi(deleted)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusNotFound)
-	}
-	return &WikiPage{Title: title, Content: content, Deleted: deletedString, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+
+	return &WikiPage{Title: title, Content: content, Deleted: deletedString, Tags: strings.Split(tags, ","), DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}, err
 }
 
 func LoadAllPagesToday(w http.ResponseWriter, r *http.Request) []WikiPage {
@@ -1114,7 +1112,7 @@ func Top10Commented(w http.ResponseWriter, r *http.Request) []WikiPage {
 	return wikiPages
 }
 
-func ShowPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) *WikiPage {
+func ShowPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*WikiPage, error) {
 	db, err := sql.Open("mysql", "gowiki:gowiki55@/gowiki")
 	if err != nil {
 		log.Fatal(err)
@@ -1125,11 +1123,9 @@ func ShowPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) *Wi
 	err = db.QueryRow(`
 	SELECT title, content, tags, date_created, last_modified, COALESCE(last_modified_by, '') as last_modified_by, created_by FROM pages_preview WHERE internal_id = ?
 	`, InternalId).Scan(&title, &content, &tags, &dateCreated, &lastModified, &lastModifiedBy, &username)
-	if err != nil {
-		http.Redirect(w, r, "/", http.StatusNotFound)
-	}
+
 	tagsArray := strings.Split(tags, ",")
-	return &WikiPage{Title: title, Content: content, Tags: tagsArray, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}
+	return &WikiPage{Title: title, Content: content, Tags: tagsArray, DateCreated: dateCreated, LastModified: lastModified, LastModifiedBy: lastModifiedBy, CreatedBy: username}, err
 }
 
 func FetchDeletedPages(w http.ResponseWriter, r *http.Request) []WikiPage {

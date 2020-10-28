@@ -59,13 +59,13 @@ func ReadCookie(w http.ResponseWriter, r *http.Request) string {
 }
 
 func LoadPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
-	s := database.ShowPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, Deleted: s.Deleted, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated, Liked: s.Liked}, nil
+	s, err := database.ShowPage(w, r, InternalId)
+	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, Deleted: s.Deleted, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated, Liked: s.Liked}, err
 }
 
 func LoadPreviewPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPage, error) {
-	s := database.ShowPreviewPage(w, r, InternalId)
-	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, nil
+	s, err := database.ShowPreviewPage(w, r, InternalId)
+	return &database.WikiPage{Title: s.Title, Body: s.Content, Tags: s.Tags, InternalId: InternalId, CreatedBy: s.CreatedBy, LastModified: s.LastModified, LastModifiedBy: s.LastModifiedBy, DateCreated: s.DateCreated}, err
 }
 
 func LoadRevisionPage(w http.ResponseWriter, r *http.Request, InternalId int) (*database.WikiPageRevision, *database.WikiPage) {
@@ -201,7 +201,7 @@ func ViewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 
 	s, err := LoadPage(w, r, id)
 	if err != nil {
-		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
+		http.Redirect(w, r, "/", http.StatusNotFound)
 		return
 	}
 	md := goldmark.New(
@@ -859,7 +859,7 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 
 	s, err := LoadPreviewPage(w, r, id)
 	if err != nil {
-		http.Redirect(w, r, "/pages/create", http.StatusNotFound)
+		http.Redirect(w, r, "/", http.StatusNotFound)
 		return
 	}
 
@@ -1202,7 +1202,7 @@ func MakeHandler(fn func(http.ResponseWriter, *http.Request, string)) http.Handl
 	return func(w http.ResponseWriter, r *http.Request) {
 		m := validPath.FindStringSubmatch(r.URL.Path)
 		if m == nil {
-			http.NotFound(w, r)
+			http.Redirect(w, r, "/", http.StatusNotFound)
 			return
 		}
 		fn(w, r, m[3])
