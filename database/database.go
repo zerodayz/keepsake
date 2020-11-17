@@ -1181,7 +1181,7 @@ func FetchRevisionPages(w http.ResponseWriter, r *http.Request, internalId int) 
 		lastModifiedBy string
 	)
 	rows, err := db.Query(`SELECT internal_id, revision_id, title, date_modified, COALESCE(last_modified_by, '') as last_modified_by
-		FROM pages_rev WHERE wiki_page_id = ?`, internalId)
+		FROM pages_rev WHERE wiki_page_id = ? ORDER BY  internal_id DESC`, internalId)
 	if err != nil {
 		log.Fatal(err)
 	}
