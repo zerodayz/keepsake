@@ -13,7 +13,7 @@
    version="1.1"
    id="svg2463"
    sodipodi:docname="delete-24px.svg"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14">
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)">
   <metadata
      id="metadata2469">
     <rdf:RDF>
@@ -36,21 +36,22 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="800"
+     inkscape:window-width="1038"
      inkscape:window-height="480"
      id="namedview2465"
      showgrid="false"
      inkscape:zoom="9.8333333"
-     inkscape:cx="12"
+     inkscape:cx="-7.5762713"
      inkscape:cy="12"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg2463" />
+     inkscape:current-layer="svg2463"
+     inkscape:document-rotation="0" />
   <path
      d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"
      id="path2459"
-     style="fill:#fff8f8;fill-opacity:1" />
+     style="fill:#cccccc;fill-opacity:1" />
   <path
      d="M0 0h24v24H0z"
      fill="none"

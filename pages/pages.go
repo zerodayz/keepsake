@@ -320,6 +320,8 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 			bufUpVoted.Write([]byte(`There are no categories yet.`))
 		} else {
 			bufUpVoted.Write([]byte(`<div id="items"></div>`))
+			bufUpVoted.Write([]byte(`<label for="search-content" class="search-collapsible">Categories</label>
+		<div id="search-content" style="display: none;">`))
 			for _, f := range existingCategories {
 				// Fix for the categories with space.
 				space := strings.Split(f.Name, " ")
@@ -330,6 +332,7 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 					bufUpVoted.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 				}
 			}
+			bufUpVoted.Write([]byte(`</div>`))
 		}
 		bufUpVoted.Write([]byte(`
 		<table id="view-all-table">
@@ -399,6 +402,8 @@ func StarHandler(w http.ResponseWriter, r *http.Request) {
 			bufUpVoted.Write([]byte(`There are no categories yet.`))
 		} else {
 			bufUpVoted.Write([]byte(`<div id="items"></div>`))
+			bufUpVoted.Write([]byte(`<label for="search-content" class="search-collapsible">Categories</label>
+		<div id="search-content" style="display: none;">`))
 			for _, f := range existingCategories {
 				// Fix for the categories with space.
 				space := strings.Split(f.Name, " ")
@@ -409,6 +414,7 @@ func StarHandler(w http.ResponseWriter, r *http.Request) {
 					bufUpVoted.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 				}
 			}
+			bufUpVoted.Write([]byte(`</div>`))
 		}
 		bufUpVoted.Write([]byte(`
 		<table id="view-all-table">

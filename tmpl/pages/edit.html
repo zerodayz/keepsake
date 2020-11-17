@@ -21,10 +21,6 @@
 <div class="navvy">
     <ul>
         <li class="menu-home"><a href="/"></a></li>
-        {{if eq .UserLoggedIn "Unauthorized"}}
-        {{else}}
-            <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
-        {{end}}
         <li>
             {{if eq .UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
@@ -63,7 +59,11 @@
 </div>
 <div class="clearfix"></div>
 <div class="container">
-    <div class="header-text"><h1>Editing {{.Title}}</h1></div>
+    {{if eq .UserLoggedIn "Unauthorized"}}
+        <div class="header-text"><h1>Editing {{.Title}}</h1></div>
+    {{else}}
+        <div class="header-text"><h1>Editing {{.Title}} <a id="ModalButton" href="#"><img src="/lib/icons/delete-24px.svg"></a></h1></div>
+    {{end}}
     <form action="/pages/save/{{.InternalId}}" method="POST">
         <div class="control-group">
             <div class="controls">

@@ -53,12 +53,9 @@
         <ul>
             <li class="menu-home"><a href="/"></a></li>
             {{if eq .UserLoggedIn "Unauthorized"}}
-                <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
             {{else}}
                 <li class="menu-create"><a href="/pages/create/"></a></li>
                 <li class="menu-edit"><a href="/pages/edit/{{.InternalId}}"></a></li>
-                <li class="menu-revisions"><a id="ModalButtonHistory" href="#"></a></li>
-                <li class="menu-delete"><a id="ModalButton" href="#"></a></li>
             {{end}}
                 <li>
                     {{if eq .UserLoggedIn "Unauthorized"}}
@@ -101,6 +98,7 @@
             <div class="header-text">
                 <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}} <a href="/pages/view/raw/{{.InternalId}}"><img src="/lib/icons/get_app-24px.svg"></a>
                     {{if eq .UserLoggedIn "Unauthorized"}}
+                        <a id="ModalButtonHistory" href="#"><img src="/lib/icons/history-24px.svg"></a>
                     {{else}}
                         {{if eq .Liked 2}}
                             <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
@@ -116,6 +114,9 @@
                         {{else if eq .Repair 0}}
                             <a id="ModalButtonNeedsImprovement" href="#"><img src="/lib/icons/home_repair_service-24px.svg"></a>
                         {{end}}
+                        <a id="ModalButtonHistory" href="#"><img src="/lib/icons/history-24px.svg"></a>
+                        <a id="ModalButton" href="#"><img src="/lib/icons/delete-24px.svg"></a></a>
+
                     {{end}}
                 </h1>
             </div>
