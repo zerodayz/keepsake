@@ -471,6 +471,8 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 			buf.Write([]byte(`There are no categories yet.`))
 		} else {
 			buf.Write([]byte(`<div id="items"></div>`))
+			buf.Write([]byte(`<label for="search-content" class="search-collapsible">Categories</label>
+		<div id="search-content" style="display: none;">`))
 			for _, f := range existingCategories {
 				// Fix for the categories with space.
 				space := strings.Split(f.Name, " ")
@@ -481,6 +483,7 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 				}
 			}
+			buf.Write([]byte(`</div>`))
 		}
 		buf.Write([]byte(`
 		<table id="view-all-table">
@@ -760,6 +763,8 @@ func EditHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		bufCategories.Write([]byte(`There are no categories yet.`))
 	} else {
 		var matched bool
+		bufCategories.Write([]byte(`<label for="search-content" class="search-collapsible">Categories</label>
+		<div id="search-content" style="display: none;">`))
 		for _, f := range existingCategories {
 			matched = false
 			for _, tag := range s.Tags {
@@ -772,6 +777,7 @@ func EditHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 				bufCategories.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 			}
 		}
+		bufCategories.Write([]byte(`</div>`))
 	}
 	s.DisplayComment = template.HTML(bufCategories.String())
 
@@ -806,9 +812,12 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	if len(existingCategories) == 0 {
 		bufCategories.Write([]byte(`There are no categories yet.`))
 	} else {
+		bufCategories.Write([]byte(`<label for="search-content" class="search-collapsible">Categories</label>
+		<div id="search-content" style="display: none;">`))
 		for _, f := range existingCategories {
 			bufCategories.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 		}
+		bufCategories.Write([]byte(`</div>`))
 	}
 	s.DisplayComment = template.HTML(bufCategories.String())
 
@@ -997,6 +1006,8 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 		if len(existingCategories) == 0 {
 			buf.Write([]byte(`There are no categories yet.`))
 		} else {
+			buf.Write([]byte(`<label for="search-content" class="search-collapsible">Categories</label>
+		<div id="search-content" style="display: none;">`))
 			for _, f := range existingCategories {
 				// Fix for the categories with space.
 				space := strings.Split(f.Name, " ")
@@ -1005,7 +1016,9 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + value + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
 				} else {
 					buf.Write([]byte(`<div class="categories"><label class="checkbox"><input name="tags" value="` + f.Name + `" type="checkbox">` + f.Name + `<span class="checkmark"></span></label></div>`))
-				}			}
+				}
+			}
+			buf.Write([]byte(`</div>`))
 		}
 		s := database.SearchWikiPages(w, r, searchKey)
 		for _, f := range s {
