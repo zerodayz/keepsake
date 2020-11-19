@@ -55,7 +55,6 @@
             {{if eq .UserLoggedIn "Unauthorized"}}
             {{else}}
                 <li class="menu-create"><a href="/pages/create/"></a></li>
-                <li class="menu-edit"><a href="/pages/edit/{{.InternalId}}"></a></li>
             {{end}}
                 <li>
                     {{if eq .UserLoggedIn "Unauthorized"}}
@@ -100,6 +99,7 @@
                     {{if eq .UserLoggedIn "Unauthorized"}}
                         <a id="ModalButtonHistory" href="#"><img src="/lib/icons/history-24px.svg"></a>
                     {{else}}
+                        <a href="/pages/edit/{{.InternalId}}"><img src="/lib/icons/edit-24px.svg"></a>
                         {{if eq .Liked 2}}
                             <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
                         {{else if eq .Liked 1}}
@@ -115,7 +115,7 @@
                             <a id="ModalButtonNeedsImprovement" href="#"><img src="/lib/icons/home_repair_service-24px.svg"></a>
                         {{end}}
                         <a id="ModalButtonHistory" href="#"><img src="/lib/icons/history-24px.svg"></a>
-                        <a id="ModalButton" href="#"><img src="/lib/icons/delete-24px.svg"></a></a>
+                        <a id="ModalButton" href="#"><img src="/lib/icons/delete-24px.svg"></a>
 
                     {{end}}
                 </h1>

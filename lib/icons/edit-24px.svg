@@ -13,7 +13,7 @@
    version="1.1"
    id="svg3055"
    sodipodi:docname="edit-24px.svg"
-   inkscape:version="0.92.4 5da689c313, 2019-01-14">
+   inkscape:version="1.0.1 (c497b03c, 2020-09-10)">
   <metadata
      id="metadata3061">
     <rdf:RDF>
@@ -44,13 +44,14 @@
      inkscape:cx="12"
      inkscape:cy="12"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
-     inkscape:current-layer="svg3055" />
+     inkscape:current-layer="svg3055"
+     inkscape:document-rotation="0" />
   <path
      d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
      id="path3051"
-     style="fill:#fff9f9;fill-opacity:1" />
+     style="fill:#ececec;fill-opacity:1" />
   <path
      d="M0 0h24v24H0z"
      fill="none"
