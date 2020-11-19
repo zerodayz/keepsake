@@ -1234,7 +1234,7 @@ legend+.control-group {
 	color: white;
 	text-align: left;
 	vertical-align: middle;
-	padding: 10px 10px;
+	padding: 10px 8px;
 	text-decoration: none;
 }
   
@@ -1342,7 +1342,7 @@ legend+.control-group {
 	border: none;
 	outline: none;
 	color: white;
-	padding: 10px 10px;
+	padding: 10px 8px;
 	background-color: inherit;
 	font-family: inherit;
 	margin: 0;
