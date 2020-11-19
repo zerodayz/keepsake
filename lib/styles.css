@@ -169,7 +169,7 @@ a:focus {
 }
 
 .container {
-	margin-left: 64px;
+	margin-left: 60px;
 	margin-right: 20px;
 	*zoom: 1
 }
@@ -1209,7 +1209,7 @@ legend+.control-group {
 .navvy {
 	position: fixed;
 	top: 0;
-	width: 44px;
+	width: 40px;
 	height: 100%;
 	z-index: 1030;
 	margin-bottom: 0;
@@ -1225,6 +1225,7 @@ legend+.control-group {
   
 .navvy>ul>li {
 	float: left;
+	width: 40px;
 	position: relative;
 }
   
@@ -1323,6 +1324,7 @@ legend+.control-group {
 
 .dropdown {
 	float: left;
+	width: 40px;
 	overflow: hidden;
 }
 
@@ -1336,6 +1338,7 @@ legend+.control-group {
 
 .dropdown .dropbtn {
 	font-size: 16px;
+	width: 40px;
 	border: none;
 	outline: none;
 	color: white;
@@ -1363,7 +1366,7 @@ legend+.control-group {
 	left: 0;
 	background-color: #353535;
 	min-width: 160px;
-	margin-left: 44px;
+	margin-left: 40px;
 	margin-top: -48px;
 	top: 100%;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -1374,7 +1377,7 @@ legend+.control-group {
 	display: none;
 	position: absolute;
 	left: 0;
-	margin-left: 44px;
+	margin-left: 40px;
 	margin-top: -48px;
 	background-color: #353535;
 	min-width: 160px;
