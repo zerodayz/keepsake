@@ -577,7 +577,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	wikiPagesToday := database.LoadAllPagesToday(w, r)
 	bufTodayArticles.Write([]byte(`
 			<div class="container-d">
-                <div class="header-text left-d"><h1>Today's Articles</h1></div>
+                <div class="left-d"><img src="/lib/images/Keepsake_Logo.png" alt="Keepsake Logo" title="Keepsake Logo"/></div>
                 <form id="searchForm" action="/pages/search" method="GET">
                     <div class="control-group search-container right-d">
                         <div class="controls">
@@ -590,7 +590,8 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
                         </div>
                     </div>
                 </form>
-            </div>`))
+            </div>
+			<div class="header-text-logo"><h1>Today's Articles</h1></div>`))
 
 	if len(wikiPagesToday) == 0 {
 		bufTodayArticles.Write([]byte(`There are no Wiki pages created today yet :-(`))
