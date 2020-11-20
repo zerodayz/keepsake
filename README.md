@@ -1,5 +1,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/zerodayz/keepsake)](https://goreportcard.com/report/github.com/zerodayz/keepsake)
 
+![Logo](lib/images/Keepsake_Logo.png)
 # Keepsake
 This is Open Source Wiki written in Go, aims for simplicity over complexity. It is actively maintained and serves as Go development project.
 
