@@ -577,7 +577,7 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	wikiPagesToday := database.LoadAllPagesToday(w, r)
 	bufTodayArticles.Write([]byte(`
 			<div class="container-d">
-                <div class="left-d"><img src="/lib/images/Keepsake_Logo.png" alt="Keepsake Logo" title="Keepsake Logo"/></div>
+                <div class="left-d" style="padding-top: 20px;"><img src="/lib/images/Keepsake_Logo.png" alt="Keepsake Logo" title="Keepsake Logo"/></div>
                 <form id="searchForm" action="/pages/search" method="GET">
                     <div class="control-group search-container right-d">
                         <div class="controls">
