@@ -5,6 +5,9 @@
     <title>Editing {{.Title}}</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <script src="/lib/jquery.min.js"></script>
+    <link href="/lib/textareafullscreen.css" rel="stylesheet">
+    <script src="/lib/jquery.textareafullscreen.js"></script>
     <meta charset='utf-8'>
 </head>
 
@@ -71,7 +74,7 @@
             </div>
             {{.DisplayComment}}
             <div class="controls">
-                <textarea name="body" rows="14" cols="80">{{printf "%s" .Body}}</textarea>
+                <textarea name="body" id="body" rows="14" cols="80">{{printf "%s" .Body}}</textarea>
             </div>
             <div class="control-group">
                 <div class="controls">
@@ -91,9 +94,10 @@
             </div>
         </div>
     </form>
-    <script type="text/javascript" src="/lib/upload.js"></script>
-    <script type="text/javascript" src="/lib/edit.js"></script>
 </div>
+<script type="text/javascript" src="/lib/underscore-min.js"></script>
+<script type="text/javascript" src="/lib/upload.js"></script>
+<script type="text/javascript" src="/lib/edit.js"></script>
 </body>
 
 </html>
