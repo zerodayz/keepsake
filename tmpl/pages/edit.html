@@ -21,43 +21,60 @@
         <a href="/pages/delete/{{.InternalId}}">Yes!</a> Please delete the page.<br>
     </div>
 </div>
+<div id="ModalUpload" class="modal">
+    <div class="modal-upload">
+        <span class="close-upload">&times;</span>
+        <h1>Upload a file</h1>
+        <br>
+        <form enctype="multipart/form-data" action="/pages/upload/" target="_blank" method="POST">
+            <div class="container-d">
+                <div class="file-upload-wrapper" data-text="Select file to upload">
+                    <input name="file-upload-field" id="file-upload-field" type="file" class="file-upload-field" value="">
+                </div>
+                <div class="right-no-border">
+                    <input id="upload" type="submit" value="Upload" disabled/>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
 <div class="navvy">
     <ul>
-        <li class="menu-home"><a href="/"></a></li>
+        <li><a class="glyphicon glyphicon-home" href="/"></a></li>
         <li>
             {{if eq .UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
-                    <button class="dropbtn user"></button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/login">Login</a>
+                    <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
+                    <div class="dropdown-content-right">
+                        <a class="glyphicon glyphicon-log-in" href="/users/login">Login</a>
                     </div>
                 </div>
             {{else}}
                 <div class="dropdown">
-                    <button class="dropbtn user"></button>
-                    <div class="dropdown-content-right menu-login">
-                        <a href="/users/logout">Logout</a>
+                    <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
+                    <div class="dropdown-content-right">
+                        <a class="glyphicon glyphicon-log-out" href="/users/logout">Logout</a>
                     </div>
                 </div>
             {{end}}
         </li>
         <li>
             <div class="dropdown">
-                <button class="dropbtn setting">
+                <button class="dropbtn"><span class="glyphicon glyphicon-cog"></span>
                 </button>
                 <div class="dropdown-content">
                     {{if eq .UserLoggedIn "Unauthorized"}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
+                        <a class="glyphicon glyphicon-user" href="/users/create">Create user</a>
                     {{else}}
-                        <a class="menu-user-add" href="/users/create">Create user</a>
-                        <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
-                        <a class="menu-category" href="/categories/create">Add category</a>
-                        <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                        <a class="glyphicon glyphicon-user" href="/users/create">Create user</a>
+                        <a class="glyphicon glyphicon-earphone" href="/ticket/queue">Ticket Queue</a>
+                        <a class="glyphicon glyphicon-tags" href="/categories/create">Add category</a>
+                        <a class="glyphicon glyphicon-trash" href="/pages/trash">Recycle Bin</a>
                     {{end}}
                 </div>
             </div>
         </li>
-        <li class="menu-help"><a href="/ticket/new"></a></li>
+        <li><a class="glyphicon glyphicon-earphone" href="/ticket/new"></a></li>
     </ul>
 </div>
 <div class="clearfix"></div>
@@ -65,7 +82,9 @@
     {{if eq .UserLoggedIn "Unauthorized"}}
         <div class="header-text"><h1>Editing {{.Title}}</h1></div>
     {{else}}
-        <div class="header-text"><h1>Editing {{.Title}} <a id="ModalButton" href="#"><img src="/lib/icons/delete-24px.svg"></a></h1></div>
+    <div class="header-text">
+        <h1>Editing {{.Title}}</h1>
+    </div>
     {{end}}
     <form action="/pages/save/{{.InternalId}}" method="POST">
         <div class="control-group">
@@ -80,17 +99,6 @@
                 <div class="controls">
                     <input id="submit" type="submit" value="Preview & Save">
                 </div>
-            </div>
-        </div>
-    </form>
-
-    <form enctype="multipart/form-data" action="/pages/upload/" target="_blank" method="POST">
-        <div class="container-d">
-            <div class="file-upload-wrapper left-no-border" data-text="Select file to upload">
-                <input name="file-upload-field" id="file-upload-field" type="file" class="file-upload-field" value="">
-            </div>
-            <div class="right-no-border">
-                <input id="upload" type="submit" value="Upload" disabled/>
             </div>
         </div>
     </form>

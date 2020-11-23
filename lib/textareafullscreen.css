@@ -1,7 +1,7 @@
 .tx-editor-wrapper {
   position: relative;
   width: 100%;
-  height: 57vh;
+  height: 66vh;
 }
 .tx-editor-wrapper .tx-editor.expanded {
   position: fixed;
@@ -12,18 +12,18 @@
   z-index: 500;
 }
 .tx-editor-wrapper .tx-editor {
-    height: 55vh;
+    height: 60vh;
 }
 .tx-editor-wrapper .tx-editor .tx-icon {
   position: absolute;
   right: 9px;
-  top: 19px;
   width: 18px;
   height: 16px;
   background-image: url(/lib/icons/open_in_full-white-18dp.svg);
   cursor: pointer;
   z-index: 3;
 }
+
 .tx-editor-overlay {
   position: fixed;
   top: 0;

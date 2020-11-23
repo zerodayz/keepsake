@@ -51,74 +51,75 @@
     </div>
     <div class="navvy">
         <ul>
-            <li class="menu-home"><a href="/"></a></li>
+            <li><a class="glyphicon glyphicon-home" href="/"></a></li>
             {{if eq .UserLoggedIn "Unauthorized"}}
             {{else}}
-                <li class="menu-create"><a href="/pages/create/"></a></li>
+                <li><a class="glyphicon glyphicon-file" href="/pages/create/"></a></li>
             {{end}}
                 <li>
                     {{if eq .UserLoggedIn "Unauthorized"}}
                     <div class="dropdown">
-                        <button class="dropbtn user"></button>
-                        <div class="dropdown-content-right menu-login">
-                            <a href="/users/login">Login</a>
+                        <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
+                        <div class="dropdown-content-right">
+                            <a class="glyphicon glyphicon-log-in" href="/users/login">Login</a>
                         </div>
                     </div>
                     {{else}}
                     <div class="dropdown">
-                        <button class="dropbtn user"></button>
-                        <div class="dropdown-content-right menu-login">
-                            <a href="/users/logout">Logout</a>
+                        <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
+                        <div class="dropdown-content-right">
+                            <a class="glyphicon glyphicon-log-out" href="/users/logout">Logout</a>
                         </div>
                     </div>
                     {{end}}
                 </li>
                 <li>
                     <div class="dropdown">
-                        <button class="dropbtn setting">
+                        <button class="dropbtn"><span class="glyphicon glyphicon-cog"></span>
                         </button>
                         <div class="dropdown-content">
                             {{if eq .UserLoggedIn "Unauthorized"}}
-                            <a class="menu-user-add" href="/users/create">Create user</a>
+                            <a class="glyphicon glyphicon-user" href="/users/create">Create user</a>
                             {{else}}
-                            <a class="menu-user-add" href="/users/create">Create user</a>
-                            <a class="menu-ticket-queue" href="/ticket/queue">Ticket Queue</a>
-                            <a class="menu-category" href="/categories/create">Add category</a>
-                            <a class="menu-recycle-bin" href="/pages/trash">Recycle Bin</a>
+                            <a class="glyphicon glyphicon-user" href="/users/create">Create user</a>
+                            <a class="glyphicon glyphicon-earphone" href="/ticket/queue">Ticket Queue</a>
+                            <a class="glyphicon glyphicon-tags" href="/categories/create">Add category</a>
+                            <a class="glyphicon glyphicon-trash" href="/pages/trash">Recycle Bin</a>
                             {{end}}
                         </div>
                     </div>
                 </li>
-                <li class="menu-help"><a href="/ticket/new"></a></li>
+                <li><a class="glyphicon glyphicon-earphone" href="/ticket/new"></a></li>
             </ul>
         </div>
         <div class="clearfix"></div>
         <div class="container">
             <div class="header-text">
-                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}} <a href="/pages/view/raw/{{.InternalId}}"><img src="/lib/icons/get_app-24px.svg"></a>
-                    {{if eq .UserLoggedIn "Unauthorized"}}
-                        <a id="ModalButtonHistory" href="#"><img src="/lib/icons/history-24px.svg"></a>
-                    {{else}}
-                        <a href="/pages/edit/{{.InternalId}}"><img src="/lib/icons/edit-24px.svg"></a>
-                        {{if eq .Liked 2}}
-                            <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
-                        {{else if eq .Liked 1}}
-                            <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px-2.svg"></a>
-                        {{else if eq .Liked 0}}
-                            <a href="/pages/like/{{.InternalId}}"><img src="/lib/icons/thumb_up_alt-24px.svg"></a>
-                        {{end}}
-                        {{if eq .Repair 2}}
-                            <a id="ModalButtonNeedsImprovement" href="#"><img src="/lib/icons/home_repair_service-24px.svg"></a>
-                        {{else if eq .Repair 1}}
-                            <a href="/pages/repair/{{.InternalId}}"><img src="/lib/icons/home_repair_service-24px-2.svg"></a>
-                        {{else if eq .Repair 0}}
-                            <a id="ModalButtonNeedsImprovement" href="#"><img src="/lib/icons/home_repair_service-24px.svg"></a>
-                        {{end}}
-                        <a id="ModalButtonHistory" href="#"><img src="/lib/icons/history-24px.svg"></a>
-                        <a id="ModalButton" href="#"><img src="/lib/icons/delete-24px.svg"></a>
-
+                <h1>{{.Title}} {{ if eq .Deleted 1 }} (deleted) {{end}}</h1>
+            </div>
+            <div style="font-size: 25px;">
+                <a href="/pages/view/raw/{{.InternalId}}"><span class="glyphicon glyphicon-download-alt"></span></a>
+                {{if eq .UserLoggedIn "Unauthorized"}}
+                    <a id="ModalButtonHistory" href="#"><span class="glyphicon glyphicon-time"></span></a>
+                {{else}}
+                    <a href="/pages/edit/{{.InternalId}}"><span class="glyphicon glyphicon-pencil"></span></a>
+                    {{if eq .Liked 2}}
+                        <a href="/pages/like/{{.InternalId}}"><span class="glyphicon glyphicon-heart-empty"></span></a>
+                    {{else if eq .Liked 1}}
+                        <a href="/pages/like/{{.InternalId}}"><span class="glyphicon glyphicon-heart"></span></a>
+                    {{else if eq .Liked 0}}
+                        <a href="/pages/like/{{.InternalId}}"><span class="glyphicon glyphicon-heart-empty"></span></a>
                     {{end}}
-                </h1>
+                    {{if eq .Repair 2}}
+                        <a id="ModalButtonNeedsImprovement" href="#"><span class="glyphicon glyphicon-wrench"></span></a>
+                    {{else if eq .Repair 1}}
+                        <a href="/pages/repair/{{.InternalId}}"><span class="glyphicon glyphicon-exclamation-sign"></span></a>
+                    {{else if eq .Repair 0}}
+                        <a id="ModalButtonNeedsImprovement" href="#"><span class="glyphicon glyphicon-wrench"></span></a>
+                    {{end}}
+                    <a id="ModalButtonHistory" href="#"><span class="glyphicon glyphicon-time"></span></a>
+                    <a id="ModalButton" href="#"><span class="glyphicon glyphicon-trash"></span></a>
+                {{end}}
             </div>
             <div>
                 Created by {{.CreatedBy}} on {{.DateCreated}} UTC
