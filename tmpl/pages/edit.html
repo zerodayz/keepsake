@@ -85,6 +85,10 @@
     <div class="header-text">
         <h1>Editing {{.Title}}</h1>
     </div>
+    <div style="font-size: 25px;">
+        <a id="ModalButton" href="#"><span class="glyphicon glyphicon-trash"></span></a>
+        <a id="ModalButtonUpload" href="#"><span class="glyphicon glyphicon-upload"></span></a>
+    </div>
     {{end}}
     <form action="/pages/save/{{.InternalId}}" method="POST">
         <div class="control-group">
