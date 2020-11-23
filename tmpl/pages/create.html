@@ -5,6 +5,9 @@
     <title>Create Wiki Page</title>
     <link type="text/css" rel="stylesheet" href="/lib/styles.css">
     <link type="test/css" rel="stylesheet" href="/lib/san-francisco.css">
+    <script src="/lib/jquery.min.js"></script>
+    <link href="/lib/textareafullscreen.css" rel="stylesheet">
+    <script src="/lib/jquery.textareafullscreen.js"></script>
     <meta charset='utf-8'>
 </head>
 
@@ -57,7 +60,7 @@
             </div>
             {{.DisplayComment}}
             <div class="controls">
-                <textarea name="body" cols="80"></textarea>
+                <textarea name="body" id="body" cols="80"></textarea>
             </div>
             <div class="control-group">
                 <div class="controls">
