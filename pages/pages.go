@@ -298,9 +298,10 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 			<div class="header-text left-d"><h1>View Needs Improvement</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
-            <div class="controls">
-              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
-            </div>
+                        <div class="controls inner-addon left-addon">
+							<i class="glyphicon glyphicon-search"></i>
+                            <input type="search" class="search-input" id="inputQuery" name="q" value="">
+                        </div>
             <div class="control-group">
                 <div class="controls">
                     <input class="navbar-search-button" id="submit" type="submit" value="Search">
@@ -380,9 +381,10 @@ func StarHandler(w http.ResponseWriter, r *http.Request) {
 			<div class="header-text left-d"><h1>View My Voted</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
-            <div class="controls">
-              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
-            </div>
+                        <div class="controls inner-addon left-addon">
+							<i class="glyphicon glyphicon-search"></i>
+                            <input type="search" class="search-input" id="inputQuery" name="q" value="">
+                        </div>
             <div class="control-group">
                 <div class="controls">
                     <input class="navbar-search-button" id="submit" type="submit" value="Search">
@@ -458,9 +460,10 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 			<div class="header-text left-d"><h1>View All</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
-            <div class="controls">
-              <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
-            </div>
+                        <div class="controls inner-addon left-addon">
+							<i class="glyphicon glyphicon-search"></i>
+                            <input type="search" class="search-input" id="inputQuery" name="q" value="">
+                        </div>
             <div class="control-group">
                 <div class="controls">
                     <input class="navbar-search-button" id="submit" type="submit" value="Search">
@@ -581,8 +584,9 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
                 <div class="left-d" style="padding-top: 20px;"><img src="/lib/images/Keepsake_Logo.png" alt="Keepsake Logo" title="Keepsake Logo"/></div>
                 <form id="searchForm" action="/pages/search" method="GET">
                     <div class="control-group search-container right-d">
-                        <div class="controls">
-                            <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+                        <div class="controls inner-addon left-addon">
+							<i class="glyphicon glyphicon-search"></i>
+                            <input type="search" class="search-input" id="inputQuery" name="q" value="">
                         </div>
                         <div class="control-group">
                             <div class="controls">

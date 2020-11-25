@@ -58,8 +58,9 @@
             <div class="header-text left-d"><h1>Search Query is {{ if .Title }} {{.Title}} {{else}} empty. {{end}}</h1></div>
             <form id="searchForm" action="/pages/search" method="GET">
                 <div class="control-group search-container right-d">
-                    <div class="controls">
-                        <input type="search" class="search-input" id="inputQuery" name="q" placeholder="Search" value="">
+                    <div class="controls inner-addon left-addon">
+                        <i class="glyphicon glyphicon-search"></i>
+                        <input type="search" class="search-input" id="inputQuery" name="q" value="">
                     </div>
                     <div class="control-group">
                         <div class="controls">
