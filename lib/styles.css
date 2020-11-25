@@ -1152,8 +1152,8 @@ dfn {
 .right-addon .glyphicon { right: 0px;}
 
 /* add padding  */
-.left-addon input  { padding-left:  30px; }
-.right-addon input { padding-right: 30px; }
+.left-addon .input-login  { padding-left:  30px; }
+.left-addon .search-input  { padding-left:  30px; }
 
 .muted {
 	display: none;

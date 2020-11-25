@@ -33,35 +33,25 @@
     <div class="clearfix"></div>
     <div class=" container">
         <div class="login">
-            <table>
                 <form action="/users/login/" method="POST">
-                    <tr>
-                        <td class="login-header" colspan="2">Login</td>
-                    </tr>
-                    <tr>
-                        <td><label for="username"><img src="/lib/icons/person-24px.svg"></label></td>
-                        <td><input type="text" placeholder="Enter Username" name="username" required>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="password"><img src="/lib/icons/lock-24px.svg"></label>
-                        </td>
-                        <td><input type="password" placeholder="Enter Password" name="password" required>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><button type="submit">Login</button></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><span style="color: #d9d9d9">Forgot <a href="#">password?</a> Don't have an
+                    <div class="login-header" colspan="2">Login</div>
+                    <div class="inner-addon left-addon">
+                        <i class="glyphicon glyphicon-user"></i>
+                        <input type="text" class="input-login" placeholder="Username" name="username" required>
+                    </div>
+                    <div class="inner-addon left-addon">
+                        <i class="glyphicon glyphicon-lock"></i>
+                        <input type="password" class="input-login" placeholder="Password" name="password" required>
+                    </div>
+                    <button type="submit">Login</button></td>
+                    <div><span style="color: #d9d9d9">Forgot <a href="#">password?</a> Don't have an
                                 account
                                 yet? <a href="/users/create/">Create
                                     one</a> or
                                 continue
-                                as <a href="/">Guest.</a></span></td>
-                    </tr>
+                                as <a href="/">Guest.</a></span>
+                    </div>
                 </form>
-            </table>
         </div>
     </div>
 </body>
