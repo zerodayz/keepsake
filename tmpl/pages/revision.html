@@ -17,7 +17,7 @@
             <li><a class="glyphicon glyphicon-file" href="/pages/create"></a></li>
         {{end}}
         <li>
-            {{if eq .UserLoggedIn "Unauthorized"}}
+            {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
                     <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
                     <div class="dropdown-content-right">
