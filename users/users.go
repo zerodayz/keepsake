@@ -50,6 +50,8 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 	username := pages.ReadCookie(w, r)
 	if username != "Unauthorized" {
 		p.UserLoggedIn, u.UserLoggedIn = username, username
+	} else {
+		p.UserLoggedIn = username
 	}
 
 	if r.Method == "POST" {
