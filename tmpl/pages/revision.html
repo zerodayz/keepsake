@@ -38,7 +38,7 @@
                 <button class="dropbtn"><span class="glyphicon glyphicon-cog"></span>
                 </button>
                 <div class="dropdown-content">
-                    {{if eq .UserLoggedIn "Unauthorized"}}
+                    {{if eq .WikiPageRevision.UserLoggedIn "Unauthorized"}}
                         <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
                     {{else}}
                         <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
