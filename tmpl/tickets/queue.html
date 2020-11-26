@@ -21,14 +21,14 @@
                 <div class="dropdown">
                     <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
                     <div class="dropdown-content-right">
-                        <a class="glyphicon glyphicon-log-in" href="/users/login">Login</a>
+                        <a href="/users/login"><span class="glyphicon glyphicon-log-in"></span> Login</a>
                     </div>
                 </div>
             {{else}}
                 <div class="dropdown">
                     <button class="dropbtn"><span class="glyphicon glyphicon-user"></span></button>
                     <div class="dropdown-content-right">
-                        <a class="glyphicon glyphicon-log-out" href="/users/logout">Logout</a>
+                        <a href="/users/logout"><span class="glyphicon glyphicon-log-out"></span> Logout</a>
                     </div>
                 </div>
             {{end}}
@@ -39,12 +39,12 @@
                 </button>
                 <div class="dropdown-content">
                     {{if eq .UserLoggedIn "Unauthorized"}}
-                        <a class="glyphicon glyphicon-user" href="/users/create">Create user</a>
+                        <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
                     {{else}}
-                        <a class="glyphicon glyphicon-user" href="/users/create">Create user</a>
-                        <a class="glyphicon glyphicon-earphone" href="/ticket/queue">Ticket Queue</a>
-                        <a class="glyphicon glyphicon-tags" href="/categories/create">Add category</a>
-                        <a class="glyphicon glyphicon-trash" href="/pages/trash">Recycle Bin</a>
+                        <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
+                        <a href="/ticket/queue"><span class="glyphicon glyphicon-earphone"></span> Ticket Queue</a>
+                        <a href="/categories/create"><span class="glyphicon glyphicon-tags"></span> Add category</a>
+                        <a href="/pages/trash"><span class="glyphicon glyphicon-trash"></span> Recycle Bin</a>
                     {{end}}
                 </div>
             </div>
