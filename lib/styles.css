@@ -2130,7 +2130,7 @@ legend+.control-group {
 	position: absolute;
 	left: 0;
 	background-color: #353535;
-	min-width: 160px;
+	min-width: 200px;
 	margin-left: 37px;
 	margin-top: -40px;
 	top: 100%;
@@ -2145,7 +2145,7 @@ legend+.control-group {
 	margin-left: 37px;
 	margin-top: -40px;
 	background-color: #353535;
-	min-width: 160px;
+	min-width: 200px;
 	box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 	z-index: 1;
 }

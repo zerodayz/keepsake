@@ -12,10 +12,28 @@
 <div class="navvy">
     <ul>
         <li><a class="glyphicon glyphicon-home" href="/"></a></li>
-        {{if eq .Page.UserLoggedIn "Unauthorized"}}
-        {{else}}
-            <li><a class="glyphicon glyphicon-file" href="/pages/create"></a></li>
-        {{end}}
+        <li>
+            {{if eq .Page.UserLoggedIn "Unauthorized"}}
+                <div class="dropdown">
+                    <button class="dropbtn"><span class="glyphicon glyphicon-folder-open"></span></button>
+                    <div class="dropdown-content-right">
+                        <a href="/pages/list"><span class="glyphicon glyphicon-list"></span> List All</a>
+                    </div>
+                </div>
+            {{else}}
+                <div class="dropdown">
+                    <button class="dropbtn"><span class="glyphicon glyphicon-folder-open"></span></button>
+                    <div class="dropdown-content-right">
+                        <a href="/pages/create"><span class="glyphicon glyphicon-file"></span> Create New</a>
+                        <a href="/pages/list"><span class="glyphicon glyphicon-list"></span> List All</a>
+                        <a href="/pages/stars"><span class="glyphicon glyphicon-heart"></span> Bookmarked</a>
+                        <a href="/pages/repairs"><span class="glyphicon glyphicon-wrench"></span> Needs Improvement</a>
+                        <a href="/categories/create"><span class="glyphicon glyphicon-tags"></span> Add category</a>
+                        <a href="/pages/trash"><span class="glyphicon glyphicon-trash"></span> Recycle Bin</a>
+                    </div>
+                </div>
+            {{end}}
+        </li>
         <li>
             {{if eq .Page.UserLoggedIn "Unauthorized"}}
                 <div class="dropdown">
@@ -39,17 +57,15 @@
                 </button>
                 <div class="dropdown-content">
                     {{if eq .Page.UserLoggedIn "Unauthorized"}}
-                            <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
-                        {{else}}
-                            <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
-                            <a href="/ticket/queue"><span class="glyphicon glyphicon-earphone"></span> Ticket Queue</a>
-                            <a href="/categories/create"><span class="glyphicon glyphicon-tags"></span> Add category</a>
-                            <a href="/pages/trash"><span class="glyphicon glyphicon-trash"></span> Recycle Bin</a>
-                        {{end}}
-                    </div>
+                        <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
+                    {{else}}
+                        <a href="/users/create"><span class="glyphicon glyphicon-user"></span> Create user</a>
+                        <a href="/ticket/new"><span class="glyphicon glyphicon-earphone"></span> Create Ticket</a>
+                        <a href="/ticket/queue"><span class="glyphicon glyphicon-inbox"></span> Ticket Queue</a>
+                    {{end}}
+                </div>
             </div>
         </li>
-        <li><a class="glyphicon glyphicon-earphone" href="/ticket/new"></a></li>
     </ul>
 </div>
 <div class="clearfix"></div>

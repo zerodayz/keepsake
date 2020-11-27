@@ -295,7 +295,7 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 
 	bufUpVoted := bytes.NewBuffer(nil)
 	bufUpVoted.Write([]byte(`<div class="container-d">
-			<div class="header-text left-d"><h1>View Needs Improvement</h1></div>
+			<div class="header-text left-d"><h1>Needs Improvement</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
                         <div class="controls inner-addon left-addon">
@@ -378,7 +378,7 @@ func StarHandler(w http.ResponseWriter, r *http.Request) {
 
 	bufUpVoted := bytes.NewBuffer(nil)
 	bufUpVoted.Write([]byte(`<div class="container-d">
-			<div class="header-text left-d"><h1>View My Voted</h1></div>
+			<div class="header-text left-d"><h1>Bookmarked</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
                         <div class="controls inner-addon left-addon">
@@ -457,7 +457,7 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 	buf := bytes.NewBuffer(nil)
 	wikiPages := database.LoadAllPages(w, r)
 	buf.Write([]byte(`<div class="container-d">
-			<div class="header-text left-d"><h1>View All</h1></div>
+			<div class="header-text left-d"><h1>List All</h1></div>
     <form id="searchForm" action="/pages/search" method="GET">
         <div class="control-group search-container right-d">
                         <div class="controls inner-addon left-addon">
