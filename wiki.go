@@ -8,6 +8,7 @@ package main
 
 import (
 	"flag"
+	"github.com/zerodayz/keepsake/blackboard"
 	"github.com/zerodayz/keepsake/categories"
 	"github.com/zerodayz/keepsake/comments"
 	"github.com/zerodayz/keepsake/database"
@@ -37,6 +38,7 @@ var (
 	cert string = "./certs/server.crt"
 	httpPort string = ":80"
 	httpsPort string = ":443"
+	webSocketPort string = ":3000"
 )
 
 func init() {
@@ -103,6 +105,8 @@ func main() {
 	http.HandleFunc("/ticket/complete/", tickets.MakeHandler(tickets.TicketCompleteHandler))
 	http.HandleFunc("/ticket/queue", tickets.TicketQueueHandler)
 
+	http.HandleFunc("/blackboard", blackboard.CreateHandler)
+
 	http.HandleFunc("/users/login/", users.LoginHandler)
 	http.HandleFunc("/users/logout/", users.LogoutHandler)
 	http.HandleFunc("/users/create/", users.CreateUserHandler)
@@ -110,12 +114,18 @@ func main() {
 	http.HandleFunc("/", RootHandler)
 	if noSsl == true {
 		log.Println("Starting Keepsake server at", httpPort)
-		log.Fatal(http.ListenAndServe(httpPort, nil))
+		go http.ListenAndServe(httpPort, nil)
 	} else if noSsl == false {
 		log.Println("Starting Keepsake server at", httpPort)
 		go http.ListenAndServe(httpPort, http.HandlerFunc(redirect))
 		log.Println("Starting Keepsake server at", httpsPort)
 		log.Println("Serving SSL Key:", key, "and SSL Cert:", cert)
-		log.Fatal(http.ListenAndServeTLS(httpsPort, cert, key, nil))
+		go http.ListenAndServeTLS(httpsPort, cert, key, nil)
 	}
+	hub := blackboard.NewHub()
+	go hub.Run()
+	log.Println("Starting Keepsake Websocket at", webSocketPort)
+	http.HandleFunc("/ws", hub.HandleWebSocket)
+	http.ListenAndServeTLS(webSocketPort, cert, key, nil)
+
 }
