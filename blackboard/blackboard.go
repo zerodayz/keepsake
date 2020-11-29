@@ -3,7 +3,6 @@ package blackboard
 import (
 	"github.com/gorilla/websocket"
 	"github.com/lucasb-eyer/go-colorful"
-	uuid "github.com/satori/go.uuid"
 	"github.com/zerodayz/keepsake/database"
 	"github.com/zerodayz/keepsake/pages"
 	"html/template"
@@ -13,6 +12,7 @@ import (
 )
 
 var (
+	username = ""
 	templatePath = "tmpl/blackboard/"
 )
 
@@ -35,7 +35,7 @@ func generateColor() string {
 
 func newClient(hub *Hub, socket *websocket.Conn) *Client {
 	return &Client{
-		id:       uuid.NewV4().String(),
+		id:       username,
 		color:    generateColor(),
 		hub:      hub,
 		socket:   socket,
@@ -82,7 +82,7 @@ func (client Client) close() {
 func CreateHandler(w http.ResponseWriter, r *http.Request) {
 	s := database.WikiPage{}
 	t := template.Must(template.ParseFiles(templatePath + "create.html"))
-	username := pages.ReadCookie(w, r)
+	username = pages.ReadCookie(w, r)
 	s.UserLoggedIn = username
 
 	if username == "Unauthorized" {

@@ -1020,20 +1020,6 @@ a:focus {
 	box-sizing: border-box;
 }
 
-.left-d-upload {
-	float: left;
-	text-align: left;
-	width: 20%;
-	box-sizing: border-box;
-}
-
-.right-d-upload {
-	float: left;
-	text-align: left;
-	width: 90%;
-	box-sizing: border-box;
-}
-
 .left-d {
 	padding-right: 16px;
 }
@@ -2279,6 +2265,10 @@ input[type="search"] {
 div.header-text {
 	padding-top: 23px;
 	padding-bottom: 23px;
+}
+
+div.header-text-board {
+	padding-top: 23px;
 }
 
 div.header-text-n {

@@ -93,6 +93,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			cookie := http.Cookie{Name: "gowiki_session", Value: uuid, Path: "/", Expires: expire, MaxAge: 86400}
 			http.SetCookie(w, &cookie)
 
+			cookieName := http.Cookie{Name: "gowiki_username", Value: u.Username, Path: "/", Expires: expire, MaxAge: 86400}
+			http.SetCookie(w, &cookieName)
+
 			http.Redirect(w, r, "/", http.StatusFound)
 			return
 		}
