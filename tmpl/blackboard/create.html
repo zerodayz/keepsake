@@ -73,7 +73,10 @@
 <div class="container" id="board">
     <div class="header-text-board"><h1>Blackboard</h1></div>
     <div id="items">Connecting...</div>
-    </br>
+    <div>
+        <button id="clearButton"><span class="glyphicon glyphicon-erase"></span></button>
+        <button id="downloadButton"><span class="glyphicon glyphicon-floppy-disk"></span></button>
+    </div>
     <style>
         #canvas {
             border: 1px solid #1c1c1c;
@@ -82,9 +85,6 @@
         }
     </style>
     <canvas id="canvas"></canvas>
-    <div>
-        <button id="clearButton">Clear</button>
-    </div>
     <script type="text/javascript" src="/lib/canvas.js"></script>
     <script>
         MESSAGE_CONNECTED = 1;
