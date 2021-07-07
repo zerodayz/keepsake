@@ -5,8 +5,6 @@ This is Open Source Wiki written in Go, aims for simplicity over complexity. It 
 
 The idea is to keep the Wiki as close to the standard libraries as possible, avoiding using any unnecessary third party libraries.
 
-![Dashboard](screenshots/Dashboard.png)
-
 # Use Keepsake in OpenShift
 
 ## Clone the keepsake into your own Filesystem

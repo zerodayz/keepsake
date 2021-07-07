@@ -8,7 +8,6 @@ package main
 
 import (
 	"flag"
-	"github.com/zerodayz/keepsake/blackboard"
 	"github.com/zerodayz/keepsake/categories"
 	"github.com/zerodayz/keepsake/comments"
 	"github.com/zerodayz/keepsake/database"
@@ -105,8 +104,6 @@ func main() {
 	http.HandleFunc("/ticket/complete/", tickets.MakeHandler(tickets.TicketCompleteHandler))
 	http.HandleFunc("/ticket/queue", tickets.TicketQueueHandler)
 
-	http.HandleFunc("/blackboard", blackboard.CreateHandler)
-
 	http.HandleFunc("/users/login/", users.LoginHandler)
 	http.HandleFunc("/users/logout/", users.LogoutHandler)
 	http.HandleFunc("/users/create/", users.CreateUserHandler)
@@ -122,10 +119,8 @@ func main() {
 		log.Println("Serving SSL Key:", key, "and SSL Cert:", cert)
 		go http.ListenAndServeTLS(httpsPort, cert, key, nil)
 	}
-	hub := blackboard.NewHub()
-	go hub.Run()
+
 	log.Println("Starting Keepsake Websocket at", webSocketPort)
-	http.HandleFunc("/ws", hub.HandleWebSocket)
 	http.ListenAndServeTLS(webSocketPort, cert, key, nil)
 
 }

@@ -266,11 +266,10 @@ func DownloadHandler(w http.ResponseWriter, r *http.Request) {
 	for _, f := range wikiPages {
 		fileName := strings.ReplaceAll(f.Title, " ", "_") + ".md"
 		fileName = strings.ReplaceAll(fileName, "/", "_")
-		files = append(files, dir + "/" + fileName)
+		files = append(files, dir+"/"+fileName)
 		data := "# " + f.Title + "\n" + f.Content
 		file := filepath.Join(dir, fileName)
-		if err := ioutil.WriteFile(file, []byte(data), 0666);
-			err != nil {
+		if err := ioutil.WriteFile(file, []byte(data), 0666); err != nil {
 			log.Fatal(err)
 		}
 	}
@@ -351,9 +350,9 @@ func ListRepairsHandler(w http.ResponseWriter, r *http.Request) {
 			categories := strings.Join(f.Tags, " ")
 
 			if len(categories) == 0 {
-				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None | Requested by ` + f.CreatedBy + `</td></tr>`))
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category ` + categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None | Requested by ` + f.CreatedBy + `</td></tr>`))
 			} else {
-				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + ` | Requested by ` + f.CreatedBy + `</td></tr>`))
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category ` + categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + ` | Requested by ` + f.CreatedBy + `</td></tr>`))
 			}
 		}
 		bufUpVoted.Write([]byte(`</table>`))
@@ -434,9 +433,9 @@ func StarHandler(w http.ResponseWriter, r *http.Request) {
 			categories := strings.Join(f.Tags, " ")
 
 			if len(categories) == 0 {
-				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category ` + categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
 			} else {
-				bufUpVoted.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
+				bufUpVoted.Write([]byte(`<tr><td class="dashboard category ` + categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
 			}
 		}
 		bufUpVoted.Write([]byte(`</table>`))
@@ -511,9 +510,9 @@ func ListHandler(w http.ResponseWriter, r *http.Request) {
 			categories := strings.Join(f.Tags, " ")
 
 			if len(categories) == 0 {
-				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
+				buf.Write([]byte(`<tr><td class="dashboard category ` + categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: None</td></tr>`))
 			} else {
-				buf.Write([]byte(`<tr><td class="dashboard category `+ categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
+				buf.Write([]byte(`<tr><td class="dashboard category ` + categories + `"><a class="dashboard-title" href="/pages/view/` + strconv.Itoa(f.InternalId) + `">` + f.Title + `</a> <br>Categories: ` + categoriesName + `</td></tr>`))
 			}
 		}
 		buf.Write([]byte(`</table>`))
@@ -882,7 +881,6 @@ func PreviewHandler(w http.ResponseWriter, r *http.Request, InternalId string) {
 		http.Redirect(w, r, "/", http.StatusNotFound)
 		return
 	}
-
 
 	md := goldmark.New(
 		goldmark.WithRendererOptions(

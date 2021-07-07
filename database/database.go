@@ -48,8 +48,8 @@ type WikiPage struct {
 	InternalId     int
 	WikiPageId     int
 	CommentCount   int
-	Liked		   int
-	Repair		   int
+	Liked          int
+	Repair         int
 	Title          string
 	Content        string
 	Tags           []string
@@ -951,10 +951,10 @@ func LoadMyVoted(w http.ResponseWriter, r *http.Request, username string) []Wiki
 	var (
 		wikiPages      []WikiPage
 		id             int
-		deleted		   int
+		deleted        int
 		title          string
 		createdBy      string
-		tags		   string
+		tags           string
 		dateCreated    string
 		lastModifiedBy string
 		lastModified   string
@@ -987,10 +987,10 @@ func LoadNeedsImprovement(w http.ResponseWriter, r *http.Request) []WikiPage {
 	var (
 		wikiPages      []WikiPage
 		id             int
-		deleted		   int
+		deleted        int
 		title          string
 		createdBy      string
-		tags		   string
+		tags           string
 		dateCreated    string
 		lastModifiedBy string
 		lastModified   string
@@ -1021,9 +1021,9 @@ func DownloadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 	}
 	defer db.Close()
 	var (
-		wikiPages      []WikiPage
-		title          string
-		content		   string
+		wikiPages []WikiPage
+		title     string
+		content   string
 	)
 	rows, err := db.Query("SELECT title, content FROM pages WHERE deleted = ? ORDER BY internal_id DESC", 0)
 	if err != nil {
@@ -1055,7 +1055,7 @@ func LoadAllPages(w http.ResponseWriter, r *http.Request) []WikiPage {
 		id             int
 		title          string
 		createdBy      string
-		tags		   string
+		tags           string
 		dateCreated    string
 		lastModifiedBy string
 		lastModified   string
