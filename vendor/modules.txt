@@ -37,22 +37,6 @@ github.com/dlclark/regexp2/syntax
 # github.com/go-sql-driver/mysql v1.5.0
 ## explicit
 github.com/go-sql-driver/mysql
-# github.com/gorilla/websocket v1.4.2
-## explicit
-github.com/gorilla/websocket
-# github.com/lucasb-eyer/go-colorful v1.0.3
-## explicit
-github.com/lucasb-eyer/go-colorful
-# github.com/satori/go.uuid v1.2.0
-## explicit
-github.com/satori/go.uuid
-# github.com/tidwall/gjson v1.6.3
-## explicit
-github.com/tidwall/gjson
-# github.com/tidwall/match v1.0.1
-github.com/tidwall/match
-# github.com/tidwall/pretty v1.0.2
-github.com/tidwall/pretty
 # github.com/yuin/goldmark v1.2.1
 ## explicit
 github.com/yuin/goldmark
