@@ -37,7 +37,7 @@ github.com/dlclark/regexp2/syntax
 # github.com/go-sql-driver/mysql v1.5.0
 ## explicit
 github.com/go-sql-driver/mysql
-# github.com/yuin/goldmark v1.2.1
+# github.com/yuin/goldmark v1.4.13
 ## explicit
 github.com/yuin/goldmark
 github.com/yuin/goldmark/ast
@@ -51,7 +51,7 @@ github.com/yuin/goldmark/util
 # github.com/yuin/goldmark-highlighting v0.0.0-20200307114337-60d527fdb691
 ## explicit
 github.com/yuin/goldmark-highlighting
-# golang.org/x/crypto v0.0.0-20200429183012-4b2356b1ed79
+# golang.org/x/crypto v0.1.0
 ## explicit
 golang.org/x/crypto/bcrypt
 golang.org/x/crypto/blowfish
